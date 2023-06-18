@@ -1,0 +1,63 @@
+server:
+  port: 8000
+  servlet:
+    session:
+      cookie:
+        max-age: 172800
+spring:
+  datasource:
+    url: jdbc:mysql://localhost:3306/{DB ??? ??}?serverTimezone=Asia/Seoul
+    username: {DB ??? ??}
+    password: {DB ??? ????}
+    driver-class-name: com.mysql.cj.jdbc.Driver
+  jpa:
+    hibernate:
+      ddl-auto: create
+      naming:
+        # underscore to camelcase table name
+        physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
+    properties:
+      hibernate:
+        # show_sql: true
+        format_sql: true
+    defer-datasource-initialization: true
+  data:
+    web:
+      pageable:
+        # page? 1?? ???? ??
+        one-indexed-parameters: true
+        # page ???
+        #        default-page-size: 10
+        # ?? page ???
+        max-page-size: 2000
+  session:
+    timeout: 86400
+    jdbc:
+      initialize-schema: always
+#logging.level:
+#  org.hibernate.SQL: debug
+#  com:
+#    amazonaws:
+#      util:
+#        EC2MetadataUtils: error
+util:
+  encrypt:
+    secretKey: {??? ?? ?}
+  jwt:
+    secretKey: {jwt secretKey}
+    refreshKey: {jwt refresh Key}
+    defaultExpirationMinutes: 60 # 1??
+    defaultRefreshTokenMinutes: 43200 # 30?
+
+cloud:
+  aws:
+    credentials:
+      accessKey: {AWS IAM ??? accessKey}
+      secretKey: {AWS IAM ??? secretKey}
+    region:
+      static: {AWS region}
+    stack:
+      auto: false
+aws:
+  s3:
+    bucketName: {??? ??? S3 ?? ??}
