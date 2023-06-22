@@ -6,9 +6,9 @@ server:
         max-age: 172800
 spring:
   datasource:
-    url: jdbc:mysql://localhost:3306/{DB ??? ??}?serverTimezone=Asia/Seoul
-    username: {DB ??? ??}
-    password: {DB ??? ????}
+    url: jdbc:mysql://localhost:3306/{DB Schema Name}?serverTimezone=Asia/Seoul
+    username: {DB username}
+    password: {DB password}
     driver-class-name: com.mysql.cj.jdbc.Driver
   jpa:
     hibernate:
@@ -42,7 +42,7 @@ spring:
 #        EC2MetadataUtils: error
 util:
   encrypt:
-    secretKey: {??? ?? ?}
+    secretKey: {secret key}
   jwt:
     secretKey: {jwt secretKey}
     refreshKey: {jwt refresh Key}
@@ -52,12 +52,12 @@ util:
 cloud:
   aws:
     credentials:
-      accessKey: {AWS IAM ??? accessKey}
-      secretKey: {AWS IAM ??? secretKey}
+      accessKey: {AWS IAM user accessKey}
+      secretKey: {AWS IAM user secretKey}
     region:
       static: {AWS region}
     stack:
       auto: false
 aws:
   s3:
-    bucketName: {??? ??? S3 ?? ??}
+    bucketName: {aws s3 bucketname}

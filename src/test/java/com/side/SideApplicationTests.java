@@ -1,10 +1,10 @@
-package com.side.api;
+package com.side;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
-class ApiApplicationTests {
+class SideApplicationTests {
 
 	@Test
 	void contextLoads() {
