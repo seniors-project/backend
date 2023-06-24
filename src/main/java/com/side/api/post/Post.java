@@ -26,14 +26,10 @@ public class Post extends BaseEntity {
 	@Lob
 	private String content;
 
-	@Column(columnDefinition = "text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci COMMENT '게시글 썸네일 이미지 경로'")
-	@Lob
-	private String thumbnailImage;
-
-	@Column(columnDefinition = "tinyint(3) not null default 0 COMMENT '노출 상태'")
+	@Column(columnDefinition = "tinyint(3) not null default 1 COMMENT '게시글 노출 여부'")
 	private Integer display;
 
-	@Column(columnDefinition = "tinyint(3) not null default 0 COMMENT '삭제 상태'")
+	@Column(columnDefinition = "tinyint(3) not null default 0 COMMENT '삭제 여부'")
 	private Integer isDeleted;
 
 	@Column(columnDefinition = "int unsigned not null default 0 COMMENT '게시글 조회 수'")
@@ -45,30 +41,16 @@ public class Post extends BaseEntity {
 	@OneToMany(mappedBy = "post", orphanRemoval = true, cascade = CascadeType.REMOVE)
 	private List<Comment> comments = new ArrayList<>();
 	public static Post initPost(String title, String content, Integer display) {
-		return Post.builder().title(title).content(content).display(display).isDeleted(0).viewCount(0).likeCount(0).thumbnailImage(null).build();
+		return Post.builder().title(title).content(content).display(display).isDeleted(0).viewCount(0).likeCount(0).build();
 	}
 
 	@Builder
-	public Post(String title, String content, Integer display, Integer isDeleted, Integer viewCount, Integer likeCount, String thumbnailImage, List<Comment> comments) {
+	public Post(String title, String content, Integer display, Integer isDeleted, Integer viewCount, Integer likeCount, List<Comment> comments) {
 		this.title = title;
 		this.content = content;
 		this.display = display;
 		this.isDeleted = isDeleted;
 		this.viewCount = viewCount;
 		this.likeCount = likeCount;
-		this.thumbnailImage = thumbnailImage;
-	}
-
-	public void changeTitle(String title) {
-		this.title = title;
-	}
-
-	public void changeContent(String content) {
-		this.content = content;
-	}
-
-	public void changePost(String title, String content) {
-		this.title = title;
-		this.content = content;
 	}
 }
