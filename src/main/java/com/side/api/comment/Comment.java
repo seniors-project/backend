@@ -2,7 +2,7 @@ package com.side.api.comment;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.side.api.common.BaseEntity;
-import com.side.api.post.Post;
+import com.side.api.post.domain.Post;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Builder;

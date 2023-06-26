@@ -1,4 +1,4 @@
-package com.side.api.post;
+package com.side.api.post.domain;
 
 import com.side.api.comment.Comment;
 import jakarta.persistence.*;

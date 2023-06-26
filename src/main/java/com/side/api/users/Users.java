@@ -6,7 +6,6 @@ import lombok.*;
 
 @Entity
 @Getter
-@Builder
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Users extends BaseEntity {
@@ -41,5 +40,12 @@ public class Users extends BaseEntity {
 				.email(email)
 				.nickname(nickname)
 				.build();
+	}
+
+	@Builder
+	public Users (String snsId, String email, String nickname) {
+		this.snsId = snsId;
+		this.email = email;
+		this.nickname = nickname;
 	}
 }

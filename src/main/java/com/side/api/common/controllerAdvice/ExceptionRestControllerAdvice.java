@@ -83,11 +83,7 @@ public class ExceptionRestControllerAdvice {
 		String logMessage = "Bad Request.";
 		HttpStatus httpStatus = HttpStatus.BAD_REQUEST;
 
-		if (httpStatus.equals(HttpStatus.BAD_REQUEST)) {
-			log.warn(logMessage, e.getMessage());
-		} else {
-			log.error(logMessage, e);
-		}
+		log.warn(logMessage, e.getMessage());
 
 		ErrorResponse errorResponse = ErrorResponse.builder().message(e.getMessage())
 				.resultCode(e.getResultCode())

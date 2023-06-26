@@ -43,6 +43,8 @@ dependencies {
 	runtimeOnly 'com.h2database:h2'
 	runtimeOnly 'com.mysql:mysql-connector-j'
 
+	implementation group: 'com.google.guava', name: 'guava', version: '30.1.1-jre'
+
 	implementation 'org.projectlombok:lombok-mapstruct-binding:0.2.0'
 	implementation 'org.mapstruct:mapstruct:1.5.3.Final'
 	annotationProcessor 'org.projectlombok:lombok-mapstruct-binding:0.2.0'
