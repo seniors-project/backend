@@ -17,7 +17,7 @@ public class PostController {
 	private final PostService postService;
 
 	@PostMapping("/")
-	public ResponseEntity<String> addPost(@Valid @RequestBody PostDto.Post postDto) {
+	public ResponseEntity<String> postAdd(@Valid @RequestBody PostDto.Post postDto) {
 		postService.addPost(postDto);
 		return ResponseEntity.ok().body("SUCCESS");
 	}
