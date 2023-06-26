@@ -15,7 +15,7 @@ spring:
       ddl-auto: create
       naming:
         # underscore to camelcase table name
-        physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
+#        physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
     properties:
       hibernate:
         # show_sql: true
@@ -30,6 +30,10 @@ spring:
         #        default-page-size: 10
         # ?? page ???
         max-page-size: 2000
+    redis:
+      host: {localhost}
+      port: {port number}
+      timeout: 10
   session:
     timeout: 86400
     jdbc:
