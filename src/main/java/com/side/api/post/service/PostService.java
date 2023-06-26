@@ -12,7 +12,7 @@ public class PostService {
 
 	private final PostRepository postRepository;
 
-	public void write(PostDto.Post postDto) {
+	public void addPost(PostDto.Post postDto) {
 		postRepository.save(Post.initPost(postDto.getTitle(), postDto.getContent(), 1));
 	}
 }
