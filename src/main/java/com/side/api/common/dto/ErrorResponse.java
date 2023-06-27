@@ -1,21 +1,30 @@
 package com.side.api.common.dto;
 
 import com.side.common.constant.ResultCode;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
 
-import java.util.Map;
+public class ErrorResponse extends ResponseDto {
 
-@Data
-@Builder
-@NoArgsConstructor
-@AllArgsConstructor
-public class ErrorResponse {
+	private ErrorResponse(ResultCode errorCode) {
+		super(false, errorCode.getCode(), errorCode.getMessage());
+	}
 
-	@Builder.Default
-	private ResultCode resultCode = ResultCode.NONE;
-	private String message;
-	private Map<String, Object> data;
+	private ErrorResponse(ResultCode errorCode, Exception e) {
+		super(false, errorCode.getCode(), errorCode.getMessage(e));
+	}
+
+	private ErrorResponse(ResultCode errorCode, String message) {
+		super(false, errorCode.getCode(), errorCode.getMessage(message));
+	}
+
+	public static ErrorResponse of(ResultCode errorCode) {
+		return new ErrorResponse(errorCode);
+	}
+
+	public static ErrorResponse of(ResultCode errorCode, Exception e) {
+		return new ErrorResponse(errorCode, e);
+	}
+
+	public static ErrorResponse of(ResultCode errorCode, String message) {
+		return new ErrorResponse(errorCode, message);
+	}
 }

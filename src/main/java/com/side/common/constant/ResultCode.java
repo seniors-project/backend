@@ -1,55 +1,66 @@
 package com.side.common.constant;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonValue;
+import com.side.common.exception.CustomException;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 
 import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
+import java.util.Optional;
+import java.util.function.Predicate;
 
 @Getter
 @RequiredArgsConstructor
 public enum ResultCode {
-	NONE("NONE"),
-	EXISTS_NICKNAME("존재하는 닉네임"),
-	EXISTS_EMAIL("존재하는 이메일"),
-	NOT_EXISTS_EMAIL("존재하지 않는 이메일"),
-	EXPIRED_REFRESH_TOKEN("만료된 리프레시 토큰"),
-	NOT_REQUIRED_SIGN_UP_VERIFICATION("회원가입 인증이 필요하지 않음"),
 
-	NOT_EXISTS_REPORT("존재하지 않는 문의"),
+	// Common Response
+	OK(0, HttpStatus.OK, "Ok"),
 
-	INVALID_USER_STATUS("유효하지 않은 사용자 상태"),
-	;
+	BAD_REQUEST(10000, HttpStatus.BAD_REQUEST, "Bad request"),
+	VALIDATION_ERROR(10001, HttpStatus.BAD_REQUEST, "Validation error"),
+	NOT_FOUND(10002, HttpStatus.NOT_FOUND, "Requested resource is not found"),
 
-	private final String desc;
+	INTERNAL_ERROR(20000, HttpStatus.INTERNAL_SERVER_ERROR, "Internal error"),
+	DATA_ACCESS_ERROR(20001, HttpStatus.INTERNAL_SERVER_ERROR, "Data access error"),
 
-	@JsonValue
-	public String getValue() {
-		return this.name();
+	UNAUTHORIZED(40000, HttpStatus.UNAUTHORIZED, "User unauthorized");
+
+	private final Integer code;
+	private final HttpStatus httpStatus;
+	private final String message;
+
+	public String getMessage(Throwable e) {
+		return this.getMessage(this.getMessage() + " - " + e.getMessage());
+		// 결과 예시 - "Validation error - Reason why it isn't valid"
 	}
 
-	@JsonCreator
-	public static ResultCode of(String name) {
-		for (ResultCode obj : ResultCode.values()) {
-			if (name.equalsIgnoreCase(obj.name())) {
-				return obj;
-			}
+	public String getMessage(String message) {
+		return Optional.ofNullable(message)
+				.filter(Predicate.not(String::isBlank))
+				.orElse(this.getMessage());
+	}
+
+	public static ResultCode valueOf(HttpStatus httpStatus) {
+		if (httpStatus == null) {
+			throw new CustomException("HttpStatus is null.");
 		}
 
-		return ResultCode.NONE;
+		return Arrays.stream(values())
+				.filter(errorCode -> errorCode.getHttpStatus() == httpStatus)
+				.findFirst()
+				.orElseGet(() -> {
+					if (httpStatus.is4xxClientError()) {
+						return ResultCode.BAD_REQUEST;
+					} else if (httpStatus.is5xxServerError()) {
+						return ResultCode.INTERNAL_ERROR;
+					} else {
+						return ResultCode.OK;
+					}
+				});
 	}
 
-	public static List<Map<String, Object>> codes() {
-		return Arrays.stream(ResultCode.values()).map(o -> {
-			Map<String, Object> map = new HashMap<>();
-			map.put("name", o.name());
-			map.put("desc", o.getDesc());
-			return map;
-		}).collect(Collectors.toList());
+	@Override
+	public String toString() {
+		return String.format("%s (%d)", this.name(), this.getCode());
 	}
 }

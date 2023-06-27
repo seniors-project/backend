@@ -15,4 +15,8 @@ public class PostService {
 	public void addPost(PostDto.Post postDto) {
 		postRepository.save(Post.initPost(postDto.getTitle(), postDto.getContent(), 1));
 	}
+
+	public Post findPost(Long postId) {
+		return postRepository.findById(postId).orElse(null);
+	}
 }
