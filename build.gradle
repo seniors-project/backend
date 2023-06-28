@@ -19,13 +19,13 @@ configurations {
 	querydsl.extendsFrom compileClasspath
 }
 
+repositories {
+	mavenCentral()
+}
+
 ext {
 	snippetsDir = file('build/generated-snippets')
 	queryDslVersion = "5.0.0"
-}
-
-repositories {
-	mavenCentral()
 }
 
 dependencies {
