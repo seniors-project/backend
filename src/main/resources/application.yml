@@ -14,8 +14,10 @@ spring:
     hibernate:
       ddl-auto: create
       naming:
+        # camelcase to underscore table name
+        physical-strategy: org.hibernate.boot.model.naming.CamelCaseToUnderscoresNamingStrategy
         # underscore to camelcase table name
-#        physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
+      #        physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
     properties:
       hibernate:
         # show_sql: true

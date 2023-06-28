@@ -16,13 +16,16 @@ public enum ResultCode {
 	// Common Response
 	OK(0, HttpStatus.OK, "Ok"),
 
+	// 400대 에러
 	BAD_REQUEST(10000, HttpStatus.BAD_REQUEST, "Bad request"),
 	VALIDATION_ERROR(10001, HttpStatus.BAD_REQUEST, "Validation error"),
 	NOT_FOUND(10002, HttpStatus.NOT_FOUND, "Requested resource is not found"),
 
+	// 500대 에러
 	INTERNAL_ERROR(20000, HttpStatus.INTERNAL_SERVER_ERROR, "Internal error"),
 	DATA_ACCESS_ERROR(20001, HttpStatus.INTERNAL_SERVER_ERROR, "Data access error"),
 
+	// 인증
 	UNAUTHORIZED(40000, HttpStatus.UNAUTHORIZED, "User unauthorized");
 
 	private final Integer code;
