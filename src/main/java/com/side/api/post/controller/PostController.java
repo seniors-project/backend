@@ -18,13 +18,13 @@ public class PostController {
 	private final PostService postService;
 
 	@PostMapping("")
-	public DataResponseDto<Object> postAdd(@Valid @RequestBody PostDto.Post postDto) {
+	public DataResponseDto<String> postAdd(@Valid @RequestBody PostDto.Post postDto) {
 		postService.addPost(postDto);
 		return DataResponseDto.of("SUCCESS");
 	}
 
 	@GetMapping("/{postId}")
-	public DataResponseDto<Object> postDetails(@PathVariable Long postId) {
+	public DataResponseDto<Post> postDetails(@PathVariable Long postId) {
 		Post post = postService.findPost(postId);
 		return DataResponseDto.of(post);
 	}

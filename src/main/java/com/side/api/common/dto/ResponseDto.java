@@ -18,11 +18,11 @@ public class ResponseDto {
 		return new ResponseDto(success, code.getCode(), code.getMessage());
 	}
 
-	public static ResponseDto of(Boolean success, ResultCode errorCode, Exception e) {
-		return new ResponseDto(success, errorCode.getCode(), errorCode.getMessage(e));
+	public static ResponseDto of(Boolean success, ResultCode code, Exception e) {
+		return new ResponseDto(success, code.getCode(), code.getMessage(e));
 	}
 
-	public static ResponseDto of(Boolean success, ResultCode errorCode, String message) {
-		return new ResponseDto(success, errorCode.getCode(), errorCode.getMessage(message));
+	public static ResponseDto of(Boolean success, ResultCode code, String message) {
+		return new ResponseDto(success, code.getCode(), code.getMessage(message));
 	}
 }
