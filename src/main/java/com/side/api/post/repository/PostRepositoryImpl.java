@@ -11,13 +11,12 @@ import org.springframework.stereotype.Repository;
 @Repository
 public class PostRepositoryImpl extends BasicRepoSupport implements PostRepositoryCustom {
 
-
 	protected PostRepositoryImpl(JPAQueryFactory jpaQueryFactory, EntityManager em) {
 		super(jpaQueryFactory, em);
 	}
 
 	@Override
-	public Post getPostOne(Long postId) {
+	public Post getOnePost(Long postId) {
 		Post post = jpaQueryFactory
 				.selectFrom(QPost.post)
 				.leftJoin(QPost.post.comments).fetchJoin()

@@ -4,5 +4,5 @@ import com.side.api.post.domain.Post;
 
 public interface PostRepositoryCustom {
 
-	Post getPostOne(Long postId);
+	Post getOnePost(Long postId);
 }
