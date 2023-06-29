@@ -1,6 +1,6 @@
 ---
 name: Refactor
-about: Describe this issue template's purpose here.
+about: " 리팩토링, 성능개선 등"
 title: "[Refactor] : 작업 사항을 입력해주세요"
 labels: "\U0001F4A1Refactor"
 assignees: ''

@@ -1,6 +1,6 @@
 ---
 name: Feat
-about: Describe this issue template's purpose here.
+about: " 기능 추가"
 title: "[Feat] : 작업 사항을 입력해주세요"
 labels: "✨Feat"
 assignees: ''

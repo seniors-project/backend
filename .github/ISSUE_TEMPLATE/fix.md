@@ -1,6 +1,6 @@
 ---
 name: Fix
-about: Describe this issue template's purpose here.
+about: " 에러 수정"
 title: "[Fix] : 작업 사항을 입력해주세요"
 labels: "\U0001F528 Fix"
 assignees: ''

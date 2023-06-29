@@ -1,6 +1,6 @@
 ---
 name: Comment
-about: Describe this issue template's purpose here.
+about: " 주석 관련"
 title: "[Comment] : 작업 사항을 입력해주세요"
 labels: "\U0001F4DD Comment"
 assignees: ''
