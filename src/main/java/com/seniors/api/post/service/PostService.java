@@ -14,7 +14,7 @@ public class PostService {
 	private final PostRepository postRepository;
 
 	public void addPost(PostDto.Post postDto) {
-		postRepository.save(Post.initPost(postDto.getTitle(), postDto.getContent(), 1));
+		postRepository.save(Post.initPost(postDto.getTitle(), postDto.getContent()));
 	}
 
 	@Transactional
