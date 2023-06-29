@@ -1,8 +1,8 @@
 ---
-name: "[Feat] : 작업 사항을 입력해주세요"
+name: Feat
 about: Describe this issue template's purpose here.
-title: ''
-labels: ''
+title: "[Feat] : 작업 사항을 입력해주세요"
+labels: "✨Feat"
 assignees: ''
 
 ---
