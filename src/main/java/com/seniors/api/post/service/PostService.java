@@ -18,6 +18,11 @@ public class PostService {
 	}
 
 	@Transactional
+	public void removePost(Long postId) {
+		postRepository.deleteById(postId);
+	}
+
+	@Transactional
 	public Post findPost(Long postId) {
 		return postRepository.getOnePost(postId);
 	}

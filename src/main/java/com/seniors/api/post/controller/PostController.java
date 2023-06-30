@@ -28,4 +28,10 @@ public class PostController {
 		Post post = postService.findPost(postId);
 		return DataResponseDto.of(post);
 	}
+
+	@DeleteMapping("/{postId}")
+	public DataResponseDto<String> postRemove(@PathVariable Long postId) {
+		postService.removePost(postId);
+		return DataResponseDto.of("SUCCESS");
+	}
 }
