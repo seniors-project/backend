@@ -7,6 +7,8 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import com.seniors.api.common.BaseEntity;
+import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.Where;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -14,6 +16,8 @@ import java.util.List;
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@SQLDelete(sql = "UPDATE Post SET isDeleted = true WHERE id = ?")
+@Where(clause = "isDeleted = false")
 public class Post extends BaseEntity {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -26,11 +30,9 @@ public class Post extends BaseEntity {
 	@Lob
 	private String content;
 
-	@Column(columnDefinition = "tinyint(3) not null default 1 COMMENT '게시글 노출 여부'")
-	private Integer display;
-
-	@Column(columnDefinition = "tinyint(3) not null default 0 COMMENT '삭제 여부'")
-	private Integer isDeleted;
+//	@Column(columnDefinition = "tinyint(3) not null default 0 COMMENT '삭제 여부'")
+//	private Integer isDeleted;
+	private boolean isDeleted = Boolean.FALSE;
 
 	@Column(columnDefinition = "int unsigned not null default 0 COMMENT '게시글 조회 수'")
 	private Integer viewCount;
@@ -40,15 +42,14 @@ public class Post extends BaseEntity {
 
 	@OneToMany(mappedBy = "post", orphanRemoval = true, cascade = CascadeType.REMOVE)
 	private List<Comment> comments = new ArrayList<>();
-	public static Post initPost(String title, String content, Integer display) {
-		return Post.builder().title(title).content(content).display(display).isDeleted(0).viewCount(0).likeCount(0).build();
+	public static Post initPost(String title, String content) {
+		return Post.builder().title(title).content(content).isDeleted(false).viewCount(0).likeCount(0).build();
 	}
 
 	@Builder
-	public Post(String title, String content, Integer display, Integer isDeleted, Integer viewCount, Integer likeCount, List<Comment> comments) {
+	public Post(String title, String content, Boolean isDeleted, Integer viewCount, Integer likeCount) {
 		this.title = title;
 		this.content = content;
-		this.display = display;
 		this.isDeleted = isDeleted;
 		this.viewCount = viewCount;
 		this.likeCount = likeCount;

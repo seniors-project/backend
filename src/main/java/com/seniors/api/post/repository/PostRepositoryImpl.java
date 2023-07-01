@@ -21,8 +21,6 @@ public class PostRepositoryImpl extends BasicRepoSupport implements PostReposito
 				.selectFrom(QPost.post)
 				.leftJoin(QPost.post.comments).fetchJoin()
 				.where(QPost.post.id.eq(postId))
-				.where(QPost.post.isDeleted.eq(0))
-				.where(QPost.post.display.eq(1))
 				.fetchOne();
 
 		if (post == null)
