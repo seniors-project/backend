@@ -40,6 +40,23 @@ spring:
     timeout: 86400
     jdbc:
       initialize-schema: always
+
+springdoc:
+  api-docs:
+    enabled: true
+  swagger-ui:
+    path: /swagger-ui
+    disable-swagger-default-url: true
+    display-request-duration: true
+    tags-sorter: alpha
+    operations-sorter: alpha
+    doc-expansion: none
+    syntax-highlight:
+      theme: nord
+    urls-primary-name: SENIORS API
+    persist-authorization: true
+    query-config-enabled: true
+  pre-loading-enabled: true
 #logging.level:
 #  org.hibernate.SQL: debug
 #  com:
