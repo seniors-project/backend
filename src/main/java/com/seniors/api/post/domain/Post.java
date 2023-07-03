@@ -1,7 +1,7 @@
 package com.seniors.api.post.domain;
 
 import com.seniors.api.comment.Comment;
-import com.seniors.api.users.Users;
+import com.seniors.api.users.domain.Users;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Builder;

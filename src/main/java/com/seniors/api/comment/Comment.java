@@ -2,7 +2,7 @@ package com.seniors.api.comment;
 
 import com.seniors.api.common.BaseEntity;
 import com.seniors.api.post.domain.Post;
-import com.seniors.api.users.Users;
+import com.seniors.api.users.domain.Users;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Builder;

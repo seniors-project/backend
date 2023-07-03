@@ -1,4 +1,4 @@
-package com.seniors.api.users;
+package com.seniors.api.users.domain;
 
 import com.seniors.api.comment.Comment;
 import com.seniors.api.common.BaseEntity;
