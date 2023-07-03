@@ -1,6 +1,7 @@
 package com.seniors.api.post.domain;
 
 import com.seniors.api.comment.Comment;
+import com.seniors.api.users.Users;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -40,18 +41,24 @@ public class Post extends BaseEntity {
 	@Column(columnDefinition = "int unsigned not null default 0 COMMENT '게시글 좋아요 수'")
 	private Integer likeCount;
 
-	@OneToMany(mappedBy = "post", orphanRemoval = true, cascade = CascadeType.REMOVE)
+	@OneToMany(mappedBy = "post", orphanRemoval = true, cascade = CascadeType.ALL)
 	private List<Comment> comments = new ArrayList<>();
-	public static Post initPost(String title, String content) {
-		return Post.builder().title(title).content(content).isDeleted(false).viewCount(0).likeCount(0).build();
+
+	@ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+	@JoinColumn(name = "userId")
+	private Users users;
+
+	public static Post initPost(String title, String content, Users users) {
+		return Post.builder().title(title).content(content).isDeleted(false).viewCount(0).likeCount(0).users(users).build();
 	}
 
 	@Builder
-	public Post(String title, String content, Boolean isDeleted, Integer viewCount, Integer likeCount) {
+	public Post(String title, String content, Boolean isDeleted, Integer viewCount, Integer likeCount, Users users) {
 		this.title = title;
 		this.content = content;
 		this.isDeleted = isDeleted;
 		this.viewCount = viewCount;
 		this.likeCount = likeCount;
+		this.users = users;
 	}
 }

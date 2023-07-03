@@ -2,6 +2,7 @@ package com.seniors.api.comment;
 
 import com.seniors.api.common.BaseEntity;
 import com.seniors.api.post.domain.Post;
+import com.seniors.api.users.Users;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -34,16 +35,21 @@ public class Comment extends BaseEntity {
 	@JoinColumn(name = "postId")
 	private Post post;
 
-	public static Comment initComment(String nickname, String content, Post post) {
+	@ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+	@JoinColumn(name = "userId")
+	private Users users;
+
+	public static Comment initComment(String nickname, String content, Post post, Users users) {
 		return Comment.builder().nickname(nickname).content(content)
-				.isDeleted(false).post(post).build();
+				.isDeleted(false).post(post).users(users).build();
 	}
 
 	@Builder
-	public Comment(String nickname, String content, Boolean isDeleted, Post post) {
+	public Comment(String nickname, String content, Boolean isDeleted, Post post, Users users) {
 		this.nickname = nickname;
 		this.content = content;
 		this.isDeleted = isDeleted;
 		this.post = post;
+		this.users = users;
 	}
 }

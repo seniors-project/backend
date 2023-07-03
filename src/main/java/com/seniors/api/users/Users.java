@@ -1,8 +1,13 @@
 package com.seniors.api.users;
 
+import com.seniors.api.comment.Comment;
 import com.seniors.api.common.BaseEntity;
+import com.seniors.api.post.domain.Post;
 import jakarta.persistence.*;
 import lombok.*;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Getter
@@ -20,9 +25,6 @@ public class Users extends BaseEntity {
 	@Column(columnDefinition = "varchar(50) COMMENT '이메일'")
 	private String email;
 
-	@Column(columnDefinition = "varchar(50) COMMENT '비밀번호'")
-	private String password;
-
 	@Column(columnDefinition = "varchar(30) COMMENT '닉네임'", unique = true)
 	private String nickname;
 
@@ -31,6 +33,15 @@ public class Users extends BaseEntity {
 
 	@Column(columnDefinition = "varchar(50) COMMENT '휴대전화번호'")
 	private String phoneNumber;
+
+	@Column(columnDefinition = "text COMMENT '프로필 이미지 url'")
+	private String profileImageUrl;
+
+	@OneToMany(mappedBy = "users", orphanRemoval = true, cascade = CascadeType.ALL)
+	private List<Post> posts = new ArrayList<>();
+
+	@OneToMany(mappedBy = "users", orphanRemoval = true, cascade = CascadeType.ALL)
+	private List<Comment> comments = new ArrayList<>();
 
 	public static Users initSnsUsers(
 			String snsId, String email, String nickname
