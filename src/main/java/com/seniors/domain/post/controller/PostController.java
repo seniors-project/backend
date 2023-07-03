@@ -1,0 +1,37 @@
+package com.seniors.domain.post.controller;
+
+import com.seniors.common.dto.DataResponseDto;
+import com.seniors.domain.post.entity.Post;
+import com.seniors.domain.post.dto.PostDto;
+import com.seniors.domain.post.service.PostService;
+import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.web.bind.annotation.*;
+
+@Slf4j
+@RestController
+@RequiredArgsConstructor
+@RequestMapping("/api/post")
+public class PostController {
+
+	private final PostService postService;
+
+	@PostMapping("")
+	public DataResponseDto<String> postAdd(@Valid @RequestBody PostDto.Post postDto) {
+		postService.addPost(postDto);
+		return DataResponseDto.of("SUCCESS");
+	}
+
+	@GetMapping("/{postId}")
+	public DataResponseDto<Post> postDetails(@PathVariable Long postId) {
+		Post post = postService.findPost(postId);
+		return DataResponseDto.of(post);
+	}
+
+	@DeleteMapping("/{postId}")
+	public DataResponseDto<String> postRemove(@PathVariable Long postId) {
+		postService.removePost(postId);
+		return DataResponseDto.of("SUCCESS");
+	}
+}

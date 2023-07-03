@@ -1,6 +1,6 @@
 package com.seniors.common.constant;
 
-import com.seniors.common.exception.CustomException;
+import com.seniors.common.exception.type.CustomException;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;

@@ -1,0 +1,29 @@
+package com.seniors.domain.post.service;
+
+import com.seniors.domain.post.entity.Post;
+import com.seniors.domain.post.dto.PostDto;
+import com.seniors.domain.post.repository.PostRepository;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+@Service
+@RequiredArgsConstructor
+public class PostService {
+
+	private final PostRepository postRepository;
+
+	public void addPost(PostDto.Post postDto) {
+		postRepository.save(Post.initPost(postDto.getTitle(), postDto.getContent()));
+	}
+
+	@Transactional
+	public void removePost(Long postId) {
+		postRepository.deleteById(postId);
+	}
+
+	@Transactional
+	public Post findPost(Long postId) {
+		return postRepository.getOnePost(postId);
+	}
+}
