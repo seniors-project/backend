@@ -4,6 +4,7 @@ import com.seniors.api.common.dto.DataResponseDto;
 import com.seniors.api.post.domain.Post;
 import com.seniors.api.post.dto.PostDto;
 import com.seniors.api.post.service.PostService;
+import com.seniors.security.CustomUserDetails;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -15,14 +16,11 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 
-import java.security.SecureRandom;
-import java.util.Base64;
-
 @Tag(name = "게시글", description = "게시글 API 명세서")
 @Slf4j
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/post")
+@RequestMapping("/api/posts")
 public class PostController {
 
 	private final PostService postService;
@@ -31,8 +29,8 @@ public class PostController {
 	@ApiResponse(responseCode = "200", description = "생성 성공",
 			content = @Content(mediaType = "application/json", schema = @Schema(implementation = DataResponseDto.class)))
 	@PostMapping("")
-	public DataResponseDto<String> postAdd(@Valid @RequestBody PostDto.Post postDto, Long userId) {
-		postService.addPost(postDto, userId);
+	public DataResponseDto<String> postAdd(@Valid @RequestBody PostDto.Post postDto, CustomUserDetails userDetails) {
+		postService.addPost(postDto, userDetails.getUserId());
 		return DataResponseDto.of("SUCCESS");
 	}
 
