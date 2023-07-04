@@ -18,7 +18,7 @@ public class PostService {
 
 	public void addPost(PostDto.Post postDto, Long userId) {
 		usersRepository.findById(userId).ifPresent(users ->
-				postRepository.save(Post.initPost(postDto.getTitle(), postDto.getContent(), users))
+				postRepository.save(Post.of(postDto.getTitle(), postDto.getContent(), users))
 		);
 	}
 

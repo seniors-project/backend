@@ -42,11 +42,6 @@ public class PostController {
 	@GetMapping("/{postId}")
 	public DataResponseDto<Post> postDetails(@Parameter(description = "게시글 ID") @PathVariable(value = "postId") Long postId) {
 		Post post = postService.findPost(postId);
-		SecureRandom random = new SecureRandom();
-		byte[] keyBytes = new byte[64];
-		random.nextBytes(keyBytes);
-		String secretKey = Base64.getEncoder().encodeToString(keyBytes);
-		log.info("{}", secretKey);
 		return DataResponseDto.of(post);
 	}
 

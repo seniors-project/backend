@@ -48,7 +48,7 @@ public class Post extends BaseEntity {
 	@JoinColumn(name = "userId")
 	private Users users;
 
-	public static Post initPost(String title, String content, Users users) {
+	public static Post of(String title, String content, Users users) {
 		return Post.builder().title(title).content(content).isDeleted(false).viewCount(0).likeCount(0).users(users).build();
 	}
 
