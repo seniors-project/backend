@@ -39,7 +39,7 @@ public class Comment extends BaseEntity {
 	@JoinColumn(name = "userId")
 	private Users users;
 
-	public static Comment initComment(String nickname, String content, Post post, Users users) {
+	public static Comment of(String nickname, String content, Post post, Users users) {
 		return Comment.builder().nickname(nickname).content(content)
 				.isDeleted(false).post(post).users(users).build();
 	}

@@ -15,6 +15,9 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 
+import java.security.SecureRandom;
+import java.util.Base64;
+
 @Tag(name = "게시글", description = "게시글 API 명세서")
 @Slf4j
 @RestController
@@ -39,6 +42,11 @@ public class PostController {
 	@GetMapping("/{postId}")
 	public DataResponseDto<Post> postDetails(@Parameter(description = "게시글 ID") @PathVariable(value = "postId") Long postId) {
 		Post post = postService.findPost(postId);
+		SecureRandom random = new SecureRandom();
+		byte[] keyBytes = new byte[64];
+		random.nextBytes(keyBytes);
+		String secretKey = Base64.getEncoder().encodeToString(keyBytes);
+		log.info("{}", secretKey);
 		return DataResponseDto.of(post);
 	}
 

@@ -3,6 +3,7 @@ package com.seniors.api.users.domain;
 import com.seniors.api.comment.Comment;
 import com.seniors.api.common.BaseEntity;
 import com.seniors.api.post.domain.Post;
+import com.seniors.common.constant.OAuthProvider;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -37,26 +38,31 @@ public class Users extends BaseEntity {
 	@Column(columnDefinition = "text COMMENT '프로필 이미지 url'")
 	private String profileImageUrl;
 
+	@Column(columnDefinition = "varchar(20) COMMENT 'OAuth Provider'")
+	private OAuthProvider oAuthProvider;
+
 	@OneToMany(mappedBy = "users", orphanRemoval = true, cascade = CascadeType.ALL)
 	private List<Post> posts = new ArrayList<>();
 
 	@OneToMany(mappedBy = "users", orphanRemoval = true, cascade = CascadeType.ALL)
 	private List<Comment> comments = new ArrayList<>();
 
-	public static Users initSnsUsers(
-			String snsId, String email, String nickname
+	public static Users of(
+			String snsId, String email, String nickname, OAuthProvider oAuthProvider
 	) {
 		return Users.builder()
 				.snsId(snsId)
 				.email(email)
 				.nickname(nickname)
+				.oAuthProvider(oAuthProvider)
 				.build();
 	}
 
 	@Builder
-	public Users (String snsId, String email, String nickname) {
+	public Users (String snsId, String email, String nickname, OAuthProvider oAuthProvider) {
 		this.snsId = snsId;
 		this.email = email;
 		this.nickname = nickname;
+		this.oAuthProvider = oAuthProvider;
 	}
 }

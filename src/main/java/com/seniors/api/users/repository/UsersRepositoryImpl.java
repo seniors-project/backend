@@ -1,7 +1,7 @@
 package com.seniors.api.users.repository;
 
 import com.querydsl.jpa.impl.JPAQueryFactory;
-import com.seniors.api.users.QUsers;
+import com.seniors.api.users.domain.QUsers;
 import com.seniors.api.users.domain.Users;
 import com.seniors.common.repository.BasicRepoSupport;
 
