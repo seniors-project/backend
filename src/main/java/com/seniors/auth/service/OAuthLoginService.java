@@ -1,11 +1,11 @@
 package com.seniors.auth.service;
 
-import com.seniors.api.users.domain.Users;
-import com.seniors.api.users.repository.UsersRepository;
 import com.seniors.auth.common.AuthTokensGenerator;
-import com.seniors.auth.dto.AuthTokens;
 import com.seniors.auth.common.OAuthInfoResponse;
 import com.seniors.auth.common.OAuthLoginParams;
+import com.seniors.auth.dto.AuthTokens;
+import com.seniors.domain.users.domain.Users;
+import com.seniors.domain.users.repository.UsersRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 

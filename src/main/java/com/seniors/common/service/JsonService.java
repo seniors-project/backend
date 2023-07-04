@@ -6,7 +6,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.type.CollectionType;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.google.common.base.Strings;
-import com.seniors.common.exception.JsonException;
+import com.seniors.common.exception.type.JsonException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
