@@ -1,4 +1,4 @@
-package com.seniors.common.mapper.config;
+package com.seniors.config;
 
 
 import io.swagger.v3.oas.models.OpenAPI;

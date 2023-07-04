@@ -1,4 +1,4 @@
-package com.seniors.common.mapper.config;
+package com.seniors.config;
 
 import io.lettuce.core.ClientOptions;
 import io.lettuce.core.SocketOptions;

@@ -1,4 +1,4 @@
-package com.seniors.common.mapper.config;
+package com.seniors.config;
 
 
 import jakarta.servlet.DispatcherType;
@@ -45,9 +45,6 @@ public class SecurityConfig {
 			"/enums/**",
 			"/join/verification-url",
 			"/view/users/change-password",
-			"/gProfile.jpeg", // static 경로 추가
-//            "/api/**",
-//            "/static/**", // static 경로 추가
 	};
 
 	@Bean

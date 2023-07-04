@@ -1,4 +1,4 @@
-package com.seniors.common.mapper.config;
+package com.seniors.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
