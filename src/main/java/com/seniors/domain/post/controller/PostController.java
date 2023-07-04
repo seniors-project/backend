@@ -4,7 +4,7 @@ import com.seniors.common.dto.DataResponseDto;
 import com.seniors.domain.post.entity.Post;
 import com.seniors.domain.post.dto.PostDto;
 import com.seniors.domain.post.service.PostService;
-import com.seniors.security.CustomUserDetails;
+import com.seniors.config.security.CustomUserDetails;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;

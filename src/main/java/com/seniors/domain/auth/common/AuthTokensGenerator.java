@@ -1,6 +1,6 @@
-package com.seniors.auth.common;
+package com.seniors.domain.auth.common;
 
-import com.seniors.auth.dto.AuthTokens;
+import com.seniors.domain.auth.dto.AuthTokens;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 

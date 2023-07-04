@@ -1,8 +1,8 @@
-package com.seniors.auth.kakao;
+package com.seniors.domain.auth.kakao;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.seniors.auth.common.OAuthInfoResponse;
+import com.seniors.domain.auth.common.OAuthInfoResponse;
 import com.seniors.common.constant.OAuthProvider;
 import lombok.Getter;
 

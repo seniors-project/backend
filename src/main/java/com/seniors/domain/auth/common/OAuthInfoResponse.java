@@ -1,4 +1,4 @@
-package com.seniors.auth.common;
+package com.seniors.domain.auth.common;
 
 import com.seniors.common.constant.OAuthProvider;
 

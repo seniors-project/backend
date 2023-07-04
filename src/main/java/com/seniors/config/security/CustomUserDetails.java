@@ -1,4 +1,4 @@
-package com.seniors.security;
+package com.seniors.config.security;
 
 import lombok.Getter;
 import org.springframework.security.core.GrantedAuthority;

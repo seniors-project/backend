@@ -1,4 +1,4 @@
-package com.seniors.auth.dto;
+package com.seniors.domain.auth.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

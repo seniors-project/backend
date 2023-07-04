@@ -1,4 +1,4 @@
-package com.seniors.auth.kakao;
+package com.seniors.domain.auth.kakao;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;

@@ -1,8 +1,8 @@
-package com.seniors.auth.kakao;
+package com.seniors.domain.auth.kakao;
 
-import com.seniors.auth.common.OAuthApiClient;
-import com.seniors.auth.common.OAuthInfoResponse;
-import com.seniors.auth.common.OAuthLoginParams;
+import com.seniors.domain.auth.common.OAuthApiClient;
+import com.seniors.domain.auth.common.OAuthInfoResponse;
+import com.seniors.domain.auth.common.OAuthLoginParams;
 import com.seniors.common.constant.OAuthProvider;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;

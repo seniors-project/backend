@@ -1,8 +1,8 @@
-package com.seniors.auth.controller;
+package com.seniors.domain.auth.controller;
 
-import com.seniors.auth.dto.AuthTokens;
-import com.seniors.auth.kakao.KakaoLoginParams;
-import com.seniors.auth.service.OAuthLoginService;
+import com.seniors.domain.auth.dto.AuthTokens;
+import com.seniors.domain.auth.kakao.KakaoLoginParams;
+import com.seniors.domain.auth.service.OAuthLoginService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;

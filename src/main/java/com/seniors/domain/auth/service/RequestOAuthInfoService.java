@@ -1,8 +1,8 @@
-package com.seniors.auth.service;
+package com.seniors.domain.auth.service;
 
-import com.seniors.auth.common.OAuthApiClient;
-import com.seniors.auth.common.OAuthInfoResponse;
-import com.seniors.auth.common.OAuthLoginParams;
+import com.seniors.domain.auth.common.OAuthApiClient;
+import com.seniors.domain.auth.common.OAuthInfoResponse;
+import com.seniors.domain.auth.common.OAuthLoginParams;
 import com.seniors.common.constant.OAuthProvider;
 import org.springframework.stereotype.Component;
 

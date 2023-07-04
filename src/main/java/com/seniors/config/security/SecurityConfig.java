@@ -1,4 +1,4 @@
-package com.seniors.config;
+package com.seniors.config.security;
 
 
 import jakarta.servlet.DispatcherType;
@@ -17,6 +17,7 @@ import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.access.AccessDeniedHandler;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
+import org.springframework.web.cors.CorsUtils;
 
 @Slf4j
 @Configuration
@@ -85,6 +86,7 @@ public class SecurityConfig {
 				.authorizeHttpRequests(req -> req
 						.dispatcherTypeMatchers(DispatcherType.FORWARD).permitAll()
 						.requestMatchers(permitAllUrl).permitAll()
+						.requestMatchers(CorsUtils::isPreFlightRequest).permitAll()
 						.anyRequest().permitAll()
 				)
 				.formLogin()

@@ -1,9 +1,9 @@
-package com.seniors.auth.service;
+package com.seniors.domain.auth.service;
 
-import com.seniors.auth.common.AuthTokensGenerator;
-import com.seniors.auth.common.OAuthInfoResponse;
-import com.seniors.auth.common.OAuthLoginParams;
-import com.seniors.auth.dto.AuthTokens;
+import com.seniors.domain.auth.common.AuthTokensGenerator;
+import com.seniors.domain.auth.common.OAuthInfoResponse;
+import com.seniors.domain.auth.common.OAuthLoginParams;
+import com.seniors.domain.auth.dto.AuthTokens;
 import com.seniors.domain.users.domain.Users;
 import com.seniors.domain.users.repository.UsersRepository;
 import lombok.RequiredArgsConstructor;
