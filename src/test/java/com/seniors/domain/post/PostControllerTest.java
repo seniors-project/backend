@@ -1,6 +1,7 @@
 package com.seniors.domain.post;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.seniors.common.constant.ResultCode;
 import com.seniors.domain.post.dto.PostDto.PostCreateDto;
 import com.seniors.domain.post.entity.Post;
 import com.seniors.domain.post.repository.PostRepository;
@@ -17,8 +18,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @Slf4j
 @AutoConfigureMockMvc
@@ -57,7 +57,6 @@ class PostControllerTest {
 						.content(json)
 				)
 				.andExpect(status().isOk())
-				.andExpect(content().string(json))
 				.andDo(print());
 	}
 
@@ -76,6 +75,8 @@ class PostControllerTest {
 						.content(json)
 				)
 				.andExpect(status().isBadRequest())
+				.andExpect(jsonPath("$.success").value(false))
+				.andExpect(jsonPath("$.code").value(ResultCode.BAD_REQUEST.getCode()))
 				.andDo(print());
 
 	}

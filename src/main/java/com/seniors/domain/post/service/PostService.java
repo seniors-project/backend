@@ -1,5 +1,6 @@
 package com.seniors.domain.post.service;
 
+import com.seniors.common.exception.type.BadRequestException;
 import com.seniors.domain.post.dto.PostDto.PostCreateDto;
 import com.seniors.domain.post.entity.Post;
 import com.seniors.domain.post.repository.PostRepository;
@@ -19,7 +20,9 @@ public class PostService {
 	private final UsersRepository usersRepository;
 
 	public void addPost(Post postReq) {
-		log.info("{}, {} ", postReq.getTitle(), postReq.getContent());
+		if (postReq.getTitle() == null || postReq.getTitle().isEmpty() || postReq.getContent() == null || postReq.getContent().isEmpty()) {
+			throw new BadRequestException("Title or Content is required");
+		}
 		postRepository.save(Post.of(postReq.getTitle(), postReq.getContent()));
 //		usersRepository.findById(userId).ifPresent(users ->
 //				postRepository.save(Post.of(postDto.getTitle(), postDto.getContent(), users))
