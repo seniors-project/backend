@@ -1,4 +1,4 @@
-package com.seniors.domain.post;
+package com.seniors.domain.post.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.seniors.common.constant.ResultCode;
