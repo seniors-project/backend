@@ -1,7 +1,8 @@
 package com.seniors.domain.post.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.seniors.domain.comment.Comment;
-import com.seniors.domain.users.domain.Users;
+import com.seniors.domain.users.entity.Users;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -17,8 +18,8 @@ import java.util.List;
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@SQLDelete(sql = "UPDATE Post SET isDeleted = true WHERE id = ?")
 @Where(clause = "isDeleted = false")
+@SQLDelete(sql = "UPDATE Post SET isDeleted = true WHERE id = ?")
 public class Post extends BaseEntity {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -46,19 +47,19 @@ public class Post extends BaseEntity {
 
 	@ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
 	@JoinColumn(name = "userId")
+	@JsonIgnore
 	private Users users;
 
-	public static Post of(String title, String content, Users users) {
-		return Post.builder().title(title).content(content).isDeleted(false).viewCount(0).likeCount(0).users(users).build();
+	public static Post of(String title, String content) {
+		return Post.builder().title(title).content(content).isDeleted(false).viewCount(0).likeCount(0).build();
 	}
 
 	@Builder
-	public Post(String title, String content, Boolean isDeleted, Integer viewCount, Integer likeCount, Users users) {
+	public Post(String title, String content, Boolean isDeleted, Integer viewCount, Integer likeCount) {
 		this.title = title;
 		this.content = content;
 		this.isDeleted = isDeleted;
 		this.viewCount = viewCount;
 		this.likeCount = likeCount;
-		this.users = users;
 	}
 }

@@ -1,6 +1,6 @@
 package com.seniors.domain.users.repository;
 
-import com.seniors.domain.users.domain.Users;
+import com.seniors.domain.users.entity.Users;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.Optional;

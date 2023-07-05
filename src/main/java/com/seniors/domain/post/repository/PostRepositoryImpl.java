@@ -6,8 +6,10 @@ import com.seniors.domain.post.entity.QPost;
 import com.seniors.common.exception.type.post.PostNotFound;
 import com.seniors.common.repository.BasicRepoSupport;
 import jakarta.persistence.EntityManager;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Repository;
 
+@Slf4j
 @Repository
 public class PostRepositoryImpl extends BasicRepoSupport implements PostRepositoryCustom {
 
@@ -23,12 +25,13 @@ public class PostRepositoryImpl extends BasicRepoSupport implements PostReposito
 				.where(QPost.post.id.eq(postId))
 				.fetchOne();
 
-		if (post == null)
+		if (post == null){
 			throw new PostNotFound();
+		}
 		else {
 			jpaQueryFactory.update(QPost.post)
 					.set(QPost.post.viewCount, QPost.post.viewCount.add(1))
-					.where(QPost.post.id.eq(postId))
+					.where(QPost.post.id.eq(post.getId()))
 					.execute();
 			em.clear();
 		}

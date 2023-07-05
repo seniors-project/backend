@@ -1,7 +1,7 @@
 package com.seniors.domain.users.repository;
 
 
-import com.seniors.domain.users.domain.Users;
+import com.seniors.domain.users.entity.Users;
 
 public interface UsersRepositoryCustom {
 

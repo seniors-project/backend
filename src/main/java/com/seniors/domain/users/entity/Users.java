@@ -1,4 +1,4 @@
-package com.seniors.domain.users.domain;
+package com.seniors.domain.users.entity;
 
 import com.seniors.common.constant.OAuthProvider;
 import com.seniors.domain.comment.Comment;

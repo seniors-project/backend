@@ -4,7 +4,7 @@ import com.seniors.domain.auth.common.AuthTokensGenerator;
 import com.seniors.domain.auth.common.OAuthInfoResponse;
 import com.seniors.domain.auth.common.OAuthLoginParams;
 import com.seniors.domain.auth.dto.AuthTokens;
-import com.seniors.domain.users.domain.Users;
+import com.seniors.domain.users.entity.Users;
 import com.seniors.domain.users.repository.UsersRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;

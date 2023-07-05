@@ -1,10 +1,9 @@
 package com.seniors.domain.post.controller;
 
 import com.seniors.common.dto.DataResponseDto;
+import com.seniors.domain.post.dto.PostDto.PostCreateDto;
 import com.seniors.domain.post.entity.Post;
-import com.seniors.domain.post.dto.PostDto;
 import com.seniors.domain.post.service.PostService;
-import com.seniors.config.security.CustomUserDetails;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -29,8 +28,9 @@ public class PostController {
 	@ApiResponse(responseCode = "200", description = "생성 성공",
 			content = @Content(mediaType = "application/json", schema = @Schema(implementation = DataResponseDto.class)))
 	@PostMapping("")
-	public DataResponseDto<String> postAdd(@Valid @RequestBody PostDto.Post postDto, CustomUserDetails userDetails) {
-		postService.addPost(postDto, userDetails.getUserId());
+	public DataResponseDto<String> postAdd(@RequestBody @Valid Post postDto) {
+//	public DataResponseDto<String> postAdd(@Valid @RequestBody PostCreateDto postDto, CustomUserDetails userDetails) {
+		postService.addPost(postDto);
 		return DataResponseDto.of("SUCCESS");
 	}
 

@@ -2,8 +2,8 @@ package com.seniors.domain.users.repository;
 
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.seniors.common.repository.BasicRepoSupport;
-import com.seniors.domain.users.domain.QUsers;
-import com.seniors.domain.users.domain.Users;
+import com.seniors.domain.users.entity.QUsers;
+import com.seniors.domain.users.entity.Users;
 import jakarta.persistence.EntityManager;
 
 public class UsersRepositoryImpl extends BasicRepoSupport implements UsersRepositoryCustom {

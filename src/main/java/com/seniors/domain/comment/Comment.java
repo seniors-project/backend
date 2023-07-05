@@ -1,8 +1,9 @@
 package com.seniors.domain.comment;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.seniors.domain.common.BaseEntity;
 import com.seniors.domain.post.entity.Post;
-import com.seniors.domain.users.domain.Users;
+import com.seniors.domain.users.entity.Users;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -33,10 +34,12 @@ public class Comment extends BaseEntity {
 
 	@ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
 	@JoinColumn(name = "postId")
+	@JsonIgnore
 	private Post post;
 
 	@ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
 	@JoinColumn(name = "userId")
+	@JsonIgnore
 	private Users users;
 
 	public static Comment of(String nickname, String content, Post post, Users users) {
