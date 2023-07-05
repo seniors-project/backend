@@ -1,5 +1,6 @@
 package com.seniors.domain.auth.kakao;
 
+import com.seniors.common.exception.type.NotAuthorizedException;
 import com.seniors.domain.auth.common.OAuthApiClient;
 import com.seniors.domain.auth.common.OAuthInfoResponse;
 import com.seniors.domain.auth.common.OAuthLoginParams;
@@ -50,12 +51,14 @@ public class KakaoApiClient implements OAuthApiClient {
 
 		KakaoTokens response = restTemplate.postForObject(url, request, KakaoTokens.class);
 
-		assert response != null;
+		if (response == null) {
+			throw new NotAuthorizedException("Kakao Token Response Data is Null");
+		}
 		return response.getAccessToken();
 	}
 
 	@Override
-	public OAuthInfoResponse requestOauthInfo(String accessToken) {
+	public OAuthInfoResponse requestOAuthInfo(String accessToken) {
 		String url = apiUrl + "/v2/user/me";
 
 		HttpHeaders httpHeaders = new HttpHeaders();

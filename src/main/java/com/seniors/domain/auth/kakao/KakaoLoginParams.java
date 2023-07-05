@@ -17,6 +17,7 @@ public class KakaoLoginParams implements OAuthLoginParams {
 		return OAuthProvider.KAKAO;
 	}
 
+	// Kakao Server에서 response받은 code 값 chaining
 	@Override
 	public MultiValueMap<String, String> makeBody() {
 		MultiValueMap<String, String> body = new LinkedMultiValueMap<>();

@@ -19,10 +19,10 @@ public class KakaoTokens {
 	private String refreshToken;
 
 	@JsonProperty("expires_in")
-	private String expiresIn;
+	private Integer expiresIn;
 
 	@JsonProperty("refresh_token_expires_in")
-	private String refreshTokenExpiresIn;
+	private Integer refreshTokenExpiresIn;
 
 	@JsonProperty("scope")
 	private String scope;

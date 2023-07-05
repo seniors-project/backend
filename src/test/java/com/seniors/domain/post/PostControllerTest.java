@@ -35,10 +35,10 @@ class PostControllerTest {
 	private PostRepository postRepository;
 
 	// 다른 테스트에 영향이 가지 않도록 사전에 deleteAll
-//	@BeforeEach
-//	void clean() {
-//		postRepository.deleteAll();
-//	}
+	@BeforeEach
+	void clean() {
+		postRepository.deleteAll();
+	}
 
 	@Deprecated
 	@Test
