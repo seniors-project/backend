@@ -32,12 +32,12 @@ public class Comment extends BaseEntity {
 //	private Integer isDeleted;
 	private boolean isDeleted = Boolean.FALSE;
 
-	@ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "postId")
 	@JsonIgnore
 	private Post post;
 
-	@ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "userId")
 	@JsonIgnore
 	private Users users;

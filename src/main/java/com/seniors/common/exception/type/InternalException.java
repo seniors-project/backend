@@ -4,46 +4,46 @@ import com.seniors.common.constant.ResultCode;
 import lombok.Getter;
 
 @Getter
-public class CustomException extends RuntimeException {
+public class InternalException extends RuntimeException {
 
 	private final ResultCode resultCode;
 
-	public CustomException() {
+	public InternalException() {
 		super(ResultCode.INTERNAL_ERROR.getMessage());
 		this.resultCode = ResultCode.INTERNAL_ERROR;
 	}
 
-	public CustomException(String message) {
+	public InternalException(String message) {
 		super(ResultCode.INTERNAL_ERROR.getMessage(message));
 		this.resultCode = ResultCode.INTERNAL_ERROR;
 	}
 
-	public CustomException(String message, Throwable cause) {
+	public InternalException(String message, Throwable cause) {
 		super(ResultCode.INTERNAL_ERROR.getMessage(message), cause);
 		this.resultCode = ResultCode.INTERNAL_ERROR;
 	}
 
-	public CustomException(Throwable cause) {
+	public InternalException(Throwable cause) {
 		super(ResultCode.INTERNAL_ERROR.getMessage(cause));
 		this.resultCode = ResultCode.INTERNAL_ERROR;
 	}
 
-	public CustomException(ResultCode errorCode) {
+	public InternalException(ResultCode errorCode) {
 		super(errorCode.getMessage());
 		this.resultCode = errorCode;
 	}
 
-	public CustomException(ResultCode errorCode, String message) {
+	public InternalException(ResultCode errorCode, String message) {
 		super(errorCode.getMessage(message));
 		this.resultCode = errorCode;
 	}
 
-	public CustomException(ResultCode errorCode, String message, Throwable cause) {
+	public InternalException(ResultCode errorCode, String message, Throwable cause) {
 		super(errorCode.getMessage(message), cause);
 		this.resultCode = errorCode;
 	}
 
-	public CustomException(ResultCode errorCode, Throwable cause) {
+	public InternalException(ResultCode errorCode, Throwable cause) {
 		super(errorCode.getMessage(cause), cause);
 		this.resultCode = errorCode;
 	}

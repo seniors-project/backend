@@ -45,7 +45,7 @@ public class Post extends BaseEntity {
 	@OneToMany(mappedBy = "post", orphanRemoval = true, cascade = CascadeType.ALL)
 	private List<Comment> comments = new ArrayList<>();
 
-	@ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "userId")
 	@JsonIgnore
 	private Users users;
