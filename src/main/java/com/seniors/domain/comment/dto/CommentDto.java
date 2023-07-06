@@ -1,18 +1,19 @@
 package com.seniors.domain.comment.dto;
 
+import com.querydsl.core.annotations.QueryProjection;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
 import lombok.*;
 
 import java.time.LocalDateTime;
 
-@NoArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @ToString
 @Getter
+@Setter
 public class CommentDto {
 
 	@Data
-	@Builder
 	public static class GetCommentRes {
 		@Schema(description = "댓글 ID")
 		private Long commentId;
@@ -26,6 +27,12 @@ public class CommentDto {
 
 		@Schema(description = "최근 수정 일자")
 		private LocalDateTime lastModifiedDate;
-		
+
+		public GetCommentRes(Long commentId, String content, LocalDateTime createdAt, LocalDateTime lastModifiedDate) {
+			this.commentId = commentId;
+			this.content = content;
+			this.createdAt = createdAt;
+			this.lastModifiedDate = lastModifiedDate;
+		}
 	}
 }

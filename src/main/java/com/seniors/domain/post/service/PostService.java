@@ -1,6 +1,8 @@
 package com.seniors.domain.post.service;
 
 import com.seniors.common.exception.type.BadRequestException;
+import com.seniors.domain.post.dto.PostDto;
+import com.seniors.domain.post.dto.PostDto.GetPostRes;
 import com.seniors.domain.post.dto.PostDto.PostCreateDto;
 import com.seniors.domain.post.entity.Post;
 import com.seniors.domain.post.repository.PostRepository;
@@ -35,7 +37,7 @@ public class PostService {
 	}
 
 	@Transactional
-	public Post findPost(Long postId) {
+	public GetPostRes findPost(Long postId) {
 		return postRepository.getOnePost(postId);
 	}
 }

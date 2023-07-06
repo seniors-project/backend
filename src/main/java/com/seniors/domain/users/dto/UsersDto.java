@@ -1,17 +1,18 @@
 package com.seniors.domain.users.dto;
 
+import com.querydsl.core.annotations.QueryProjection;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.*;
 
 import java.time.LocalDateTime;
 
-@NoArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @ToString
 @Getter
+@Setter
 public class UsersDto {
 
 	@Data
-	@Builder
 	public static class GetUserRes {
 		@Schema(description = "사용자 ID")
 		private Long userId;
@@ -37,5 +38,15 @@ public class UsersDto {
 		@Schema(description = "최근 수정 일자")
 		private LocalDateTime lastModifiedDate;
 
+		public GetUserRes(Long userId, String snsId, String email, String nickname, String gender, String profileImageUrl, LocalDateTime createdAt, LocalDateTime lastModifiedDate) {
+			this.userId = userId;
+			this.snsId = snsId;
+			this.email = email;
+			this.nickname = nickname;
+			this.gender = gender;
+			this.profileImageUrl = profileImageUrl;
+			this.createdAt = createdAt;
+			this.lastModifiedDate = lastModifiedDate;
+		}
 	}
 }
