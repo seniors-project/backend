@@ -1,7 +1,6 @@
 package com.seniors.domain.post.entity;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.seniors.domain.comment.Comment;
+import com.seniors.domain.comment.entity.Comment;
 import com.seniors.domain.users.entity.Users;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
@@ -32,8 +31,6 @@ public class Post extends BaseEntity {
 	@Lob
 	private String content;
 
-//	@Column(columnDefinition = "tinyint(3) not null default 0 COMMENT '삭제 여부'")
-//	private Integer isDeleted;
 	private boolean isDeleted = Boolean.FALSE;
 
 	@Column(columnDefinition = "int unsigned not null default 0 COMMENT '게시글 조회 수'")
@@ -47,7 +44,6 @@ public class Post extends BaseEntity {
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "userId")
-	@JsonIgnore
 	private Users users;
 
 	public static Post of(String title, String content) {

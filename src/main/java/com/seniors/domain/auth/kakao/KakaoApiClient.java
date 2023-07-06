@@ -1,17 +1,19 @@
 package com.seniors.domain.auth.kakao;
 
-import com.seniors.common.constant.OAuthProvider;
 import com.seniors.common.exception.type.NotAuthorizedException;
 import com.seniors.domain.auth.common.OAuthApiClient;
 import com.seniors.domain.auth.common.OAuthInfoResponse;
 import com.seniors.domain.auth.common.OAuthLoginParams;
+import com.seniors.common.constant.OAuthProvider;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
+import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
-import org.springframework.web.reactive.function.client.WebClient;
-import reactor.core.publisher.Mono;
+import org.springframework.web.client.RestTemplate;
 
 @Component
 @RequiredArgsConstructor
@@ -27,7 +29,7 @@ public class KakaoApiClient implements OAuthApiClient {
 	@Value("${oauth.kakao.client-id}")
 	private String clientId;
 
-	private final WebClient webClient;
+	private final RestTemplate restTemplate;
 
 	@Override
 	public OAuthProvider oAuthProvider() {
@@ -38,33 +40,36 @@ public class KakaoApiClient implements OAuthApiClient {
 	public String requestAccessToken(OAuthLoginParams params) {
 		String url = authUrl + "/oauth/token";
 
+		HttpHeaders httpHeaders = new HttpHeaders();
+		httpHeaders.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
+
 		MultiValueMap<String, String> body = params.makeBody();
 		body.add("grant_type", GRANT_TYPE);
 		body.add("client_id", clientId);
 
-		return webClient.post()
-				.uri(url)
-				.contentType(MediaType.APPLICATION_FORM_URLENCODED)
-				.bodyValue(body)
-				.retrieve()
-				.bodyToMono(KakaoTokens.class)
-				.switchIfEmpty(Mono.error(new NotAuthorizedException("Kakao Token Response Data is Null")))
-				.map(KakaoTokens::getAccessToken)
-				.block();
+		HttpEntity<?> request = new HttpEntity<>(body, httpHeaders);
+
+		KakaoTokens response = restTemplate.postForObject(url, request, KakaoTokens.class);
+
+		if (response == null) {
+			throw new NotAuthorizedException("Kakao Token Response Data is Null");
+		}
+		return response.getAccessToken();
 	}
 
 	@Override
 	public OAuthInfoResponse requestOAuthInfo(String accessToken) {
 		String url = apiUrl + "/v2/user/me";
 
-		return webClient.post()
-				.uri(url)
-				.contentType(MediaType.APPLICATION_FORM_URLENCODED)
-				.header("Authorization", "Bearer " + accessToken)
-				.bodyValue("{\"property_keys\": [\"kakao_account.email\", \"kakao_account.profile\"]}")
-				.retrieve()
-				.bodyToMono(KakaoInfoResponse.class)
-				.block();
+		HttpHeaders httpHeaders = new HttpHeaders();
+		httpHeaders.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
+		httpHeaders.set("Authorization", "Bearer " + accessToken);
+
+		MultiValueMap<String, String> body = new LinkedMultiValueMap<>();
+		body.add("property_keys", "[\"kakao_account.email\", \"kakao_account.profile\"]");
+
+		HttpEntity<?> request = new HttpEntity<>(body, httpHeaders);
+
+		return restTemplate.postForObject(url, request, KakaoInfoResponse.class);
 	}
 }
-
