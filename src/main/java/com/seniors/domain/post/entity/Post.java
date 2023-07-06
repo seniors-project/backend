@@ -1,7 +1,7 @@
 package com.seniors.domain.post.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.seniors.domain.comment.entity.Comment;
+import com.seniors.domain.comment.Comment;
 import com.seniors.domain.users.entity.Users;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
