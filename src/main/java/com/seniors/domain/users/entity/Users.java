@@ -1,7 +1,7 @@
 package com.seniors.domain.users.entity;
 
 import com.seniors.common.constant.OAuthProvider;
-import com.seniors.domain.comment.Comment;
+import com.seniors.domain.comment.entity.Comment;
 import com.seniors.domain.common.BaseEntity;
 import com.seniors.domain.post.entity.Post;
 import jakarta.persistence.*;
