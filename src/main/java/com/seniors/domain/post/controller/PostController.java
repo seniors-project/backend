@@ -1,8 +1,10 @@
 package com.seniors.domain.post.controller;
 
 import com.seniors.common.dto.DataResponseDto;
-import com.seniors.domain.post.entity.Post;
 import com.seniors.domain.post.dto.PostDto;
+import com.seniors.domain.post.dto.PostDto.GetPostRes;
+import com.seniors.domain.post.dto.PostDto.PostCreateDto;
+import com.seniors.domain.post.entity.Post;
 import com.seniors.domain.post.service.PostService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -19,7 +21,7 @@ import org.springframework.web.bind.annotation.*;
 @Slf4j
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/post")
+@RequestMapping("/api/posts")
 public class PostController {
 
 	private final PostService postService;
@@ -28,7 +30,8 @@ public class PostController {
 	@ApiResponse(responseCode = "200", description = "생성 성공",
 			content = @Content(mediaType = "application/json", schema = @Schema(implementation = DataResponseDto.class)))
 	@PostMapping("")
-	public DataResponseDto<String> postAdd(@Valid @RequestBody PostDto.Post postDto) {
+	public DataResponseDto<String> postAdd(@RequestBody @Valid Post postDto) {
+//	public DataResponseDto<String> postAdd(@Valid @RequestBody PostCreateDto postDto, CustomUserDetails userDetails) {
 		postService.addPost(postDto);
 		return DataResponseDto.of("SUCCESS");
 	}
@@ -37,8 +40,8 @@ public class PostController {
 	@ApiResponse(responseCode = "200", description = "단건 조회 성공",
 		content = @Content(mediaType = "application/json", schema = @Schema(implementation = DataResponseDto.class)))
 	@GetMapping("/{postId}")
-	public DataResponseDto<Post> postDetails(@Parameter(description = "게시글 ID") @PathVariable(value = "postId") Long postId) {
-		Post post = postService.findPost(postId);
+	public DataResponseDto<GetPostRes> postDetails(@Parameter(description = "게시글 ID") @PathVariable(value = "postId") Long postId) {
+		GetPostRes post = postService.findPost(postId);
 		return DataResponseDto.of(post);
 	}
 

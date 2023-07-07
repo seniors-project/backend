@@ -1,6 +1,7 @@
 package com.seniors.domain.post.entity;
 
-import com.seniors.domain.comment.Comment;
+import com.seniors.domain.comment.entity.Comment;
+import com.seniors.domain.users.entity.Users;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -16,8 +17,8 @@ import java.util.List;
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@SQLDelete(sql = "UPDATE Post SET isDeleted = true WHERE id = ?")
 @Where(clause = "isDeleted = false")
+@SQLDelete(sql = "UPDATE Post SET isDeleted = true WHERE id = ?")
 public class Post extends BaseEntity {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -30,8 +31,6 @@ public class Post extends BaseEntity {
 	@Lob
 	private String content;
 
-//	@Column(columnDefinition = "tinyint(3) not null default 0 COMMENT '삭제 여부'")
-//	private Integer isDeleted;
 	private boolean isDeleted = Boolean.FALSE;
 
 	@Column(columnDefinition = "int unsigned not null default 0 COMMENT '게시글 조회 수'")
@@ -40,9 +39,14 @@ public class Post extends BaseEntity {
 	@Column(columnDefinition = "int unsigned not null default 0 COMMENT '게시글 좋아요 수'")
 	private Integer likeCount;
 
-	@OneToMany(mappedBy = "post", orphanRemoval = true, cascade = CascadeType.REMOVE)
+	@OneToMany(mappedBy = "post", orphanRemoval = true, cascade = CascadeType.ALL)
 	private List<Comment> comments = new ArrayList<>();
-	public static Post initPost(String title, String content) {
+
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "userId")
+	private Users users;
+
+	public static Post of(String title, String content) {
 		return Post.builder().title(title).content(content).isDeleted(false).viewCount(0).likeCount(0).build();
 	}
 

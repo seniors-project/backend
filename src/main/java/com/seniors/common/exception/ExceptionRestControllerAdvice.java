@@ -2,7 +2,9 @@ package com.seniors.common.exception;
 
 import com.seniors.common.dto.ErrorResponse;
 import com.seniors.common.constant.ResultCode;
-import com.seniors.common.exception.type.CustomException;
+import com.seniors.common.exception.type.BadRequestException;
+import com.seniors.common.exception.type.InternalException;
+import com.seniors.common.exception.type.NotFoundException;
 import jakarta.validation.ConstraintViolationException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpHeaders;
@@ -23,13 +25,23 @@ public class ExceptionRestControllerAdvice extends ResponseEntityExceptionHandle
 	}
 
 	@ExceptionHandler
-	public ResponseEntity<Object> general(CustomException e, WebRequest request) {
+	public ResponseEntity<Object> general(InternalException e, WebRequest request) {
 		return handleExceptionInternal(e, e.getResultCode(), request);
 	}
 
 	@ExceptionHandler
 	public ResponseEntity<Object> exception(Exception e, WebRequest request) {
 		return handleExceptionInternal(e, ResultCode.INTERNAL_ERROR, request);
+	}
+
+	@ExceptionHandler
+	public ResponseEntity<Object> handleBadRequestException(BadRequestException e, WebRequest request) {
+		return handleExceptionInternal(e, ResultCode.BAD_REQUEST, request);
+	}
+
+	@ExceptionHandler
+	public ResponseEntity<Object> handleNotFoundException(NotFoundException e, WebRequest request) {
+		return handleExceptionInternal(e, ResultCode.NOT_FOUND, request);
 	}
 
 //	@Override

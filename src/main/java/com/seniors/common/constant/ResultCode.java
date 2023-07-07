@@ -1,6 +1,6 @@
 package com.seniors.common.constant;
 
-import com.seniors.common.exception.type.CustomException;
+import com.seniors.common.exception.type.InternalException;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -45,7 +45,7 @@ public enum ResultCode {
 
 	public static ResultCode valueOf(HttpStatus httpStatus) {
 		if (httpStatus == null) {
-			throw new CustomException("HttpStatus is null.");
+			throw new InternalException("HttpStatus is null.");
 		}
 
 		return Arrays.stream(values())
