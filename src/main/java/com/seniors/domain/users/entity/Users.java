@@ -39,6 +39,7 @@ public class Users extends BaseEntity {
 	private String profileImageUrl;
 
 	@Column(columnDefinition = "varchar(20) COMMENT 'OAuth Provider'")
+	@Enumerated(EnumType.STRING)
 	private OAuthProvider oAuthProvider;
 
 	@OneToMany(mappedBy = "users", orphanRemoval = true, cascade = CascadeType.ALL)
