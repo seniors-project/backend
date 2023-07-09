@@ -17,7 +17,6 @@ import static com.seniors.domain.comment.dto.CommentDto.GetCommentRes;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @ToString
 @Getter
-@Setter
 public class PostDto {
 
 	@Data

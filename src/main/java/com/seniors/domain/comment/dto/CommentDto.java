@@ -1,16 +1,16 @@
 package com.seniors.domain.comment.dto;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.querydsl.core.annotations.QueryProjection;
 import io.swagger.v3.oas.annotations.media.Schema;
-import jakarta.validation.constraints.NotBlank;
 import lombok.*;
 
 import java.time.LocalDateTime;
 
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@Builder
+@NoArgsConstructor
 @ToString
 @Getter
-@Setter
 public class CommentDto {
 
 	@Data
@@ -19,7 +19,6 @@ public class CommentDto {
 		private Long commentId;
 
 		@Schema(description = "댓글 내용", defaultValue = "댓글 내용 1", example = "댓글 내용 1이요")
-		@NotBlank(message = "Input content!")
 		private String content;
 
 		@Schema(description = "생성 일자")
@@ -35,5 +34,47 @@ public class CommentDto {
 			this.createdAt = createdAt;
 			this.lastModifiedDate = lastModifiedDate;
 		}
+	}
+
+	@Data
+	public static class SaveCommentDto {
+		@Schema(description = "댓글 내용", defaultValue = "댓글 내용 1", example = "댓글 내용 1이요")
+		private String content;
+
+		@Schema(description = "작성할 글 ID")
+		private Long postId;
+
+		@Schema(description = "작성한 사용자 ID")
+		private Long userId;
+
+//		@QueryProjection
+//		public SaveCommentDto(String content, Long postId, Long userId) {
+//			this.content = content;
+//			this.postId = postId;
+//			this.userId = userId;
+//		}
+	}
+
+	@Data
+	public static class ModifyCommentDto {
+		@Schema(description = "댓글 ID")
+		private Long commentId;
+
+		@Schema(description = "댓글 내용", defaultValue = "댓글 내용 1", example = "댓글 내용 1이요")
+		private String content;
+
+		@Schema(description = "작성할 글 ID")
+		private Long postId;
+
+		@Schema(description = "작성한 사용자 ID")
+		private Long userId;
+
+//		@QueryProjection
+//		public ModifyCommentDto(Long commentId, String content, Long postId, Long userId) {
+//			this.commentId = commentId;
+//			this.content = content;
+//			this.postId = postId;
+//			this.userId = userId;
+//		}
 	}
 }

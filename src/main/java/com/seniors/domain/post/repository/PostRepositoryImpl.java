@@ -5,7 +5,6 @@ import com.seniors.common.exception.type.NotFoundException;
 import com.seniors.common.repository.BasicRepoSupport;
 import com.seniors.domain.comment.entity.QComment;
 import com.seniors.domain.post.dto.PostDto.GetPostRes;
-import com.seniors.domain.post.dto.QPostDto_GetPostRes;
 import com.seniors.domain.post.entity.Post;
 import com.seniors.domain.post.entity.QPost;
 import com.seniors.domain.users.entity.QUsers;
@@ -14,8 +13,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
-
-import static com.seniors.domain.users.dto.UsersDto.GetPostUserRes;
 
 
 @Slf4j

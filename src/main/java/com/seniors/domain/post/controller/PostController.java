@@ -30,9 +30,8 @@ public class PostController {
 	@ApiResponse(responseCode = "200", description = "생성 성공",
 			content = @Content(mediaType = "application/json", schema = @Schema(implementation = DataResponseDto.class)))
 	@PostMapping("")
-	public DataResponseDto<String> postAdd(@RequestBody @Valid Post postDto) {
-//	public DataResponseDto<String> postAdd(@Valid @RequestBody PostCreateDto postDto, CustomUserDetails userDetails) {
-		postService.addPost(postDto);
+	public DataResponseDto<String> postAdd(@RequestBody @Valid Post post) {
+		postService.addPost(post);
 		return DataResponseDto.of("SUCCESS");
 	}
 
