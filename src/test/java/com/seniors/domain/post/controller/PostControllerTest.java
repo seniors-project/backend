@@ -94,7 +94,7 @@ class PostControllerTest {
 				.likeCount(0)
 				.build();
 		Post post = postRepository.save(addPost);
-		log.info("{}", post.getId());
+
 
 		// expected
 		mockMvc.perform(get("/api/posts/{postId}", post.getId())
