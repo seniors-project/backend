@@ -45,7 +45,19 @@ jobs:
           docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
           docker build -t ${{ secrets.DOCKER_REPO }}/seniors .
           docker push ${{ secrets.DOCKER_REPO }}/seniors
-          
+
+      ## Slack 알람(빌드)
+      - name: Slack 알람 발송
+        uses: rtCamp/action-slack-notify@v2
+        env:
+          SLACK_CHANNEL: general
+          SLACK_COLOR: ${{ job.status }} # or a specific color like 'good' or '#ff00ff'
+          SLACK_ICON: https://github.com/rtCamp.png?size=48
+          SLACK_MESSAGE: 빌드 결과 => ${{ job.status }}
+          SLACK_TITLE: 빌드 결과 알람
+          SLACK_USERNAME: Notification-Bot
+          SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK_URL }}
+        if: always()
 
       ## docker compose up
       - name: executing remote ssh commands using password
@@ -60,3 +72,18 @@ jobs:
             sudo docker pull ${{ secrets.DOCKER_REPO }}/nginx
             docker-compose up -d
             docker image prune -f    
+
+      ## Slack 알람(배포)
+      - name: Slack 알람 발송
+        uses: rtCamp/action-slack-notify@v2
+        env:
+          SLACK_CHANNEL: general
+          SLACK_COLOR: ${{ job.status }} # or a specific color like 'good' or '#ff00ff'
+          SLACK_ICON: https://github.com/rtCamp.png?size=48
+          SLACK_MESSAGE: 배포 결과 => ${{ job.status }}
+          SLACK_TITLE: 배포 결과 알람
+          SLACK_USERNAME: Notification-Bot
+          SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK_URL }}
+        # 이 구문을 추가해야 빌드 성공 실패와 상관없이 동작합니다.
+        if: always()
+
