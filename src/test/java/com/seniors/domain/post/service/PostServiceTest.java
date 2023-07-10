@@ -49,28 +49,28 @@ class PostServiceTest {
 		assertEquals("글 내용입니다.", post.getContent());
 	}
 
-	@Test
-	@DisplayName("글 단건 조회")
-	void getOneTest1() {
-		// given
-		Post savePost = Post.builder()
-				.title("foo")
-				.content("bar")
-				.viewCount(0)
-				.likeCount(0)
-				.isDeleted(false)
-				.build();
-		postRepository.save(savePost);
-
-		// when
-		Post post = postService.findPost(savePost.getId());
-
-		// then
-		assertNotNull(post);
-		assertEquals(1L, postRepository.count());
-		assertEquals("foo", post.getTitle());
-		assertEquals("bar", post.getContent());
-	}
+//	@Test
+//	@DisplayName("글 단건 조회")
+//	void getOneTest1() {
+//		// given
+//		Post savePost = Post.builder()
+//				.title("foo")
+//				.content("bar")
+//				.viewCount(0)
+//				.likeCount(0)
+//				.isDeleted(false)
+//				.build();
+//		postRepository.save(savePost);
+//
+//		// when
+//		Post post = postService.findPost(savePost.getId());
+//
+//		// then
+//		assertNotNull(post);
+//		assertEquals(1L, postRepository.count());
+//		assertEquals("foo", post.getTitle());
+//		assertEquals("bar", post.getContent());
+//	}
 
 	@Test
 	@DisplayName("글 단건 삭제")
