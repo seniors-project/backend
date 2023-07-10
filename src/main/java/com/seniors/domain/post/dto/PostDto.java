@@ -60,7 +60,6 @@ public class PostDto {
 		@Schema(description = "게시글 댓글 리스트")
 		private List<GetCommentRes> comments; // Update the field type to List<GetCommentRes>
 
-		@QueryProjection
 		public GetPostRes(Long postId, String title, String content, Integer viewCount,
 		                  LocalDateTime createdAt, LocalDateTime lastModifiedDate, Users users,
 		                  List<Comment> comments) {

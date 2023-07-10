@@ -20,9 +20,10 @@ public class CommentRepositoryImpl extends BasicRepoSupport implements CommentRe
     public void modifyComment(Long commentId, ModifyCommentDto modifyCommentDto) {
         jpaQueryFactory.update(comment)
                 .set(comment.content, modifyCommentDto.getContent())
-                .where(comment.id.eq(commentId))
-                .where(comment.post.id.eq(modifyCommentDto.getPostId()))
-                .where(comment.users.id.eq(modifyCommentDto.getUserId()))
+                .where(comment.id.eq(commentId)
+                        .and(comment.post.id.eq(modifyCommentDto.getPostId()))
+                        .and(comment.users.id.eq(modifyCommentDto.getUserId()))
+                )
                 .execute();
     }
 }

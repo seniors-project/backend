@@ -27,7 +27,6 @@ public class CommentDto {
 		@Schema(description = "최근 수정 일자")
 		private LocalDateTime lastModifiedDate;
 
-		@QueryProjection
 		public GetCommentRes(Long commentId, String content, LocalDateTime createdAt, LocalDateTime lastModifiedDate) {
 			this.commentId = commentId;
 			this.content = content;
