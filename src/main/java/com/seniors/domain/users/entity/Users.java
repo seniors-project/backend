@@ -49,21 +49,26 @@ public class Users extends BaseEntity {
 	private List<Comment> comments = new ArrayList<>();
 
 	public static Users of(
-			String snsId, String email, String nickname, OAuthProvider oAuthProvider
+			String snsId, String email, String nickname, OAuthProvider oAuthProvider,
+			String gender, String profileImageUrl
 	) {
 		return Users.builder()
 				.snsId(snsId)
 				.email(email)
 				.nickname(nickname)
 				.oAuthProvider(oAuthProvider)
+				.gender(gender)
+				.profileImageUrl(profileImageUrl)
 				.build();
 	}
 
 	@Builder
-	public Users (String snsId, String email, String nickname, OAuthProvider oAuthProvider) {
+	public Users (String snsId, String email, String nickname, OAuthProvider oAuthProvider, String gender, String profileImageUrl) {
 		this.snsId = snsId;
 		this.email = email;
 		this.nickname = nickname;
 		this.oAuthProvider = oAuthProvider;
+		this.gender = gender;
+		this.profileImageUrl = profileImageUrl;
 	}
 }
