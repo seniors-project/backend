@@ -1,9 +1,7 @@
 package com.seniors.domain.post.controller;
 
 import com.seniors.common.dto.DataResponseDto;
-import com.seniors.domain.post.dto.PostDto;
 import com.seniors.domain.post.dto.PostDto.GetPostRes;
-import com.seniors.domain.post.dto.PostDto.PostCreateDto;
 import com.seniors.domain.post.entity.Post;
 import com.seniors.domain.post.service.PostService;
 import io.swagger.v3.oas.annotations.Operation;

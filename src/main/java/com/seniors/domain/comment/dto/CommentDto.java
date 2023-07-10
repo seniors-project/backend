@@ -36,16 +36,22 @@ public class CommentDto {
 	}
 
 	@Data
+	@Builder
 	public static class SaveCommentDto {
 		@Schema(description = "댓글 내용", defaultValue = "댓글 내용 1", example = "댓글 내용 1이요")
 		private String content;
 
 		@Schema(description = "작성할 글 ID")
+		@JsonIgnore
 		private Long postId;
 
 		@Schema(description = "작성한 사용자 ID")
+		@JsonIgnore
 		private Long userId;
 
+		private static SaveCommentDto of(String content, Long postId, Long userId) {
+			return SaveCommentDto.builder().content(content).postId(postId).userId(userId).build();
+		}
 //		@QueryProjection
 //		public SaveCommentDto(String content, Long postId, Long userId) {
 //			this.content = content;

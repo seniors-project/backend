@@ -1,6 +1,7 @@
 package com.seniors.domain.post.service;
 
 import com.seniors.domain.post.dto.PostDto;
+import com.seniors.domain.post.dto.PostDto.GetPostRes;
 import com.seniors.domain.post.entity.Post;
 import com.seniors.domain.post.repository.PostRepository;
 import org.junit.jupiter.api.BeforeEach;
@@ -60,16 +61,15 @@ class PostServiceTest {
 				.likeCount(0)
 				.isDeleted(false)
 				.build();
-		postRepository.save(savePost);
+		Post post = postRepository.save(savePost);
 
 		// when
-		Post post = postService.findPost(savePost.getId());
+		GetPostRes getPostRes = postService.findPost(post.getId());
 
 		// then
 		assertNotNull(post);
-		assertEquals(1L, postRepository.count());
-		assertEquals("foo", post.getTitle());
-		assertEquals("bar", post.getContent());
+		assertEquals("foo", getPostRes.getTitle());
+		assertEquals("bar", getPostRes.getContent());
 	}
 
 	@Test

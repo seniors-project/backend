@@ -1,5 +1,6 @@
 package com.seniors.domain.post.dto;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.querydsl.core.annotations.QueryProjection;
 import com.seniors.domain.comment.entity.Comment;
 import com.seniors.domain.users.dto.UsersDto.GetPostUserRes;
@@ -29,8 +30,14 @@ public class PostDto {
 		@Schema(description = "게시글 내용", defaultValue = "내용 1", example = "내용 1이요")
 		@NotBlank(message = "Input content!")
 		private String content;
-		public static PostCreateDto of(String title, String content) {
-			return PostCreateDto.builder().title(title).content(content).build();
+
+		@Schema(description = "작성자 ID")
+		@NotBlank(message = "Required userId")
+		@JsonIgnore
+		private Long userId;
+
+		public static PostCreateDto of(String title, String content, Long userId) {
+			return PostCreateDto.builder().title(title).content(content).userId(userId).build();
 		}
 	}
 
