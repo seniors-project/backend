@@ -5,5 +5,5 @@ import com.seniors.domain.post.dto.PostDto.GetPostRes;
 
 public interface PostRepositoryCustom {
 
-	GetPostRes getOnePost(Long postId);
+	GetPostRes getOnePost(Long postId, Long userId);
 }

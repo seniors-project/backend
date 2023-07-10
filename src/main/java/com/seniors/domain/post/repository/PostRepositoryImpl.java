@@ -31,12 +31,12 @@ public class PostRepositoryImpl extends BasicRepoSupport implements PostReposito
 	}
 
 	@Override
-	public GetPostRes getOnePost(Long postId) {
+	public GetPostRes getOnePost(Long postId, Long userId) {
 		List<Post> postResList = jpaQueryFactory
 				.selectFrom(post)
 				.leftJoin(post.comments, comment).fetchJoin()
 				.innerJoin(post.users, users).fetchJoin()
-				.where(post.id.eq(postId))
+				.where(post.id.eq(postId).and(post.users.id.eq(userId)))
 				.fetch();
 
 		if (postResList.isEmpty()) {

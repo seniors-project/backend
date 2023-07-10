@@ -37,7 +37,7 @@ public class PostService {
 	}
 
 	@Transactional
-	public GetPostRes findPost(Long postId) {
-		return postRepository.getOnePost(postId);
+	public GetPostRes findPost(Long postId, Long userId) {
+		return postRepository.getOnePost(postId, userId);
 	}
 }
