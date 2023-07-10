@@ -24,13 +24,13 @@ public class CommentService {
     private final PostRepository postRepository;
     private final UsersRepository usersRepository;
 
-    public void addComment(SaveCommentDto commentReq) {
+    public Comment addComment(SaveCommentDto commentReq) {
         if (commentReq.getContent() == null || commentReq.getContent().isEmpty())
             throw new BadRequestException("Content is required");
         Post post = postRepository.findById(commentReq.getPostId()).orElse(null);
         Users users = usersRepository.findById(commentReq.getUserId()).orElse(null);
 
-        commentRepository.save(Comment.of(commentReq.getContent(), post, users));
+        return commentRepository.save(Comment.of(commentReq.getContent(), post, users));
     }
 
     @Transactional

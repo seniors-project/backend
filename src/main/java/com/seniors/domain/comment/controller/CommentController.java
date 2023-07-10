@@ -23,9 +23,9 @@ public class CommentController {
     private final CommentService commentService;
 
     @PostMapping("")
-    public DataResponseDto<String> commentAdd(@RequestBody @Valid SaveCommentDto comment) {
-        commentService.addComment(comment);
-        return DataResponseDto.of("SUCCESS");
+    public DataResponseDto<String> commentAdd(@RequestBody @Valid SaveCommentDto commentDto) {
+        Comment comment = commentService.addComment(commentDto);
+        return DataResponseDto.of("Comment [" + comment.getId() + "] add success");
     }
 
     @PatchMapping("/{commentId}")
@@ -33,7 +33,7 @@ public class CommentController {
             @Parameter(description = "댓글 ID") @PathVariable(value = "commentId") Long commentId,
             @RequestBody @Valid ModifyCommentDto commentDto) {
         commentService.modifyComment(commentId, commentDto);
-        return DataResponseDto.of("SUCCESS");
+        return DataResponseDto.of("Comment [" + commentId + "] modify success");
     }
 
     @DeleteMapping("/{commentId}")
@@ -41,6 +41,6 @@ public class CommentController {
             @Parameter(description = "댓글 ID") @PathVariable(value = "commentId") Long commentId
     ) {
         commentService.removeComment(commentId);
-        return DataResponseDto.of("SUCCESS");
+        return DataResponseDto.of("Comment [" + commentId + "] delete success");
     }
 }
