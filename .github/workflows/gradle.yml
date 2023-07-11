@@ -1,0 +1,87 @@
+# This workflow uses actions that are not certified by GitHub.
+# They are provided by a third-party and are governed by
+# separate terms of service, privacy policy, and support
+# documentation.
+# This workflow will build a Java project with Gradle and cache/restore any dependencies to improve the workflow execution time
+# For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-java-with-gradle
+
+name: Java CI with Gradle
+
+on:
+  push:
+    branches: [ "main", "develop" ]
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+
+      - name: checkout
+        uses: actions/checkout@v3
+
+      # JDK version 설정
+      - name: Set up JDK 17
+        uses: actions/setup-java@v3
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+
+      # Build
+      - name: Build with Gradle
+        uses: gradle/gradle-build-action@67421db6bd0bf253fb4bd25b31ebb98943c375e1
+        with:
+          arguments: build
+
+      ## 웹 이미지 빌드 및 도커허브에 push
+      - name: web docker build and push
+        run: |
+          docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
+          docker build -t ${{ secrets.DOCKER_REPO }}/seniors .
+          docker push ${{ secrets.DOCKER_REPO }}/seniors
+
+      ## Slack 알람(빌드)
+      - name: Slack 알람 발송
+        uses: rtCamp/action-slack-notify@v2
+        env:
+          SLACK_CHANNEL: general
+          SLACK_COLOR: ${{ job.status }} # or a specific color like 'good' or '#ff00ff'
+          SLACK_ICON: https://github.com/rtCamp.png?size=48
+          SLACK_MESSAGE: 빌드 결과 => ${{ job.status }}
+          SLACK_TITLE: 빌드 결과 알람
+          SLACK_USERNAME: Notification-Bot
+          SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK_URL }}
+        if: always()
+
+      ## docker compose up
+      - name: executing remote ssh commands using password
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.HOST }}
+          username: ubuntu
+          key: ${{ secrets.KEY }}
+          script: |
+            sudo docker rm -f $(docker ps -qa)
+            sudo docker pull ${{ secrets.DOCKER_REPO }}/seniors
+            sudo docker pull ${{ secrets.DOCKER_REPO }}/nginx
+            docker-compose up -d
+            docker image prune -f    
+
+      ## Slack 알람(배포)
+      - name: Slack 알람 발송
+        uses: rtCamp/action-slack-notify@v2
+        env:
+          SLACK_CHANNEL: general
+          SLACK_COLOR: ${{ job.status }} # or a specific color like 'good' or '#ff00ff'
+          SLACK_ICON: https://github.com/rtCamp.png?size=48
+          SLACK_MESSAGE: 배포 결과 => ${{ job.status }}
+          SLACK_TITLE: 배포 결과 알람
+          SLACK_USERNAME: Notification-Bot
+          SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK_URL }}
+        # 이 구문을 추가해야 빌드 성공 실패와 상관없이 동작합니다.
+        if: always()
+
