@@ -1,6 +1,7 @@
 package com.seniors.config.security;
 
 
+import com.seniors.common.exception.ExceptionHandlerFilter;
 import jakarta.servlet.DispatcherType;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
@@ -16,6 +17,7 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.access.AccessDeniedHandler;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 import org.springframework.web.cors.CorsUtils;
 
@@ -26,8 +28,8 @@ import org.springframework.web.cors.CorsUtils;
 @EnableMethodSecurity(securedEnabled = true, jsr250Enabled = true)
 public class SecurityConfig {
 
-//	private final TokenFilter tokenFilter;
-//	private final ExceptionHandlerFilter exceptionHandlerFilter;
+	private final TokenFilter tokenFilter;
+	private final ExceptionHandlerFilter exceptionHandlerFilter;
 
 	private static final String[] permitAllUrl = {
 			"/",
@@ -36,6 +38,8 @@ public class SecurityConfig {
 			"/robots.txt",
 			"/post/**",
 			"/api/post/**",
+			"/api/comments/**",
+			"/api/resume/**",
 			"/assets/**", // static 경로 추가
 			"/public/**",
 			"/public/fonts/**",
@@ -103,9 +107,12 @@ public class SecurityConfig {
 				.sessionManagement()
 				.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
 				.and()
-				.exceptionHandling();
-//		        .addFilterBefore(tokenFilter, UsernamePasswordAuthenticationFilter.class)
-//				.addFilterBefore(exceptionHandlerFilter, TokenFilter.class);
+				.exceptionHandling()
+				.accessDeniedHandler(accessDeniedHandler())
+                .authenticationEntryPoint(authenticationEntryPoint())
+				.and()
+		        .addFilterBefore(tokenFilter, UsernamePasswordAuthenticationFilter.class)
+				.addFilterBefore(exceptionHandlerFilter, TokenFilter.class);
 		return httpSecurity.build();
 	}
 }

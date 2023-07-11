@@ -35,6 +35,7 @@ public class PostController {
 	public DataResponseDto<String> postAdd(
 			@RequestBody @Valid PostDto.SavePostReq postDto,
 			@LoginUsers CustomUserDetails userDetails) {
+		log.info("{}", userDetails.getUserId());
 		postDto.setUserId(userDetails.getUserId());
 		postService.addPost(postDto);
 		return DataResponseDto.of("SUCCESS");
