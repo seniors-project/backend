@@ -31,6 +31,17 @@ jobs:
           java-version: '17'
           distribution: 'temurin'
 
+      ## create application-database.yaml
+      - name: make application-database.yaml
+        run: |
+          cd ./src/main/resources
+          
+          touch ./application-dev.yml
+          
+          # GitHub-Actions 에서 설정한 값을 application.yml 파일에 쓰기
+          echo "${{ secrets.DATABASE }}" > ./application-dev.yml
+        shell: bash
+
       # Build
       - name: Build with Gradle
         uses: gradle/gradle-build-action@67421db6bd0bf253fb4bd25b31ebb98943c375e1
