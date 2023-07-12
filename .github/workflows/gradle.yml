@@ -35,11 +35,11 @@ jobs:
       - name: make application-database.yaml
         run: |
           cd ./src/main/resources
-          
-          touch ./application-dev.yml
-          
+
+          touch ./application.yml
+
           # GitHub-Actions 에서 설정한 값을 application.yml 파일에 쓰기
-          echo "${{ secrets.DATABASE }}" > ./application-dev.yml
+          echo "${{ secrets.DATABASE }}" > ./application.yml
         shell: bash
 
       # Build
