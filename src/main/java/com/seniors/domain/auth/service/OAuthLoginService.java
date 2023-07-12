@@ -21,7 +21,6 @@ public class OAuthLoginService {
 
 	public AuthTokens login(OAuthLoginParams params) {
 		OAuthInfoResponse oAuthInfoResponse = requestOAuthInfoService.request(params);
-		log.info("{}", oAuthInfoResponse.toString());
 		Users users = findOrCreateUser(oAuthInfoResponse);
 		return authTokensGenerator.generate(users);
 	}
@@ -38,6 +37,8 @@ public class OAuthLoginService {
 				.nickname(oAuthInfoResponse.getNickname())
 				.oAuthProvider(oAuthInfoResponse.getOAuthProvider())
 				.gender(oAuthInfoResponse.getGender())
+				.birthday(oAuthInfoResponse.getBirthday())
+				.ageRange(oAuthInfoResponse.getAgeRange())
 				.profileImageUrl(oAuthInfoResponse.getProfileImageUrl())
 				.build();
 

@@ -9,4 +9,6 @@ public interface OAuthInfoResponse {
 	OAuthProvider getOAuthProvider();
 	String getProfileImageUrl();
 	String getGender();
+	String getBirthday();
+	String getAgeRange();
 }

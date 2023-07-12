@@ -18,22 +18,24 @@ public class KakaoInfoResponse implements OAuthInfoResponse {
 	@JsonIgnoreProperties(ignoreUnknown = true)
 	static class KakaoAccount {
 		private KakaoProfile profile;
-		private String sub;
+		private String id;
 		private String email;
 		private String gender;
+		private String birthday;
+		private String age_range;
 	}
 
 	@Getter
 	@JsonIgnoreProperties(ignoreUnknown = true)
 	static class KakaoProfile {
+		private String id;
 		private String nickname;
-		private String profileImageUrl;
-		private String gender;
+		private String profile_image;
 	}
 
 	@Override
 	public String getSnsId() {
-		return kakaoAccount.sub;
+		return kakaoAccount.id;
 	}
 
 	@Override
@@ -53,11 +55,25 @@ public class KakaoInfoResponse implements OAuthInfoResponse {
 
 	@Override
 	public String getProfileImageUrl() {
-		return kakaoAccount.profile.profileImageUrl;
+		return kakaoAccount.profile.profile_image;
 	}
 
 	@Override
 	public String getGender() {
 		return kakaoAccount.gender;
 	}
+
+	@Override
+	public String getBirthday() {
+		String month = kakaoAccount.birthday.substring(0, 2);
+		String day = kakaoAccount.birthday.substring(2);
+		return month + "-" + day;
+	}
+
+	@Override
+	public String getAgeRange() {
+		return kakaoAccount.age_range;
+	}
+
+
 }
