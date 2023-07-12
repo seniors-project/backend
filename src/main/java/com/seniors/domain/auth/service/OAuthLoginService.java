@@ -21,6 +21,7 @@ public class OAuthLoginService {
 
 	public AuthTokens login(OAuthLoginParams params) {
 		OAuthInfoResponse oAuthInfoResponse = requestOAuthInfoService.request(params);
+		log.info("{}", oAuthInfoResponse.toString());
 		Users users = findOrCreateUser(oAuthInfoResponse);
 		return authTokensGenerator.generate(users);
 	}

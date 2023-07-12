@@ -120,10 +120,13 @@ public class TokenService {
 		// token정보 이외에 추가로 정보가 필요해서 DB의 데이터를 조회해서 userDetails정보를 만드려면 UserDetailsService 인터페이스를 캐시서비스 또는 유저서비스에서 구현해서 userDetails를 리턴하게 하면 된다.
 		// 꼭 UserDetailsService 인터페이스를 구현하지 않아도 되고 DB를 조회해서 userDetails에 데이터를 넣어서 리턴해주게 만들면된다.
 		Long userId = Long.parseLong(claims.get("userId").toString());
+		String userSnsId = claims.get("userSnsId") != null ? claims.get("userSnsId").toString() : null;
 		String userEmail = claims.get("userEmail").toString();
 		String userNickname = claims.get("userNickname").toString();
+		String userGender = claims.get("userGender") != null ? claims.get("userGender").toString() : null;
+		String userProfileImageUrl = claims.get("userProfileImageUrl") != null ? claims.get("userProfileImageUrl").toString() : null;
 
-		return new CustomUserDetails(userId, userEmail, userNickname);
+		return new CustomUserDetails(userId, userSnsId, userEmail, userNickname, userGender, userProfileImageUrl);
 	}
 
 	public CustomUserDetails getUserDetailsByRefreshToken(String token)
@@ -143,7 +146,7 @@ public class TokenService {
 
 		Long userId = Long.parseLong(claims.get("userId").toString());
 
-		return new CustomUserDetails(userId, null, null);
+		return new CustomUserDetails(userId, null, null, null, null, null);
 	}
 
 }

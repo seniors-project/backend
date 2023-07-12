@@ -12,15 +12,21 @@ import java.util.List;
 public class CustomUserDetails implements UserDetails {
 
 	private final Long userId;
+	private final String userSnsId;
 	private final String userEmail;
 	private final String userNickname;
 	private final List<GrantedAuthority> authorityList;
+	private final String gender;
+	private final String profileImageUrl;
 
-	public CustomUserDetails(Long userId, String userEmail, String userNickname) {
+	public CustomUserDetails(Long userId, String userSnsId, String userEmail, String userNickname, String gender, String profileImageUrl) {
 		this.userId = userId;
+		this.userSnsId = userSnsId;
 		this.authorityList = new ArrayList<>();
 		this.userEmail = userEmail;
 		this.userNickname = userNickname;
+		this.gender = gender;
+		this.profileImageUrl = profileImageUrl;
 	}
 
 	@Override

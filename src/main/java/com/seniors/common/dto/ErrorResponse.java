@@ -1,7 +1,6 @@
 package com.seniors.common.dto;
 
 import com.seniors.common.constant.ResultCode;
-import lombok.Builder;
 
 public class ErrorResponse extends ResponseDto {
 

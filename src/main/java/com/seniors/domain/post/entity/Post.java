@@ -47,7 +47,14 @@ public class Post extends BaseEntity {
 	private Users users;
 
 	public static Post of(String title, String content, Users users) {
-		return Post.builder().title(title).content(content).isDeleted(false).viewCount(0).likeCount(0).users(users).build();
+		return Post.builder()
+				.title(title)
+				.content(content)
+				.isDeleted(false)
+				.viewCount(0)
+				.likeCount(0)
+				.users(users)
+				.build();
 	}
 
 	@Builder

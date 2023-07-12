@@ -23,7 +23,9 @@ public class JwtUtil {
 
 	public JwtUtil(@Value("${jwt.secret-key}") String secretKey) {
 		this.secretKey = new SecretKeySpec(secretKey.getBytes(StandardCharsets.UTF_8), SignatureAlgorithm.HS256.getJcaName());
+		this.refreshKey = new SecretKeySpec(secretKey.getBytes(StandardCharsets.UTF_8), SignatureAlgorithm.HS256.getJcaName());
 		this.secretBytes = Base64.getDecoder().decode(secretKey.getBytes(StandardCharsets.UTF_8));
+		this.refreshBytes = Base64.getDecoder().decode(secretKey.getBytes(StandardCharsets.UTF_8));
 	}
 
 	/**

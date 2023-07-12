@@ -2,7 +2,7 @@ package com.seniors.common.exception.type;
 
 import com.seniors.common.constant.ResultCode;
 
-public class SignInException extends Exception{
+public class SignInException extends RuntimeException{
 	private final ResultCode resultCode;
 
 	public SignInException() {
