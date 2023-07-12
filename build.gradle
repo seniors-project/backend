@@ -42,7 +42,7 @@ dependencies {
 
 	implementation 'org.projectlombok:lombok'
 	annotationProcessor('org.projectlombok:lombok')
-	runtimeOnly 'com.h2database:h2'
+
 	runtimeOnly 'com.mysql:mysql-connector-j'
 
 	implementation group: 'com.google.guava', name: 'guava', version: '30.1.1-jre'
