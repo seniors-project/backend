@@ -6,6 +6,7 @@ import com.seniors.config.security.CustomUserDetails;
 import com.seniors.domain.post.dto.PostDto;
 import com.seniors.domain.post.dto.PostDto.GetPostRes;
 import com.seniors.domain.post.dto.PostDto.PostCreateDto;
+import com.seniors.domain.post.dto.PostDto.SavePostReq;
 import com.seniors.domain.post.entity.Post;
 import com.seniors.domain.post.service.PostService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -33,9 +34,8 @@ public class PostController {
 			content = @Content(mediaType = "application/json", schema = @Schema(implementation = DataResponseDto.class)))
 	@PostMapping("")
 	public DataResponseDto<String> postAdd(
-			@RequestBody @Valid PostDto.SavePostReq postDto,
+			@RequestBody @Valid SavePostReq postDto,
 			@LoginUsers CustomUserDetails userDetails) {
-		log.info("{}", userDetails.getUserId());
 		postDto.setUserId(userDetails.getUserId());
 		postService.addPost(postDto);
 		return DataResponseDto.of("SUCCESS");

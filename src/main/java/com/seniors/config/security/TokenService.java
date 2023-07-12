@@ -4,12 +4,16 @@ import com.seniors.common.constant.ResultCode;
 import com.seniors.common.exception.type.NotAuthorizedException;
 import com.seniors.common.exception.type.SignInException;
 import com.seniors.domain.users.entity.Users;
+import io.jsonwebtoken.SignatureAlgorithm;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import javax.crypto.SecretKey;
+import javax.crypto.spec.SecretKeySpec;
+import java.nio.charset.StandardCharsets;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -22,13 +26,19 @@ import java.util.Map;
 public class TokenService {
 
 	private static Long defaultExpirationMinutes;
+	private final JwtUtil jwtUtil;
 
 	@Value("${jwt.secret-key}")
-	private static String secretKey;
+	private String secretKey;
 
 	@Value("${util.jwt.defaultExpirationMinutes}")
 	public void setDefaultExpirationMinutes(Long defaultExpirationMinutes) {
 		TokenService.defaultExpirationMinutes = defaultExpirationMinutes;
+	}
+
+	private static SecretKey createSecretKey(String key) {
+		byte[] keyBytes = key.getBytes(StandardCharsets.UTF_8);
+		return new SecretKeySpec(keyBytes, SignatureAlgorithm.HS256.getJcaName());
 	}
 
 	public static String parseTokenByRequest(HttpServletRequest request) {
@@ -40,13 +50,11 @@ public class TokenService {
 	}
 
 	public static String parseReFreshTokenByRequest(HttpServletRequest request) {
-		final String authHeader = request.getHeader("refresh-token");
-		return authHeader;
+		return request.getHeader("refresh-token");
 	}
 
-	public static Map<String, Object> generateDefaultClaims(Users user, Long plusExpMinutes) {
+	public Map<String, Object> generateDefaultClaims(Users user, Long plusExpMinutes) {
 		LocalDateTime now = LocalDateTime.now();
-
 		Map<String, Object> claims = new HashMap<>();
 		claims.put("sub", "access-token");
 		claims.put("iss", secretKey);
@@ -55,56 +63,56 @@ public class TokenService {
 		claims.put("userId", user.getId());
 		claims.put("userNickname", user.getNickname());
 		claims.put("userEmail", user.getEmail());
-		claims.put("created",
+		claims.put("createdAt",
 				LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMddHHmmss")));
 
 		return claims;
 	}
 
-	public static Map<String, Object> generateReFreshClaims(Users user, Long plusExpMinutes) {
+	public Map<String, Object> generateReFreshClaims(Users user, Long plusExpMinutes) {
 		LocalDateTime now = LocalDateTime.now();
-
 		Map<String, Object> claims = new HashMap<>();
 		claims.put("sub", "refresh-token");
 		claims.put("iss", secretKey);
 		claims.put("userId", user.getId());
 		claims.put("iat", Timestamp.valueOf(now));
 		claims.put("exp", Timestamp.valueOf(now.plusMinutes(plusExpMinutes)).getTime() / 1000);
-		claims.put("created",
+		claims.put("createdAt",
 				LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMddHHmmss")));
 
 		return claims;
 	}
 
-	public static String generateToken(Users user, Boolean remember) {
+	// 자동 로그인 사용 시 아래 메서드 사용
+	public String generateToken(Users user, Boolean remember) {
 		Long expMin = remember ? defaultExpirationMinutes * 24 * 7 : defaultExpirationMinutes;
 		Map<String, Object> claims = generateDefaultClaims(user, expMin);
 
-		return JwtUtil.generateToken(claims);
+		return jwtUtil.generateToken(claims, createSecretKey(secretKey));
 	}
 
-	public static String generateRefreshToken(Users user, Boolean remember) {
+	public String generateRefreshToken(Users user, Boolean remember) {
 		Long expMin = remember ? defaultExpirationMinutes * 24 * 30 : defaultExpirationMinutes * 4;
 		Map<String, Object> claims = generateReFreshClaims(user, expMin);
 
-		return JwtUtil.generateRefreshToken(claims);
+		return jwtUtil.generateRefreshToken(claims, createSecretKey(secretKey));
 	}
 
-	public static String generateToken(Users user, Long plusExpMinutes) {
+	public String generateToken(Users user, Long plusExpMinutes) {
 		Map<String, Object> claims = generateDefaultClaims(user, plusExpMinutes);
 
-		return JwtUtil.generateToken(claims);
+		return jwtUtil.generateToken(claims, createSecretKey(secretKey));
 	}
 
-	public static String generateRefreshToken(Users user, Long plusExpMinutes) {
+	public String generateRefreshToken(Users user, Long plusExpMinutes) {
 		Map<String, Object> claims = generateReFreshClaims(user, plusExpMinutes);
 
-		return JwtUtil.generateRefreshToken(claims);
+		return jwtUtil.generateRefreshToken(claims, createSecretKey(secretKey));
 	}
 
 
-	public static CustomUserDetails getUserDetailsByToken(String token) {
-		Map<String, Object> claims = JwtUtil.getClaims(token);
+	public CustomUserDetails getUserDetailsByToken(String token) {
+		Map<String, Object> claims = jwtUtil.getClaims(token);
 		if (claims == null) {
 			throw new NotAuthorizedException("Invalid token (" + token + ")");
 		}
@@ -114,16 +122,15 @@ public class TokenService {
 		Long userId = Long.parseLong(claims.get("userId").toString());
 		String userEmail = claims.get("userEmail").toString();
 		String userNickname = claims.get("userNickname").toString();
-		String userPhoneNumber = claims.get("userPhoneNumber").toString();
 
-		return new CustomUserDetails(userId, userEmail, userNickname, userPhoneNumber);
+		return new CustomUserDetails(userId, userEmail, userNickname);
 	}
 
-	public static CustomUserDetails getUserDetailsByRefreshToken(String token)
+	public CustomUserDetails getUserDetailsByRefreshToken(String token)
 			throws SignInException {
 		Map<String, Object> claims = null;
 		try {
-			claims = JwtUtil.getClaimsForReFresh(token);
+			claims = jwtUtil.getClaimsForReFresh(token);
 		} catch (Exception e) {
 			throw new SignInException(ResultCode.EXPIRED_REFRESH_TOKEN,
 					"Invalid token (" + token + ")");
@@ -136,63 +143,7 @@ public class TokenService {
 
 		Long userId = Long.parseLong(claims.get("userId").toString());
 
-		return new CustomUserDetails(userId, null, null,  null);
-	}
-
-	public static String generateMailVerificationToken(Users user, Long plusExpMinutes) {
-		LocalDateTime now = LocalDateTime.now();
-
-		Map<String, Object> claims = new HashMap<>();
-		claims.put("sub", "mail-verification");
-		claims.put("iss", secretKey);
-		claims.put("iat", Timestamp.valueOf(now));
-		claims.put("exp", Timestamp.valueOf(now.plusMinutes(plusExpMinutes)).getTime() / 1000);
-		claims.put("userId", user.getId());
-		claims.put("created",
-				LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMddHHmmss")));
-
-		return JwtUtil.generateToken(claims);
-	}
-
-	public static Long getUserIdByMailVerificationToken(String token) {
-		Map<String, Object> claims = JwtUtil.getClaims(token);
-		if (claims == null) {
-			throw new NotAuthorizedException("Invalid token (" + token + ")");
-		}
-
-		if (!claims.get("sub").toString().equals("mail-verification")) {
-			throw new NotAuthorizedException("Invalid token sub (" + token + ")");
-		}
-
-		return Long.parseLong(claims.get("userId").toString());
-	}
-
-	public static String generateMailUserChangePasswordToken(Users user, Long plusExpMinutes) {
-		LocalDateTime now = LocalDateTime.now();
-
-		Map<String, Object> claims = new HashMap<>();
-		claims.put("sub", "mail-user-change-password");
-		claims.put("iss", secretKey);
-		claims.put("iat", Timestamp.valueOf(now));
-		claims.put("exp", Timestamp.valueOf(now.plusMinutes(plusExpMinutes)).getTime() / 1000);
-		claims.put("userId", user.getId());
-		claims.put("created",
-				LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMddHHmmss")));
-
-		return JwtUtil.generateToken(claims);
-	}
-
-	public static Long getUserIdByMailUserChangePasswordToken(String token) {
-		Map<String, Object> claims = JwtUtil.getClaims(token);
-		if (claims == null) {
-			throw new NotAuthorizedException("Invalid token (" + token + ")");
-		}
-
-		if (!claims.get("sub").toString().equals("mail-user-change-password")) {
-			throw new NotAuthorizedException("Invalid token sub (" + token + ")");
-		}
-
-		return Long.parseLong(claims.get("userId").toString());
+		return new CustomUserDetails(userId, null, null);
 	}
 
 }

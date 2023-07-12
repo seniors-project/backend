@@ -18,6 +18,7 @@ import java.io.IOException;
 public class TokenFilter extends OncePerRequestFilter {
 
 	private final SecurityService securityService;
+	private final TokenService tokenService;
 
 	@Override
 	protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response,
@@ -26,7 +27,7 @@ public class TokenFilter extends OncePerRequestFilter {
 		try {
 			final String token = TokenService.parseTokenByRequest(request);
 			if (token != null) {
-				CustomUserDetails userDetails = TokenService.getUserDetailsByToken(token);
+				CustomUserDetails userDetails = tokenService.getUserDetailsByToken(token);
 				securityService.setAuthentication(userDetails);
 			}
 		} catch (Exception e) {

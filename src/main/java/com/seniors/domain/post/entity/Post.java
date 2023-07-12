@@ -46,16 +46,17 @@ public class Post extends BaseEntity {
 	@JoinColumn(name = "userId")
 	private Users users;
 
-	public static Post of(String title, String content) {
-		return Post.builder().title(title).content(content).isDeleted(false).viewCount(0).likeCount(0).build();
+	public static Post of(String title, String content, Users users) {
+		return Post.builder().title(title).content(content).isDeleted(false).viewCount(0).likeCount(0).users(users).build();
 	}
 
 	@Builder
-	public Post(String title, String content, Boolean isDeleted, Integer viewCount, Integer likeCount) {
+	public Post(String title, String content, Boolean isDeleted, Integer viewCount, Integer likeCount, Users users) {
 		this.title = title;
 		this.content = content;
 		this.isDeleted = isDeleted;
 		this.viewCount = viewCount;
 		this.likeCount = likeCount;
+		this.users = users;
 	}
 }

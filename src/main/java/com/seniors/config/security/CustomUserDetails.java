@@ -14,16 +14,13 @@ public class CustomUserDetails implements UserDetails {
 	private final Long userId;
 	private final String userEmail;
 	private final String userNickname;
-	private final String userPhoneNumber;
 	private final List<GrantedAuthority> authorityList;
 
-	public CustomUserDetails(Long userId, String userEmail, String userNickname,
-	                         String userPhoneNumber) {
+	public CustomUserDetails(Long userId, String userEmail, String userNickname) {
 		this.userId = userId;
 		this.authorityList = new ArrayList<>();
 		this.userEmail = userEmail;
 		this.userNickname = userNickname;
-		this.userPhoneNumber = userPhoneNumber;
 	}
 
 	@Override
