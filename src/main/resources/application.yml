@@ -6,8 +6,7 @@ server:
         max-age: 172800
 spring:
   profiles:
-    active:
-      - dev
+    active: dev
   datasource:
     url: jdbc:mysql://localhost:3306/{DB Schema Name}?serverTimezone=Asia/Seoul
     username: {DB username}
