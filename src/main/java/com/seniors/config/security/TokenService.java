@@ -6,10 +6,15 @@ import com.seniors.common.exception.type.SignInException;
 import com.seniors.domain.users.entity.Users;
 import io.jsonwebtoken.SignatureAlgorithm;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.session.Session;
+import org.springframework.session.SessionRepository;
 import org.springframework.stereotype.Service;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
 
 import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
@@ -27,6 +32,7 @@ public class TokenService {
 
 	private static Long defaultExpirationMinutes;
 	private final JwtUtil jwtUtil;
+	private final SessionRepository<?> sessionRepository;
 
 	@Value("${jwt.secret-key}")
 	private String secretKey;
@@ -106,8 +112,14 @@ public class TokenService {
 
 	public String generateRefreshToken(Users user, Long plusExpMinutes) {
 		Map<String, Object> claims = generateReFreshClaims(user, plusExpMinutes);
+		String refreshToken = jwtUtil.generateRefreshToken(claims, createSecretKey(secretKey));
 
-		return jwtUtil.generateRefreshToken(claims, createSecretKey(secretKey));
+		// refreshToken을 세션에 저장
+		HttpServletRequest currentRequest = ((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes()).getRequest();
+		HttpSession session = currentRequest.getSession();
+		session.setAttribute("refreshToken", refreshToken);
+
+		return refreshToken;
 	}
 
 
