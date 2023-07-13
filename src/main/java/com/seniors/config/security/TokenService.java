@@ -10,7 +10,6 @@ import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.session.Session;
 import org.springframework.session.SessionRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.web.context.request.RequestContextHolder;
@@ -30,7 +29,7 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class TokenService {
 
-	private static Long defaultExpirationMinutes;
+	private static Long DEFAULT_EXPIRATION_MINUTES;
 	private final JwtUtil jwtUtil;
 	private final SessionRepository<?> sessionRepository;
 
@@ -39,7 +38,7 @@ public class TokenService {
 
 	@Value("${util.jwt.defaultExpirationMinutes}")
 	public void setDefaultExpirationMinutes(Long defaultExpirationMinutes) {
-		TokenService.defaultExpirationMinutes = defaultExpirationMinutes;
+		TokenService.DEFAULT_EXPIRATION_MINUTES = defaultExpirationMinutes;
 	}
 
 	private static SecretKey createSecretKey(String key) {
@@ -91,14 +90,14 @@ public class TokenService {
 
 	// 자동 로그인 사용 시 아래 메서드 사용
 	public String generateToken(Users user, Boolean remember) {
-		Long expMin = remember ? defaultExpirationMinutes * 24 * 7 : defaultExpirationMinutes;
+		Long expMin = remember ? DEFAULT_EXPIRATION_MINUTES * 24 * 7 : DEFAULT_EXPIRATION_MINUTES;
 		Map<String, Object> claims = generateDefaultClaims(user, expMin);
 
 		return jwtUtil.generateToken(claims, createSecretKey(secretKey));
 	}
 
 	public String generateRefreshToken(Users user, Boolean remember) {
-		Long expMin = remember ? defaultExpirationMinutes * 24 * 30 : defaultExpirationMinutes * 4;
+		Long expMin = remember ? DEFAULT_EXPIRATION_MINUTES * 24 * 30 : DEFAULT_EXPIRATION_MINUTES * 4;
 		Map<String, Object> claims = generateReFreshClaims(user, expMin);
 
 		return jwtUtil.generateRefreshToken(claims, createSecretKey(secretKey));
@@ -141,8 +140,7 @@ public class TokenService {
 		return new CustomUserDetails(userId, userSnsId, userEmail, userNickname, userGender, userProfileImageUrl);
 	}
 
-	public CustomUserDetails getUserDetailsByRefreshToken(String token)
-			throws SignInException {
+	public CustomUserDetails getUserDetailsByRefreshToken(String token) throws SignInException {
 		Map<String, Object> claims = null;
 		try {
 			claims = jwtUtil.getClaimsForReFresh(token);

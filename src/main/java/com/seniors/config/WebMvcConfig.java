@@ -8,6 +8,7 @@ import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
+import java.util.Arrays;
 import java.util.List;
 
 @Configuration
@@ -23,12 +24,11 @@ public class WebMvcConfig implements WebMvcConfigurer {
 
 	@Override
 	public void addCorsMappings(CorsRegistry registry) {
-		registry.addMapping("/**").allowedOrigins("*")
-				.allowedMethods(HttpMethod.GET.toString()
-						, HttpMethod.POST.toString()
-						, HttpMethod.PUT.toString()
-						, HttpMethod.PATCH.toString()
-						, HttpMethod.DELETE.toString())
+		registry.addMapping("/**")
+				.allowedOrigins("*")
+				.allowedMethods(Arrays.stream(HttpMethod.values())
+						.map(HttpMethod::name)
+						.toArray(String[]::new))
 				.allowedHeaders("*");
 	}
 }
