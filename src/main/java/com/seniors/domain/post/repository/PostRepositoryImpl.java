@@ -1,5 +1,6 @@
 package com.seniors.domain.post.repository;
 
+import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.seniors.common.exception.type.NotFoundException;
 import com.seniors.common.repository.BasicRepoSupport;
@@ -12,6 +13,7 @@ import com.seniors.domain.users.entity.QUsers;
 import jakarta.persistence.EntityManager;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
 
@@ -68,8 +70,30 @@ public class PostRepositoryImpl extends BasicRepoSupport implements PostReposito
 	}
 
 	@Override
-	public Page<Post> findAllPost(Pageable pageable) {
-		return null;
+	public Page<GetPostRes> findAllPost(Pageable pageable) {
+		JPAQuery<Post> query = jpaQueryFactory
+				.selectFrom(post)
+				.leftJoin(post.comments, comment).fetchJoin()
+				.innerJoin(post.users, users).fetchJoin();
+		super.setPageQuery(query, pageable, post);
+		List<GetPostRes> content = query.fetch().stream()
+				.map(p -> new GetPostRes(
+						p.getId(),
+						p.getTitle(),
+						p.getContent(),
+						p.getViewCount(),
+						p.getCreatedAt(),
+						p.getLastModifiedDate(),
+						p.getUsers(),
+						p.getComments())).toList();
+
+		JPAQuery<Long> countQuery = jpaQueryFactory
+				.select(post.id.count())
+				.from(post);
+		Long count = countQuery.fetchOne();
+		count = count == null ? 0 : count;
+
+		return new PageImpl<>(content, super.getValidPageable(pageable), count);
 	}
 
 	private void updateViewCount(Long postId) {

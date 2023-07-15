@@ -50,8 +50,8 @@ public class PostService {
 	public List<GetPostRes> findPost(int page, int offset) {
 		Sort.Direction direction = Sort.Direction.DESC;
 		Pageable pageable = PageRequest.of(page, offset, Sort.by(direction, "id"));
-		Page<Post> posts = postRepository.findAllPost(pageable);
-		return null;
+		Page<GetPostRes> posts = postRepository.findAllPost(pageable);
+		return posts.stream().toList();
 	}
 
 	@Transactional

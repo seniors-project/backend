@@ -65,7 +65,7 @@ public class PostController {
 			@RequestParam(required = false, defaultValue = "1") int page,
 			@RequestParam(required = false) int offset
 	) {
-		List<GetPostRes> postResList = new ArrayList<>();
+		List<GetPostRes> postResList = postService.findPost(page, offset);
 		return DataResponseDto.of(postResList);
 	}
 

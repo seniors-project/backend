@@ -11,5 +11,5 @@ public interface PostRepositoryCustom {
 	GetPostRes findOnePost(Long postId, Long userId);
 	void modifyPost(ModifyPostReq modifyPostReq, Long postId);
 
-	Page<Post> findAllPost(Pageable pageable);
+	Page<GetPostRes> findAllPost(Pageable pageable);
 }
