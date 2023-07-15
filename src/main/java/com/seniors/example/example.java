@@ -8,7 +8,7 @@ public class example {
 
     @RequestMapping("/ex")
     public String ex(){
-        return "hello my name is apple!!!";
+        return "hello my name is apple!!!!!";
     }
 
 
