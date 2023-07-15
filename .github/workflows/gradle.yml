@@ -16,46 +16,57 @@ permissions:
 
 jobs:
   build:
-
     runs-on: ubuntu-latest
-
     steps:
-
       - name: checkout
         uses: actions/checkout@v3
 
-      # JDK version 설정
       - name: Set up JDK 17
         uses: actions/setup-java@v3
         with:
           java-version: '17'
           distribution: 'temurin'
 
-      ## create application-database.yaml
       - name: make application-database.yaml
         run: |
           cd ./src/main/resources
-
           touch ./application.yml
-
-          # GitHub-Actions 에서 설정한 값을 application.yml 파일에 쓰기
           echo "${{ secrets.DATABASE }}" > ./application.yml
         shell: bash
 
-      # Build
       - name: Build with Gradle
         uses: gradle/gradle-build-action@67421db6bd0bf253fb4bd25b31ebb98943c375e1
         with:
           arguments: build
 
-      ## 웹 이미지 빌드 및 도커허브에 push
-      - name: web docker build and push
-        run: |
-          docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
-          docker build -t ${{ secrets.DOCKER_REPO }}/seniors .
-          docker push ${{ secrets.DOCKER_REPO }}/seniors
+      - name: AWS 연결
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ secrets.AWS_REGION }}
 
-      ## Slack 알람(빌드)
+      - name: Make zip file
+        run: |
+          mkdir deploy
+          cp ./appspec.yml ./deploy/
+          cp ./Dockerfile ./deploy/
+          cp ./deploy.sh ./deploy/
+          cp ./build/libs/*.jar ./deploy/
+          zip -r -qq -j ./seniors-build.zip ./deploy
+
+      - name: Upload to S3
+        run: |
+          aws s3 cp \
+            --region ap-northeast-2 \
+            ./seniors-build.zip s3://backend-app-bucket    
+
+      #      - name: Build Docker image
+      #        run: |
+      #          docker build -t ${{ secrets.DOCKER_REPO }}/seniors .
+      #          docker save ${{ secrets.DOCKER_REPO }}/seniors | gzip > seniors.tar.gz
+      #          aws s3 cp seniors.tar.gz s3://backend-app-bucket/seniors.tar.gz
+
       - name: Slack 알람 발송
         uses: rtCamp/action-slack-notify@v2
         env:
@@ -68,21 +79,14 @@ jobs:
           SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK_URL }}
         if: always()
 
-      ## docker compose up
-      - name: executing remote ssh commands using password
-        uses: appleboy/ssh-action@master
-        with:
-          host: ${{ secrets.HOST }}
-          username: ubuntu
-          key: ${{ secrets.KEY }}
-          script: |
-            sudo docker rm -f $(docker ps -qa)
-            sudo docker pull ${{ secrets.DOCKER_REPO }}/seniors
-            sudo docker pull ${{ secrets.DOCKER_REPO }}/nginx
-            docker-compose up -d
-            docker image prune -f    
 
-      ## Slack 알람(배포)
+      - name: Code Deploy 배포 요청
+        run: |
+          aws deploy create-deployment --application-name seniors \
+            --deployment-config-name CodeDeployDefault.OneAtATime \
+            --deployment-group-name seniors \
+            --s3-location bucket=backend-app-bucket,bundleType=zip,key=seniors-build.zip
+
       - name: Slack 알람 발송
         uses: rtCamp/action-slack-notify@v2
         env:
@@ -93,6 +97,5 @@ jobs:
           SLACK_TITLE: 배포 결과 알람
           SLACK_USERNAME: Notification-Bot
           SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK_URL }}
-        # 이 구문을 추가해야 빌드 성공 실패와 상관없이 동작합니다.
         if: always()
 
