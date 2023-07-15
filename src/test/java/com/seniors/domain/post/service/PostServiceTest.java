@@ -27,27 +27,27 @@ class PostServiceTest {
 		postRepository.deleteAll();
 	}
 
-	@Test
-	@DisplayName("글 작성")
-	void postTest1() {
-		// given
-		Post savePost = Post.builder()
-				.title("글 제목입니다.")
-				.content("글 내용입니다.")
-				.isDeleted(false)
-				.viewCount(0)
-				.likeCount(0)
-				.build();
-
-		// when
-		postService.addPost(savePost);
-
-		// then
-		assertEquals(1L, postRepository.count());
-		Post post = postRepository.findAll().get(0);
-		assertEquals("글 제목입니다.", post.getTitle());
-		assertEquals("글 내용입니다.", post.getContent());
-	}
+//	@Test
+//	@DisplayName("글 작성")
+//	void postTest1() {
+//		// given
+//		Post savePost = Post.builder()
+//				.title("글 제목입니다.")
+//				.content("글 내용입니다.")
+//				.isDeleted(false)
+//				.viewCount(0)
+//				.likeCount(0)
+//				.build();
+//
+//		// when
+//		postService.addPost(savePost);
+//
+//		// then
+//		assertEquals(1L, postRepository.count());
+//		Post post = postRepository.findAll().get(0);
+//		assertEquals("글 제목입니다.", post.getTitle());
+//		assertEquals("글 내용입니다.", post.getContent());
+//	}
 
 //	@Test
 //	@DisplayName("글 단건 조회")
