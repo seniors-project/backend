@@ -96,4 +96,15 @@ public class PostDto {
 		private Long userId;
 	}
 
+	@Data
+	public static class ModifyPostReq {
+		@Schema(description = "게시글 제목", defaultValue = "제목 1", example = "제목 1이요")
+		@NotBlank(message = "Input title!")
+		private String title;
+
+		@Schema(description = "게시글 내용", defaultValue = "내용 1", example = "내용 1이요")
+		@NotBlank(message = "Input content!")
+		private String content;
+	}
+
 }

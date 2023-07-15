@@ -5,6 +5,7 @@ import com.seniors.common.dto.DataResponseDto;
 import com.seniors.config.security.CustomUserDetails;
 import com.seniors.domain.post.dto.PostDto;
 import com.seniors.domain.post.dto.PostDto.GetPostRes;
+import com.seniors.domain.post.dto.PostDto.ModifyPostReq;
 import com.seniors.domain.post.dto.PostDto.PostCreateDto;
 import com.seniors.domain.post.dto.PostDto.SavePostReq;
 import com.seniors.domain.post.entity.Post;
@@ -19,6 +20,9 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Tag(name = "게시글", description = "게시글 API 명세서")
 @Slf4j
@@ -48,8 +52,32 @@ public class PostController {
 	public DataResponseDto<GetPostRes> postDetails(
 			@Parameter(description = "게시글 ID") @PathVariable(value = "postId") Long postId,
 			@LoginUsers CustomUserDetails userDetails) {
-		GetPostRes post = postService.findPost(postId, userDetails.getUserId());
+		GetPostRes post = postService.findOnePost(postId, userDetails.getUserId());
 		return DataResponseDto.of(post);
+	}
+
+	@Operation(summary = "게시글 리스트 조회")
+	@ApiResponse(responseCode = "200", description = "리스트 조회 성공",
+			content = @Content(mediaType = "application/json", schema = @Schema(implementation = DataResponseDto.class)))
+	@GetMapping("")
+	public DataResponseDto<List<GetPostRes>> postList(
+			@LoginUsers CustomUserDetails userDetails,
+			@RequestParam(required = false, defaultValue = "1") int page,
+			@RequestParam(required = false) int offset
+	) {
+		List<GetPostRes> postResList = new ArrayList<>();
+		return DataResponseDto.of(postResList);
+	}
+
+	@Operation(summary = "게시글 수정")
+	@ApiResponse(responseCode = "200", description = "단건 수정 성공",
+			content = @Content(mediaType = "application/json", schema = @Schema(implementation = DataResponseDto.class)))
+	@PatchMapping("/{postId}")
+	public DataResponseDto<String> postModify(
+			@Parameter(description = "게시글 ID") @PathVariable(value = "postId") Long postId,
+			@RequestBody @Valid ModifyPostReq postDto) {
+		postService.modifyPost(postDto, postId);
+		return DataResponseDto.of("SUCCESS");
 	}
 
 	@Operation(summary = "게시글 단건 삭제")

@@ -5,17 +5,17 @@ import com.seniors.common.exception.type.NotFoundException;
 import com.seniors.common.repository.BasicRepoSupport;
 import com.seniors.domain.comment.entity.QComment;
 import com.seniors.domain.post.dto.PostDto.GetPostRes;
-import com.seniors.domain.post.dto.QPostDto_GetPostRes;
+import com.seniors.domain.post.dto.PostDto.ModifyPostReq;
 import com.seniors.domain.post.entity.Post;
 import com.seniors.domain.post.entity.QPost;
 import com.seniors.domain.users.entity.QUsers;
 import jakarta.persistence.EntityManager;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
-
-import static com.seniors.domain.users.dto.UsersDto.GetPostUserRes;
 
 
 @Slf4j
@@ -31,7 +31,7 @@ public class PostRepositoryImpl extends BasicRepoSupport implements PostReposito
 	}
 
 	@Override
-	public GetPostRes getOnePost(Long postId, Long userId) {
+	public GetPostRes findOnePost(Long postId, Long userId) {
 		List<Post> postResList = jpaQueryFactory
 				.selectFrom(post)
 				.leftJoin(post.comments, comment).fetchJoin()
@@ -58,6 +58,19 @@ public class PostRepositoryImpl extends BasicRepoSupport implements PostReposito
 		return content.get(0);
 	}
 
+	public void modifyPost(ModifyPostReq modifyPostReq, Long postId) {
+		jpaQueryFactory
+				.update(post)
+				.set(post.title, modifyPostReq.getTitle())
+				.set(post.content, modifyPostReq.getContent())
+				.where(post.id.eq(postId))
+				.execute();
+	}
+
+	@Override
+	public Page<Post> findAllPost(Pageable pageable) {
+		return null;
+	}
 
 	private void updateViewCount(Long postId) {
 		jpaQueryFactory
