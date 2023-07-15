@@ -59,10 +59,10 @@ public class PostController {
 
 	@Operation(summary = "게시글 리스트 조회")
 	@ApiResponse(responseCode = "200", description = "리스트 조회 성공",
-			content = @Content(mediaType = "application/json", schema = @Schema(implementation = DataResponseDto.class)))
+			content = @Content(mediaType = "application/json", schema =
+			@Schema(implementation = DataResponseDto.class)))
 	@GetMapping("")
 	public DataResponseDto<CustomPage<GetPostRes>> postList(
-			@LoginUsers CustomUserDetails userDetails,
 			@RequestParam(required = false, defaultValue = "1") int page,
 			@RequestParam(required = false) int offset
 	) {

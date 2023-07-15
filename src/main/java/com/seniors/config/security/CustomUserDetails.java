@@ -1,9 +1,12 @@
 package com.seniors.config.security;
 
+import com.seniors.domain.users.entity.Users;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import java.security.Principal;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -11,7 +14,7 @@ import java.util.List;
 @Getter
 public class CustomUserDetails implements UserDetails {
 
-	private final Long userId;
+	private Long userId;
 	private final String userSnsId;
 	private final String userEmail;
 	private final String userNickname;
@@ -62,5 +65,9 @@ public class CustomUserDetails implements UserDetails {
 	@Override
 	public boolean isEnabled() {
 		return true;
+	}
+
+	public void setUserId(Long userId) {
+		this.userId = userId;
 	}
 }
