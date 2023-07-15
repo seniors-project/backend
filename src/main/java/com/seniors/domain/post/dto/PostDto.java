@@ -90,7 +90,6 @@ public class PostDto {
 	}
 
 	@Data
-	@Setter
 	public static class SavePostReq extends Post {
 		@JsonIgnore
 		private Long userId;

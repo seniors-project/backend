@@ -1,6 +1,7 @@
 package com.seniors.domain.post.controller;
 
 import com.seniors.common.annotation.LoginUsers;
+import com.seniors.common.dto.CustomPage;
 import com.seniors.common.dto.DataResponseDto;
 import com.seniors.config.security.CustomUserDetails;
 import com.seniors.domain.post.dto.PostDto;
@@ -19,6 +20,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
@@ -40,8 +42,7 @@ public class PostController {
 	public DataResponseDto<String> postAdd(
 			@RequestBody @Valid SavePostReq postDto,
 			@LoginUsers CustomUserDetails userDetails) {
-		postDto.setUserId(userDetails.getUserId());
-		postService.addPost(postDto);
+		postService.addPost(postDto, userDetails.getUserId());
 		return DataResponseDto.of("SUCCESS");
 	}
 
@@ -60,12 +61,12 @@ public class PostController {
 	@ApiResponse(responseCode = "200", description = "리스트 조회 성공",
 			content = @Content(mediaType = "application/json", schema = @Schema(implementation = DataResponseDto.class)))
 	@GetMapping("")
-	public DataResponseDto<List<GetPostRes>> postList(
+	public DataResponseDto<CustomPage<GetPostRes>> postList(
 			@LoginUsers CustomUserDetails userDetails,
 			@RequestParam(required = false, defaultValue = "1") int page,
 			@RequestParam(required = false) int offset
 	) {
-		List<GetPostRes> postResList = postService.findPost(page, offset);
+		CustomPage<GetPostRes> postResList = postService.findPost(page - 1, offset);
 		return DataResponseDto.of(postResList);
 	}
 

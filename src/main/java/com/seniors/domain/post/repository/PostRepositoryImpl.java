@@ -74,7 +74,7 @@ public class PostRepositoryImpl extends BasicRepoSupport implements PostReposito
 		JPAQuery<Post> query = jpaQueryFactory
 				.selectFrom(post)
 				.leftJoin(post.comments, comment).fetchJoin()
-				.innerJoin(post.users, users).fetchJoin();
+				.join(post.users, users).fetchJoin();
 		super.setPageQuery(query, pageable, post);
 		List<GetPostRes> content = query.fetch().stream()
 				.map(p -> new GetPostRes(

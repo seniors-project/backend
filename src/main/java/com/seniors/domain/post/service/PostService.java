@@ -1,5 +1,6 @@
 package com.seniors.domain.post.service;
 
+import com.seniors.common.dto.CustomPage;
 import com.seniors.common.exception.type.BadRequestException;
 import com.seniors.domain.post.dto.PostDto;
 import com.seniors.domain.post.dto.PostDto.GetPostRes;
@@ -16,6 +17,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.Sort.Direction;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -31,12 +33,12 @@ public class PostService {
 	private final PostRepository postRepository;
 	private final UsersRepository usersRepository;
 
-	public void addPost(SavePostReq postReq) {
+	public void addPost(SavePostReq postReq, Long userId) {
 		if (postReq.getTitle() == null || postReq.getTitle().isEmpty() || postReq.getContent() == null || postReq.getContent().isEmpty()) {
 			throw new BadRequestException("Title or Content is required");
 		}
 
-		usersRepository.findById(postReq.getUserId()).ifPresent(users ->
+		usersRepository.findById(userId).ifPresent(users ->
 				postRepository.save(Post.of(postReq.getTitle(), postReq.getContent(), users))
 		);
 	}
@@ -46,12 +48,11 @@ public class PostService {
 		return postRepository.findOnePost(postId, userId);
 	}
 
-	@Transactional
-	public List<GetPostRes> findPost(int page, int offset) {
-		Sort.Direction direction = Sort.Direction.DESC;
+	public CustomPage<GetPostRes> findPost(int page, int offset) {
+		Direction direction = Direction.DESC;
 		Pageable pageable = PageRequest.of(page, offset, Sort.by(direction, "id"));
 		Page<GetPostRes> posts = postRepository.findAllPost(pageable);
-		return posts.stream().toList();
+		return CustomPage.of(posts);
 	}
 
 	@Transactional
