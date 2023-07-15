@@ -1,8 +1,8 @@
 # 작업 디렉토리를 /home/ec2-user/app으로 변경
-cd /home/ubuntu/app
+cd /home/ubuntu
 
 # 환경변수 DOCKER_APP_NAME을 spring으로 설정
-DOCKER_APP_NAME=spring
+DOCKER_APP_NAME=seniors
 
 
 # 실행중인 blue가 있는지 확인
