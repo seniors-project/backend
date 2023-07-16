@@ -160,7 +160,7 @@ class PostControllerTest {
 		postRepository.saveAll(requestPosts);
 
 		// expected
-		mockMvc.perform(get("/api/posts?page=1&offset=5")
+		mockMvc.perform(get("/api/posts?page=1&size=5")
 						.contentType(APPLICATION_JSON)
 						.principal(authentication)
 				)
