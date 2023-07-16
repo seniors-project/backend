@@ -40,6 +40,9 @@ dependencies {
 
 	implementation 'org.json:json:20220320'
 
+	//log
+	implementation "com.github.maricn:logback-slack-appender:1.4.0"
+
 	implementation 'org.projectlombok:lombok'
 	annotationProcessor('org.projectlombok:lombok')
 
