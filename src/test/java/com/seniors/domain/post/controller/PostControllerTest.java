@@ -4,15 +4,13 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.seniors.common.constant.OAuthProvider;
 import com.seniors.common.constant.ResultCode;
 import com.seniors.config.security.CustomUserDetails;
-import com.seniors.domain.post.dto.PostDto;
 import com.seniors.domain.post.dto.PostDto.PostCreateDto;
 import com.seniors.domain.post.entity.Post;
 import com.seniors.domain.post.repository.PostRepository;
-import com.seniors.domain.post.service.PostService;
 import com.seniors.domain.users.entity.Users;
 import com.seniors.domain.users.repository.UsersRepository;
+import jakarta.persistence.EntityManager;
 import lombok.extern.slf4j.Slf4j;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -25,20 +23,18 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.request.RequestPostProcessor;
+import org.springframework.transaction.annotation.Transactional;
 
-import java.security.Principal;
 import java.sql.Timestamp;
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
-import static com.seniors.domain.post.dto.PostDto.*;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @Slf4j
 @AutoConfigureMockMvc
@@ -51,6 +47,8 @@ class PostControllerTest {
 	private ObjectMapper objectMapper;
 	@Autowired
 	private MockMvc mockMvc;
+	@Autowired
+	private EntityManager em;
 
 	@Autowired
 	private PostRepository postRepository;
@@ -63,6 +61,7 @@ class PostControllerTest {
 	@BeforeEach
 	void clean() {
 		postRepository.deleteAll();
+		usersRepository.deleteAll();
 
 		users = usersRepository.save(Users.builder()
 				// Duplicate 에러로 인해 임시로 timestamp 값으로 해결
@@ -87,6 +86,7 @@ class PostControllerTest {
 		SecurityContextHolder.getContext().setAuthentication(authentication);
 	}
 
+	@Transactional
 	@Test
 	@DisplayName("게시글 생성")
 	void postAdd() throws Exception {
@@ -107,6 +107,7 @@ class PostControllerTest {
 				.andDo(print());
 	}
 
+	@Transactional
 	@Test
 	@DisplayName("생성 요청 시 title 값은 필수")
 	void postAddNotExistTitle() throws Exception {
@@ -128,6 +129,7 @@ class PostControllerTest {
 				.andDo(print());
 	}
 
+	@Transactional
 	@Test
 	@DisplayName("게시글 단건 조회")
 	void findOnePost() throws Exception {
@@ -143,6 +145,7 @@ class PostControllerTest {
 				.andDo(print());
 	}
 
+	@Transactional
 	@Test
 	@DisplayName("사용자 글 리스트 조회")
 	void getListTest2() throws Exception {
@@ -169,6 +172,7 @@ class PostControllerTest {
 
 	}
 
+	@Transactional
 	@Test
 	@DisplayName("게시글 수정")
 	void modifyPost() throws Exception {
