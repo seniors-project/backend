@@ -64,9 +64,9 @@ public class PostController {
 	@GetMapping("")
 	public DataResponseDto<CustomPage<GetPostRes>> postList(
 			@RequestParam(required = false, defaultValue = "1") int page,
-			@RequestParam(required = false) int offset
+			@RequestParam(required = false) int size
 	) {
-		CustomPage<GetPostRes> postResList = postService.findPost(page - 1, offset);
+		CustomPage<GetPostRes> postResList = postService.findPost(page - 1, size);
 		return DataResponseDto.of(postResList);
 	}
 
@@ -76,8 +76,9 @@ public class PostController {
 	@PatchMapping("/{postId}")
 	public DataResponseDto<String> postModify(
 			@Parameter(description = "게시글 ID") @PathVariable(value = "postId") Long postId,
+			@LoginUsers CustomUserDetails userDetails,
 			@RequestBody @Valid ModifyPostReq postDto) {
-		postService.modifyPost(postDto, postId);
+		postService.modifyPost(postDto, postId, userDetails.getUserId());
 		return DataResponseDto.of("SUCCESS");
 	}
 

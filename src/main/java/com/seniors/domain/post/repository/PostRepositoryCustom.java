@@ -9,7 +9,7 @@ import org.springframework.data.domain.Pageable;
 public interface PostRepositoryCustom {
 
 	GetPostRes findOnePost(Long postId, Long userId);
-	void modifyPost(ModifyPostReq modifyPostReq, Long postId);
+	void modifyPost(ModifyPostReq modifyPostReq, Long postId, Long userId);
 
 	Page<GetPostRes> findAllPost(Pageable pageable);
 }

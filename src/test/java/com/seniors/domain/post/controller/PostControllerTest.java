@@ -28,6 +28,11 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.RequestPostProcessor;
 
 import java.security.Principal;
+import java.sql.Timestamp;
+import java.time.LocalDateTime;
+import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 import static com.seniors.domain.post.dto.PostDto.*;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
@@ -58,11 +63,12 @@ class PostControllerTest {
 	@BeforeEach
 	void clean() {
 		postRepository.deleteAll();
+
 		users = usersRepository.save(Users.builder()
-				.snsId("123123123")
+				// Duplicate 에러로 인해 임시로 timestamp 값으로 해결
+				.snsId(String.valueOf(new Timestamp(System.currentTimeMillis()).getTime()))
 				.email("test@test.com")
 				.gender("male")
-				.nickname("테스터 1")
 				.ageRange("20~29")
 				.birthday("12-31")
 				.oAuthProvider(OAuthProvider.KAKAO)
@@ -136,5 +142,56 @@ class PostControllerTest {
 				.andExpect(status().isOk())
 				.andDo(print());
 	}
+
+	@Test
+	@DisplayName("사용자 글 리스트 조회")
+	void getListTest2() throws Exception {
+		// given
+		List<Post> requestPosts = IntStream.range(1, 5)
+				.mapToObj(i -> Post.builder()
+						.title("seniors title " + i)
+						.content("seniors content " + i)
+						.isDeleted(false)
+						.viewCount(0)
+						.likeCount(0)
+						.users(users)
+						.build())
+				.collect(Collectors.toList());
+		postRepository.saveAll(requestPosts);
+
+		// expected
+		mockMvc.perform(get("/api/posts?page=1&offset=5")
+						.contentType(APPLICATION_JSON)
+						.principal(authentication)
+				)
+				.andExpect(status().isOk())
+				.andDo(print());
+
+	}
+
+	@Test
+	@DisplayName("게시글 수정")
+	void modifyPost() throws Exception {
+		// given
+		Post post = postRepository.save(Post.of("글 제목1", "글 내용1", users));
+
+		PostCreateDto modifyPostReq = PostCreateDto.builder()
+				.title("변경 제목1")
+				.content("변경 내용1")
+				.build();
+		String json = objectMapper.writeValueAsString(modifyPostReq);     // Javascript의 JSON.stringfy(object)
+
+		// expected
+		mockMvc.perform(patch("/api/posts/{postId}", post.getId())
+						.contentType(APPLICATION_JSON)
+						.content(json)
+						.principal(authentication)
+				)
+				.andExpect(status().isOk())
+				.andDo(print());
+
+	}
+
+
 
 }

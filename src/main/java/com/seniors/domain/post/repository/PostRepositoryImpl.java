@@ -60,12 +60,12 @@ public class PostRepositoryImpl extends BasicRepoSupport implements PostReposito
 		return content.get(0);
 	}
 
-	public void modifyPost(ModifyPostReq modifyPostReq, Long postId) {
+	public void modifyPost(ModifyPostReq modifyPostReq, Long postId, Long userId) {
 		jpaQueryFactory
 				.update(post)
 				.set(post.title, modifyPostReq.getTitle())
 				.set(post.content, modifyPostReq.getContent())
-				.where(post.id.eq(postId))
+				.where(post.id.eq(postId).and(post.users.id.eq(userId)))
 				.execute();
 	}
 

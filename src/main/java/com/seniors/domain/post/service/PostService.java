@@ -48,16 +48,16 @@ public class PostService {
 		return postRepository.findOnePost(postId, userId);
 	}
 
-	public CustomPage<GetPostRes> findPost(int page, int offset) {
+	public CustomPage<GetPostRes> findPost(int page, int size) {
 		Direction direction = Direction.DESC;
-		Pageable pageable = PageRequest.of(page, offset, Sort.by(direction, "id"));
+		Pageable pageable = PageRequest.of(page, size, Sort.by(direction, "id"));
 		Page<GetPostRes> posts = postRepository.findAllPost(pageable);
 		return CustomPage.of(posts);
 	}
 
 	@Transactional
-	public void modifyPost(ModifyPostReq modifyPostReq, Long postId) {
-		postRepository.modifyPost(modifyPostReq, postId);
+	public void modifyPost(ModifyPostReq modifyPostReq, Long postId, Long userId) {
+		postRepository.modifyPost(modifyPostReq, postId, userId);
 	}
 
 	@Transactional
