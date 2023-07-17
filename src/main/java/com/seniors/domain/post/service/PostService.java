@@ -42,6 +42,7 @@ public class PostService {
 		return postRepository.findOnePost(postId, userId);
 	}
 
+	@Transactional(readOnly = true)
 	public CustomPage<GetPostRes> findPost(int page, int size) {
 		Direction direction = Direction.DESC;
 		Pageable pageable = PageRequest.of(page, size, Sort.by(direction, "id"));
@@ -51,7 +52,8 @@ public class PostService {
 
 	@Transactional
 	public void modifyPost(ModifyPostReq modifyPostReq, Long postId, Long userId) {
-		postRepository.modifyPost(modifyPostReq, postId, userId);
+
+//		postRepository.modifyPost(modifyPostReq, postId, userId);
 	}
 
 	@Transactional
