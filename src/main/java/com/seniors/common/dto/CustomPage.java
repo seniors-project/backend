@@ -8,6 +8,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 
+import java.util.Collections;
 import java.util.List;
 
 @Data
@@ -27,10 +28,11 @@ public class CustomPage<T> {
     private int numberOfElements;
     private boolean empty;
 
-    // 생성자, 게터, 세터 등 필요한 코드
     public static <T> CustomPage<T> of(Page<T> page) {
+        if (page == null) return null;
+        List<T> list = page.getContent();
         CustomPage<T> response = new CustomPage<>();
-        response.setList(page.getContent()); // 변경: content를 list에 설정
+        response.setList(list);
         response.setPageable(page.getPageable());
         response.setLast(page.isLast());
         response.setTotalPages(page.getTotalPages());

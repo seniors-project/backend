@@ -4,12 +4,9 @@ import com.seniors.common.annotation.LoginUsers;
 import com.seniors.common.dto.CustomPage;
 import com.seniors.common.dto.DataResponseDto;
 import com.seniors.config.security.CustomUserDetails;
-import com.seniors.domain.post.dto.PostDto;
 import com.seniors.domain.post.dto.PostDto.GetPostRes;
 import com.seniors.domain.post.dto.PostDto.ModifyPostReq;
-import com.seniors.domain.post.dto.PostDto.PostCreateDto;
 import com.seniors.domain.post.dto.PostDto.SavePostReq;
-import com.seniors.domain.post.entity.Post;
 import com.seniors.domain.post.service.PostService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -20,11 +17,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.ArrayList;
-import java.util.List;
 
 @Tag(name = "게시글", description = "게시글 API 명세서")
 @Slf4j
@@ -66,7 +59,7 @@ public class PostController {
 			@RequestParam(required = false, defaultValue = "1") int page,
 			@RequestParam(required = false) int size
 	) {
-		CustomPage<GetPostRes> postResList = postService.findPost(page - 1, size);
+		CustomPage<GetPostRes> postResList = postService.findPost(page > 0 ? page - 1 : 0, size);
 		return DataResponseDto.of(postResList);
 	}
 

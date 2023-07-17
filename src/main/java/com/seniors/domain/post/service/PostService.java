@@ -2,14 +2,11 @@ package com.seniors.domain.post.service;
 
 import com.seniors.common.dto.CustomPage;
 import com.seniors.common.exception.type.BadRequestException;
-import com.seniors.domain.post.dto.PostDto;
 import com.seniors.domain.post.dto.PostDto.GetPostRes;
 import com.seniors.domain.post.dto.PostDto.ModifyPostReq;
-import com.seniors.domain.post.dto.PostDto.PostCreateDto;
 import com.seniors.domain.post.dto.PostDto.SavePostReq;
 import com.seniors.domain.post.entity.Post;
 import com.seniors.domain.post.repository.PostRepository;
-import com.seniors.domain.users.entity.Users;
 import com.seniors.domain.users.repository.UsersRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -20,10 +17,6 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import javax.persistence.EntityNotFoundException;
-import java.util.List;
-
 
 @Slf4j
 @Service
