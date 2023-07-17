@@ -26,6 +26,7 @@ public class PostService {
 	private final PostRepository postRepository;
 	private final UsersRepository usersRepository;
 
+	@Transactional
 	public void addPost(SavePostReq postReq, Long userId) {
 		if (postReq.getTitle() == null || postReq.getTitle().isEmpty() || postReq.getContent() == null || postReq.getContent().isEmpty()) {
 			throw new BadRequestException("Title or Content is required");
@@ -36,7 +37,7 @@ public class PostService {
 		);
 	}
 
-	@Transactional
+	@Transactional(readOnly = true)
 	public GetPostRes findOnePost(Long postId, Long userId) {
 		return postRepository.findOnePost(postId, userId);
 	}
