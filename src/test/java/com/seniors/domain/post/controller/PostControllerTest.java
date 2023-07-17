@@ -47,8 +47,6 @@ class PostControllerTest {
 	private ObjectMapper objectMapper;
 	@Autowired
 	private MockMvc mockMvc;
-	@Autowired
-	private EntityManager em;
 
 	@Autowired
 	private PostRepository postRepository;
