@@ -9,7 +9,6 @@ import com.seniors.domain.post.entity.Post;
 import com.seniors.domain.post.repository.PostRepository;
 import com.seniors.domain.users.entity.Users;
 import com.seniors.domain.users.repository.UsersRepository;
-import jakarta.persistence.EntityManager;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -30,11 +29,14 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
-import static org.springframework.http.MediaType.APPLICATION_JSON;
+import static org.hamcrest.Matchers.*;
+import static org.junit.jupiter.api.Assertions.*;
+import static org.springframework.http.MediaType.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
 
 @Slf4j
 @AutoConfigureMockMvc
@@ -148,10 +150,10 @@ class PostControllerTest {
 	@DisplayName("사용자 글 리스트 조회")
 	void getListTest2() throws Exception {
 		// given
-		List<Post> requestPosts = IntStream.range(1, 5)
+		List<Post> requestPosts = IntStream.range(0, 5)
 				.mapToObj(i -> Post.builder()
-						.title("seniors title " + i)
-						.content("seniors content " + i)
+						.title("seniors title " + i + 1)
+						.content("seniors content " + i + 1)
 						.isDeleted(false)
 						.viewCount(0)
 						.likeCount(0)
@@ -166,6 +168,10 @@ class PostControllerTest {
 						.principal(authentication)
 				)
 				.andExpect(status().isOk())
+				.andExpect(jsonPath("$.data.list.length()", is(5)))
+				.andExpect(jsonPath("$.data.list[0].postId").value(requestPosts.get(requestPosts.size() - 1).getId()))
+				.andExpect(jsonPath("$.code").value(ResultCode.OK.getCode()))
+				.andExpect(jsonPath("$.message").value(ResultCode.OK.getMessage()))
 				.andDo(print());
 
 	}
