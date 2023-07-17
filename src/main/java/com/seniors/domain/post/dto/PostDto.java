@@ -3,6 +3,7 @@ package com.seniors.domain.post.dto;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.querydsl.core.annotations.QueryProjection;
 import com.seniors.domain.comment.entity.Comment;
+import com.seniors.domain.post.entity.Post;
 import com.seniors.domain.users.dto.UsersDto.GetPostUserRes;
 import com.seniors.domain.users.entity.Users;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -91,6 +92,18 @@ public class PostDto {
 					))
 					.collect(Collectors.toList());
 		}
+	}
+
+	@Data
+	public static class SavePostReq extends Post {
+		@JsonIgnore
+		private Long userId;
+	}
+
+	@Data
+	public static class ModifyPostReq extends Post {
+		@JsonIgnore
+		private Long userId;
 	}
 
 }

@@ -40,9 +40,12 @@ dependencies {
 
 	implementation 'org.json:json:20220320'
 
+	//log
+	implementation "com.github.maricn:logback-slack-appender:1.4.0"
+
 	implementation 'org.projectlombok:lombok'
 	annotationProcessor('org.projectlombok:lombok')
-	runtimeOnly 'com.h2database:h2'
+
 	runtimeOnly 'com.mysql:mysql-connector-j'
 
 	implementation group: 'com.google.guava', name: 'guava', version: '30.1.1-jre'
@@ -55,6 +58,7 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-security'
 	implementation 'org.springframework.security:spring-security-test'
 	implementation 'org.springframework.security:spring-security-crypto'
+	implementation 'org.springframework.session:spring-session-jdbc'
 
 	implementation 'org.springframework.boot:spring-boot-starter-oauth2-client:3.0.4'
 	implementation 'io.jsonwebtoken:jjwt-api:0.11.5'

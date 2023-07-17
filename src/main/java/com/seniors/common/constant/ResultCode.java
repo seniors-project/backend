@@ -26,7 +26,8 @@ public enum ResultCode {
 	DATA_ACCESS_ERROR(20001, HttpStatus.INTERNAL_SERVER_ERROR, "Data access error"),
 
 	// 인증
-	UNAUTHORIZED(40000, HttpStatus.UNAUTHORIZED, "User unauthorized");
+	UNAUTHORIZED(40000, HttpStatus.UNAUTHORIZED, "User unauthorized"),
+	EXPIRED_REFRESH_TOKEN(40003, HttpStatus.UNAUTHORIZED, "Expired Refresh-token");
 
 	private final Integer code;
 	private final HttpStatus httpStatus;

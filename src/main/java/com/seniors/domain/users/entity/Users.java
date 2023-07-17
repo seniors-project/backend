@@ -32,6 +32,12 @@ public class Users extends BaseEntity {
 	@Column(columnDefinition = "varchar(10) COMMENT '성별'")
 	private String gender;
 
+	@Column(columnDefinition = "varchar(10) COMMENT '생년월일'")
+	private String birthday;
+
+	@Column(columnDefinition = "varchar(20) COMMENT '나이 연령대'")
+	private String ageRange;
+
 	@Column(columnDefinition = "varchar(50) COMMENT '휴대전화번호'")
 	private String phoneNumber;
 
@@ -49,21 +55,32 @@ public class Users extends BaseEntity {
 	private List<Comment> comments = new ArrayList<>();
 
 	public static Users of(
-			String snsId, String email, String nickname, OAuthProvider oAuthProvider
+			String snsId, String email, String nickname, OAuthProvider oAuthProvider,
+			String gender, String birthday, String ageRange, String profileImageUrl
 	) {
 		return Users.builder()
 				.snsId(snsId)
 				.email(email)
 				.nickname(nickname)
 				.oAuthProvider(oAuthProvider)
+				.gender(gender)
+				.birthday(birthday)
+				.ageRange(ageRange)
+				.profileImageUrl(profileImageUrl)
 				.build();
 	}
 
 	@Builder
-	public Users (String snsId, String email, String nickname, OAuthProvider oAuthProvider) {
+	public Users (String snsId, String email, String nickname, OAuthProvider oAuthProvider,
+	              String gender, String birthday, String ageRange, String profileImageUrl
+	) {
 		this.snsId = snsId;
 		this.email = email;
 		this.nickname = nickname;
 		this.oAuthProvider = oAuthProvider;
+		this.gender = gender;
+		this.profileImageUrl = profileImageUrl;
+		this.birthday = birthday;
+		this.ageRange = ageRange;
 	}
 }
