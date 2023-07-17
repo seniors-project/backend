@@ -11,7 +11,7 @@ import java.util.List;
 @Getter
 public class CustomUserDetails implements UserDetails {
 
-	private final Long userId;
+	private Long userId;
 	private final String userSnsId;
 	private final String userEmail;
 	private final String userNickname;
@@ -62,5 +62,9 @@ public class CustomUserDetails implements UserDetails {
 	@Override
 	public boolean isEnabled() {
 		return true;
+	}
+
+	public void setUserId(Long userId) {
+		this.userId = userId;
 	}
 }

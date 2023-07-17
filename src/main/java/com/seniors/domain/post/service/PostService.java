@@ -1,21 +1,22 @@
 package com.seniors.domain.post.service;
 
+import com.seniors.common.dto.CustomPage;
 import com.seniors.common.exception.type.BadRequestException;
-import com.seniors.domain.post.dto.PostDto;
 import com.seniors.domain.post.dto.PostDto.GetPostRes;
-import com.seniors.domain.post.dto.PostDto.PostCreateDto;
+import com.seniors.domain.post.dto.PostDto.ModifyPostReq;
 import com.seniors.domain.post.dto.PostDto.SavePostReq;
 import com.seniors.domain.post.entity.Post;
 import com.seniors.domain.post.repository.PostRepository;
-import com.seniors.domain.users.entity.Users;
 import com.seniors.domain.users.repository.UsersRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.Sort.Direction;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import javax.persistence.EntityNotFoundException;
-
 
 @Slf4j
 @Service
@@ -25,14 +26,34 @@ public class PostService {
 	private final PostRepository postRepository;
 	private final UsersRepository usersRepository;
 
-	public void addPost(SavePostReq postReq) {
+	@Transactional
+	public void addPost(SavePostReq postReq, Long userId) {
 		if (postReq.getTitle() == null || postReq.getTitle().isEmpty() || postReq.getContent() == null || postReq.getContent().isEmpty()) {
 			throw new BadRequestException("Title or Content is required");
 		}
 
-		usersRepository.findById(postReq.getUserId()).ifPresent(users ->
+		usersRepository.findById(userId).ifPresent(users ->
 				postRepository.save(Post.of(postReq.getTitle(), postReq.getContent(), users))
 		);
+	}
+
+	@Transactional(readOnly = true)
+	public GetPostRes findOnePost(Long postId, Long userId) {
+		return postRepository.findOnePost(postId, userId);
+	}
+
+	@Transactional(readOnly = true)
+	public CustomPage<GetPostRes> findPost(int page, int size) {
+		Direction direction = Direction.DESC;
+		Pageable pageable = PageRequest.of(page, size, Sort.by(direction, "id"));
+		Page<GetPostRes> posts = postRepository.findAllPost(pageable);
+		return CustomPage.of(posts);
+	}
+
+	@Transactional
+	public void modifyPost(ModifyPostReq modifyPostReq, Long postId, Long userId) {
+
+//		postRepository.modifyPost(modifyPostReq, postId, userId);
 	}
 
 	@Transactional
@@ -40,8 +61,4 @@ public class PostService {
 		postRepository.deleteById(postId);
 	}
 
-	@Transactional
-	public GetPostRes findPost(Long postId, Long userId) {
-		return postRepository.getOnePost(postId, userId);
-	}
 }

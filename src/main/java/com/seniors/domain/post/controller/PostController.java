@@ -1,13 +1,12 @@
 package com.seniors.domain.post.controller;
 
 import com.seniors.common.annotation.LoginUsers;
+import com.seniors.common.dto.CustomPage;
 import com.seniors.common.dto.DataResponseDto;
 import com.seniors.config.security.CustomUserDetails;
-import com.seniors.domain.post.dto.PostDto;
 import com.seniors.domain.post.dto.PostDto.GetPostRes;
-import com.seniors.domain.post.dto.PostDto.PostCreateDto;
+import com.seniors.domain.post.dto.PostDto.ModifyPostReq;
 import com.seniors.domain.post.dto.PostDto.SavePostReq;
-import com.seniors.domain.post.entity.Post;
 import com.seniors.domain.post.service.PostService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -36,8 +35,7 @@ public class PostController {
 	public DataResponseDto<String> postAdd(
 			@RequestBody @Valid SavePostReq postDto,
 			@LoginUsers CustomUserDetails userDetails) {
-		postDto.setUserId(userDetails.getUserId());
-		postService.addPost(postDto);
+		postService.addPost(postDto, userDetails.getUserId());
 		return DataResponseDto.of("SUCCESS");
 	}
 
@@ -48,8 +46,33 @@ public class PostController {
 	public DataResponseDto<GetPostRes> postDetails(
 			@Parameter(description = "게시글 ID") @PathVariable(value = "postId") Long postId,
 			@LoginUsers CustomUserDetails userDetails) {
-		GetPostRes post = postService.findPost(postId, userDetails.getUserId());
+		GetPostRes post = postService.findOnePost(postId, userDetails.getUserId());
 		return DataResponseDto.of(post);
+	}
+
+	@Operation(summary = "게시글 리스트 조회")
+	@ApiResponse(responseCode = "200", description = "리스트 조회 성공",
+			content = @Content(mediaType = "application/json", schema =
+			@Schema(implementation = DataResponseDto.class)))
+	@GetMapping("")
+	public DataResponseDto<CustomPage<GetPostRes>> postList(
+			@RequestParam(required = false, defaultValue = "1") int page,
+			@RequestParam(required = false) int size
+	) {
+		CustomPage<GetPostRes> postResList = postService.findPost(page > 0 ? page - 1 : 0, size);
+		return DataResponseDto.of(postResList);
+	}
+
+	@Operation(summary = "게시글 수정")
+	@ApiResponse(responseCode = "200", description = "단건 수정 성공",
+			content = @Content(mediaType = "application/json", schema = @Schema(implementation = DataResponseDto.class)))
+	@PatchMapping("/{postId}")
+	public DataResponseDto<String> postModify(
+			@Parameter(description = "게시글 ID") @PathVariable(value = "postId") Long postId,
+			@LoginUsers CustomUserDetails userDetails,
+			@RequestBody @Valid ModifyPostReq postDto) {
+		postService.modifyPost(postDto, postId, userDetails.getUserId());
+		return DataResponseDto.of("SUCCESS");
 	}
 
 	@Operation(summary = "게시글 단건 삭제")
