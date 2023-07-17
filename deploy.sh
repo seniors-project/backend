@@ -1,4 +1,4 @@
-# 작업 디렉토리를 /home/ubuntu 로 변경
+# 작업 디렉토리를 /home/ubuntu으로 변경
 cd /home/ubuntu
 
 # 환경변수 DOCKER_APP_NAME을 seniors으로 설정
@@ -15,7 +15,7 @@ echo "배포 시작일자 : $(date +%Y)-$(date +%m)-$(date +%d) $(date +%H):$(da
 # EXIST_BLUE 변수가 비어있는지 확인
 if [ -z "$EXIST_BLUE" ]; then
 
-  # 로그 파일(/home/ec2-user/deploy.log)에 "blue up - blue 배포 : port:8081"이라는 내용을 추가
+  # 로그 파일(/home/ubuntu/deploy.log)에 "blue up - blue 배포 : port:8081"이라는 내용을 추가
   echo "blue 배포 시작 : $(date +%Y)-$(date +%m)-$(date +%d) $(date +%H):$(date +%M):$(date +%S)" >> /home/ubuntu/deploy.log
 
 	# docker-compose.blue.yml 파일을 사용하여 spring-blue 프로젝트의 컨테이너를 빌드하고 실행
@@ -34,7 +34,7 @@ if [ -z "$EXIST_BLUE" ]; then
   # blue가 현재 실행되고 있는 경우에만 green을 종료
   else
 
-    # /home/ec2-user/deploy.log: 로그 파일에 "green 중단 시작"이라는 내용을 추가
+    # /home/ubuntu/deploy.log: 로그 파일에 "green 중단 시작"이라는 내용을 추가
     echo "green 중단 시작 : $(date +%Y)-$(date +%m)-$(date +%d) $(date +%H):$(date +%M):$(date +%S)" >> /home/ubuntu/deploy.log
 
     # docker-compose.green.yml 파일을 사용하여 spring-green 프로젝트의 컨테이너를 중지
@@ -60,7 +60,7 @@ else
       sudo ./slack_green.sh
   else
 
-      # /home/ec2-user/deploy.log: 로그 파일에 "blue 중단 시작"이라는 내용을 추가
+      # /home/ubuntu/deploy.log: 로그 파일에 "blue 중단 시작"이라는 내용을 추가
       echo "blue 중단 시작 : $(date +%Y)-$(date +%m)-$(date +%d) $(date +%H):$(date +%M):$(date +%S)" >> /home/ubuntu/deploy.log
 
       # docker-compose.blue.yml 파일을 사용하여 spring-green 프로젝트의 컨테이너를 중지
