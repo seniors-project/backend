@@ -68,9 +68,13 @@ public class KakaoInfoResponse implements OAuthInfoResponse {
 
 	@Override
 	public String getBirthday() {
-		String month = kakaoAccount.birthday.substring(0, 2);
-		String day = kakaoAccount.birthday.substring(2);
-		return month + "-" + day;
+		if (kakaoAccount.birthday != null) {
+			String month = kakaoAccount.birthday.substring(0, 2);
+			String day = kakaoAccount.birthday.substring(2);
+			return month + "-" + day;
+		} else {
+			return null;
+		}
 	}
 
 	@Override
