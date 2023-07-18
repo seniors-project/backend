@@ -2,6 +2,7 @@ package com.seniors.domain.comment.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.seniors.common.constant.OAuthProvider;
+import com.seniors.config.security.CustomUserDetails;
 import com.seniors.domain.comment.dto.CommentDto;
 import com.seniors.domain.comment.entity.Comment;
 import com.seniors.domain.comment.repository.CommentRepository;
@@ -18,9 +19,14 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
+
+import java.sql.Timestamp;
 
 import static com.seniors.domain.comment.dto.CommentDto.*;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
@@ -47,35 +53,50 @@ public class CommentControllerTest {
 	@Autowired
 	private CommentRepository commentRepository;
 
+	private static Authentication authentication;
+	private static Users users;
+
 	@BeforeEach
 	void clean() {
 		commentRepository.deleteAll();
+		postRepository.deleteAll();
+		usersRepository.deleteAll();
+		users = usersRepository.save(Users.builder()
+				// Duplicate 에러로 인해 임시로 timestamp 값으로 해결
+				.snsId(String.valueOf(new Timestamp(System.currentTimeMillis()).getTime()))
+				.email("test@test.com")
+				.gender("male")
+				.ageRange("20~29")
+				.birthday("12-31")
+				.oAuthProvider(OAuthProvider.KAKAO)
+				.build());
+		CustomUserDetails userDetails = new CustomUserDetails(
+				users.getId(),
+				users.getSnsId(),
+				users.getEmail(),
+				users.getNickname(),
+				users.getGender(),
+				users.getProfileImageUrl());
+		userDetails.setUserId(users.getId());
+
+		// Set the Authentication object
+		authentication = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
+		SecurityContextHolder.getContext().setAuthentication(authentication);
 	}
 
 	@Test
 	@DisplayName("댓글 생성")
 	void commentAdd() throws Exception {
 		// given
-		Users users = Users.builder()
-				.email("test@test.com")
-				.nickname("tester")
-				.oAuthProvider(OAuthProvider.KAKAO)
-				.snsId("alskdkadknasjlfn kakao")
-				.build();
-		Users users1 = usersRepository.save(users);
-
 		PostCreateDto postCreateDto = PostCreateDto.builder()
 				.title("글 제목입니다.")
 				.content("글 내용입니다.")
-				.userId(users1.getId())
 				.build();
-		Post post1 = postRepository.save(Post.of(postCreateDto.getTitle(), postCreateDto.getContent()));
-		log.info("{}, {}", users1.getId(), post1.getId());
+		Post post = postRepository.save(Post.of("글 제목1", "글 내용1", users));
 		SaveCommentDto saveCommentDto = SaveCommentDto
 				.builder()
 				.content("댓글 내용1")
 				.postId(post1.getId())
-				.userId(users1.getId())
 				.build();
 		String json = objectMapper.writeValueAsString(saveCommentDto);
 
@@ -83,6 +104,7 @@ public class CommentControllerTest {
 		mockMvc.perform(post("/api/comments")
 						.contentType(APPLICATION_JSON)
 						.content(json)
+						.principal(authentication)
 				)
 				.andExpect(status().isOk())
 				.andDo(print());

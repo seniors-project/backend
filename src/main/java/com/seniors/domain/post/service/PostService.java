@@ -52,7 +52,6 @@ public class PostService {
 
 	@Transactional
 	public void modifyPost(ModifyPostReq modifyPostReq, Long postId, Long userId) {
-
 		postRepository.modifyPost(modifyPostReq, postId, userId);
 	}
 

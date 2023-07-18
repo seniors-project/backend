@@ -1,6 +1,8 @@
 package com.seniors.domain.comment.controller;
 
+import com.seniors.common.annotation.LoginUsers;
 import com.seniors.common.dto.DataResponseDto;
+import com.seniors.config.security.CustomUserDetails;
 import com.seniors.domain.comment.dto.CommentDto;
 import com.seniors.domain.comment.entity.Comment;
 import com.seniors.domain.comment.service.CommentService;
@@ -30,9 +32,12 @@ public class CommentController {
     @ApiResponse(responseCode = "200", description = "생성 성공",
             content = @Content(mediaType = "application/json", schema = @Schema(implementation = DataResponseDto.class)))
     @PostMapping("")
-    public DataResponseDto<String> commentAdd(@RequestBody @Valid SaveCommentDto commentDto) {
-        Comment comment = commentService.addComment(commentDto);
-        return DataResponseDto.of("Comment [" + comment.getId() + "] add success");
+    public DataResponseDto<String> commentAdd(
+            @RequestBody @Valid SaveCommentDto commentDto,
+            @RequestParam(value = "postId", required = false) Long postId,
+            @LoginUsers CustomUserDetails userDetails) {
+        commentService.addComment(commentDto, postId, userDetails.getUserId());
+        return DataResponseDto.of("SUCCESS");
     }
 
     @Operation(summary = "댓글 수정")
@@ -41,9 +46,10 @@ public class CommentController {
     @PatchMapping("/{commentId}")
     public DataResponseDto<String> commentModify(
             @Parameter(description = "댓글 ID") @PathVariable(value = "commentId") Long commentId,
-            @RequestBody @Valid ModifyCommentDto commentDto) {
-        commentService.modifyComment(commentId, commentDto);
-        return DataResponseDto.of("Comment [" + commentId + "] modify success");
+            @RequestBody @Valid ModifyCommentDto commentDto,
+            @LoginUsers CustomUserDetails userDetails) {
+        commentService.modifyComment(commentId, commentDto, userDetails.getUserId());
+        return DataResponseDto.of("SUCCESS");
     }
 
     @Operation(summary = "댓글 삭제")
@@ -51,9 +57,10 @@ public class CommentController {
             content = @Content(mediaType = "application/json", schema = @Schema(implementation = DataResponseDto.class)))
     @DeleteMapping("/{commentId}")
     public DataResponseDto<String> commentRemove(
-            @Parameter(description = "댓글 ID") @PathVariable(value = "commentId") Long commentId
+            @Parameter(description = "댓글 ID") @PathVariable(value = "commentId") Long commentId,
+            @LoginUsers CustomUserDetails userDetails
     ) {
-        commentService.removeComment(commentId);
-        return DataResponseDto.of("Comment [" + commentId + "] delete success");
+        commentService.removeComment(commentId, userDetails.getUserId());
+        return DataResponseDto.of("SUCCESS");
     }
 }

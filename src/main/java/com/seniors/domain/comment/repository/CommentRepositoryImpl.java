@@ -17,13 +17,19 @@ public class CommentRepositoryImpl extends BasicRepoSupport implements CommentRe
     }
 
     @Override
-    public void modifyComment(Long commentId, ModifyCommentDto modifyCommentDto) {
+    public void modifyComment(Long commentId, ModifyCommentDto modifyCommentDto, Long userId) {
         jpaQueryFactory.update(comment)
                 .set(comment.content, modifyCommentDto.getContent())
                 .where(comment.id.eq(commentId)
-                        .and(comment.post.id.eq(modifyCommentDto.getPostId()))
-                        .and(comment.users.id.eq(modifyCommentDto.getUserId()))
+                        .and(comment.users.id.eq(userId))
                 )
+                .execute();
+    }
+
+    @Override
+    public void removeComment(Long commentId, Long userId) {
+        jpaQueryFactory.delete(comment)
+                .where(comment.id.eq(commentId).and(comment.users.id.eq(userId)))
                 .execute();
     }
 }

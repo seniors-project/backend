@@ -24,22 +24,23 @@ public class CommentService {
     private final PostRepository postRepository;
     private final UsersRepository usersRepository;
 
-    public Comment addComment(SaveCommentDto commentReq) {
-        if (commentReq.getContent() == null || commentReq.getContent().isEmpty())
+    public void addComment(SaveCommentDto commentReq, Long postId, Long userId) {
+        if (commentReq.getContent() == null || commentReq.getContent().isEmpty()) {
             throw new BadRequestException("Content is required");
-        Post post = postRepository.findById(commentReq.getPostId()).orElse(null);
-        Users users = usersRepository.findById(commentReq.getUserId()).orElse(null);
-
-        return commentRepository.save(Comment.of(commentReq.getContent(), post, users));
+        }
+        Post post = postRepository.findById(postId).orElse(null);
+        usersRepository.findById(userId).ifPresent(users ->
+                commentRepository.save(Comment.of(commentReq.getContent(), post, users))
+        );
     }
 
     @Transactional
-    public void removeComment(Long commentId) {
-        commentRepository.deleteById(commentId);
+    public void modifyComment(Long commentId, ModifyCommentDto modifyCommentDto, Long userId) {
+        commentRepository.modifyComment(commentId, modifyCommentDto, userId);
     }
 
     @Transactional
-    public void modifyComment(Long commentId, ModifyCommentDto modifyCommentDto) {
-        commentRepository.modifyComment(commentId, modifyCommentDto);
+    public void removeComment(Long commentId, Long userId) {
+        commentRepository.removeComment(commentId, userId);
     }
 }
