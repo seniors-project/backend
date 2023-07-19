@@ -28,7 +28,8 @@ public class CommentRepositoryImpl extends BasicRepoSupport implements CommentRe
 
     @Override
     public void removeComment(Long commentId, Long userId) {
-        jpaQueryFactory.delete(comment)
+        jpaQueryFactory.update(comment)
+                .set(comment.isDeleted, true)
                 .where(comment.id.eq(commentId).and(comment.users.id.eq(userId)))
                 .execute();
     }

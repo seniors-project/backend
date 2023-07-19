@@ -2,6 +2,7 @@ package com.seniors.domain.comment.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.seniors.common.constant.OAuthProvider;
+import com.seniors.common.constant.ResultCode;
 import com.seniors.config.security.CustomUserDetails;
 import com.seniors.domain.comment.dto.CommentDto;
 import com.seniors.domain.comment.entity.Comment;
@@ -12,6 +13,7 @@ import com.seniors.domain.post.entity.Post;
 import com.seniors.domain.post.repository.PostRepository;
 import com.seniors.domain.users.entity.Users;
 import com.seniors.domain.users.repository.UsersRepository;
+import io.jsonwebtoken.Claims;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -25,13 +27,16 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.sql.Timestamp;
 
 import static com.seniors.domain.comment.dto.CommentDto.*;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @Slf4j
@@ -60,7 +65,6 @@ public class CommentControllerTest {
 	void clean() {
 		commentRepository.deleteAll();
 		postRepository.deleteAll();
-		usersRepository.deleteAll();
 		users = usersRepository.save(Users.builder()
 				// Duplicate 에러로 인해 임시로 timestamp 값으로 해결
 				.snsId(String.valueOf(new Timestamp(System.currentTimeMillis()).getTime()))
@@ -84,24 +88,22 @@ public class CommentControllerTest {
 		SecurityContextHolder.getContext().setAuthentication(authentication);
 	}
 
+	@Transactional
 	@Test
 	@DisplayName("댓글 생성")
 	void commentAdd() throws Exception {
 		// given
-		PostCreateDto postCreateDto = PostCreateDto.builder()
-				.title("글 제목입니다.")
-				.content("글 내용입니다.")
-				.build();
 		Post post = postRepository.save(Post.of("글 제목1", "글 내용1", users));
-		SaveCommentDto saveCommentDto = SaveCommentDto
-				.builder()
-				.content("댓글 내용1")
-				.postId(post1.getId())
+		Comment comment = Comment.builder()
+				.content("댓글 test")
+				.isDeleted(false)
+				.post(post)
+				.users(users)
 				.build();
-		String json = objectMapper.writeValueAsString(saveCommentDto);
+		String json = objectMapper.writeValueAsString(comment);
 
 		// expected
-		mockMvc.perform(post("/api/comments")
+		mockMvc.perform(post("/api/comments?postId={postId}", post.getId())
 						.contentType(APPLICATION_JSON)
 						.content(json)
 						.principal(authentication)
@@ -114,24 +116,57 @@ public class CommentControllerTest {
 	@DisplayName("생성 요청 시 content 값은 필수")
 	void commentAddNotExistContent() throws Exception {
 		// given
-
+		Post post = postRepository.save(Post.of("글 제목1", "글 내용1", users));
+		Comment comment = Comment.builder()
+				.content("댓글 test")
+				.isDeleted(false)
+				.post(post)
+				.users(users)
+				.build();
+		String json = objectMapper.writeValueAsString(comment);
 
 		// expected
+		mockMvc.perform(post("/api/comments?postId={postId}", post.getId())
+						.contentType(APPLICATION_JSON)
+						.content(json)
+						.principal(authentication)
+				)
+				.andExpect(status().isBadRequest())
+				.andExpect(jsonPath("$.success").value(false))
+				.andExpect(jsonPath("$.code").value(ResultCode.BAD_REQUEST.getCode()))
+				.andDo(print());
 	}
 
 	@Test
 	@DisplayName("댓글 수정")
 	void commentModify() throws Exception {
 		// given
-		// expected
-	}
+		Post post = postRepository.save(Post.of("글 제목1", "글 내용1", users));
 
-	@Test
-	@DisplayName("댓글 삭제")
-	void commentRemove() throws Exception {
-		// given
-		// expected
-	}
+		Comment commentDto = Comment.builder()
+				.content("댓글 test")
+				.isDeleted(false)
+				.post(post)
+				.users(users)
+				.build();
+		Comment comment = commentRepository.save(commentDto);
 
+		Comment modifyPostReq = Comment.builder()
+				.content("댓글 변경 test")
+				.isDeleted(false)
+				.post(post)
+				.users(users)
+				.build();;
+		String json = objectMapper.writeValueAsString(modifyPostReq);     // Javascript의 JSON.stringfy(object)
+
+		// expected
+		mockMvc.perform(patch("/api/comments/{commentId}", comment.getId())
+						.contentType(APPLICATION_JSON)
+						.content(json)
+						.principal(authentication)
+				)
+				.andExpect(status().isOk())
+				.andDo(print());
+	}
 
 }

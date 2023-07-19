@@ -34,7 +34,7 @@ public class CommentController {
     @PostMapping("")
     public DataResponseDto<String> commentAdd(
             @RequestBody @Valid SaveCommentDto commentDto,
-            @RequestParam(value = "postId", required = false) Long postId,
+            @RequestParam(value = "postId") Long postId,
             @LoginUsers CustomUserDetails userDetails) {
         commentService.addComment(commentDto, postId, userDetails.getUserId());
         return DataResponseDto.of("SUCCESS");

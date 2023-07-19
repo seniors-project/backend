@@ -2,6 +2,7 @@ package com.seniors.domain.comment.dto;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.querydsl.core.annotations.QueryProjection;
+import com.seniors.domain.comment.entity.Comment;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.*;
 
@@ -36,15 +37,14 @@ public class CommentDto {
 	}
 
 	@Data
-	public static class SaveCommentDto {
-		@Schema(description = "댓글 내용", defaultValue = "댓글 내용 1", example = "댓글 내용 1이요")
-		private String content;
+	public static class SaveCommentDto extends Comment {
+		@JsonIgnore
+		private Long userId;
 	}
 
 	@Data
-	public static class ModifyCommentDto {
-		@Schema(description = "댓글 내용", defaultValue = "댓글 내용 1", example = "댓글 내용 1이요")
-		private String content;
-
+	public static class ModifyCommentDto extends Comment {
+		@JsonIgnore
+		private Long userId;
 	}
 }
