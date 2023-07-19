@@ -34,7 +34,7 @@ public class ChatRoom extends BaseEntity {
     @OneToMany(mappedBy = "chatRoom", orphanRemoval = true, cascade = CascadeType.ALL)
     private List<ChatMessage> chatMessages = new ArrayList<>();
 
-    public static ChatRoom of(String roomName) {
+    public static ChatRoom from(String roomName) {
         return ChatRoom.builder().roomName(roomName).isDeleted(false).build();
     }
 

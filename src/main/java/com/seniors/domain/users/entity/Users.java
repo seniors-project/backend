@@ -51,10 +51,10 @@ public class Users extends BaseEntity {
 	@OneToMany(mappedBy = "users", orphanRemoval = true, cascade = CascadeType.ALL)
 	private List<Comment> comments = new ArrayList<>();
 
-	@OneToMany(mappedBy = "users", orphanRemoval = true, cascade = CascadeType.ALL)
+	@OneToMany(mappedBy = "users", cascade = CascadeType.PERSIST)
 	private List<ChatMessage> chatMessages = new ArrayList<>();
 
-	@OneToMany(mappedBy = "users", orphanRemoval = true, cascade = CascadeType.ALL)
+	@OneToMany(mappedBy = "users", cascade = CascadeType.PERSIST)
 	private List<ChatRoomMembers> chatRoomMembers = new ArrayList<>();
 
 
