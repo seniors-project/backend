@@ -24,6 +24,7 @@ public class CommentService {
     private final PostRepository postRepository;
     private final UsersRepository usersRepository;
 
+    @Transactional
     public void addComment(SaveCommentDto commentReq, Long postId, Long userId) {
         if (commentReq.getContent() == null || commentReq.getContent().isEmpty()) {
             throw new BadRequestException("Content is required");

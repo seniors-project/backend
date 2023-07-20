@@ -112,6 +112,7 @@ public class CommentControllerTest {
 				.andDo(print());
 	}
 
+	@Transactional
 	@Test
 	@DisplayName("생성 요청 시 content 값은 필수")
 	void commentAddNotExistContent() throws Exception {
@@ -137,6 +138,7 @@ public class CommentControllerTest {
 				.andDo(print());
 	}
 
+	@Transactional
 	@Test
 	@DisplayName("댓글 수정")
 	void commentModify() throws Exception {
