@@ -1,6 +1,9 @@
 package com.seniors.domain.users.entity;
 
 import com.seniors.common.constant.OAuthProvider;
+import com.seniors.domain.chat.entity.ChatMessage;
+import com.seniors.domain.chat.entity.ChatRoom;
+import com.seniors.domain.chat.entity.ChatRoomMembers;
 import com.seniors.domain.comment.entity.Comment;
 import com.seniors.domain.common.BaseEntity;
 import com.seniors.domain.post.entity.Post;
@@ -53,6 +56,14 @@ public class Users extends BaseEntity {
 
 	@OneToMany(mappedBy = "users", orphanRemoval = true, cascade = CascadeType.ALL)
 	private List<Comment> comments = new ArrayList<>();
+
+	@OneToMany(mappedBy = "users", cascade = CascadeType.PERSIST)
+	private List<ChatMessage> chatMessages = new ArrayList<>();
+
+	@OneToMany(mappedBy = "users", cascade = CascadeType.PERSIST)
+	private List<ChatRoomMembers> chatRoomMembers = new ArrayList<>();
+
+
 
 	public static Users of(
 			String snsId, String email, String nickname, OAuthProvider oAuthProvider,
