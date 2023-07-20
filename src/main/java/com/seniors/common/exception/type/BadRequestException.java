@@ -7,23 +7,23 @@ public class BadRequestException extends RuntimeException{
 	private final ResultCode resultCode;
 
 	public BadRequestException() {
-		super(ResultCode.INTERNAL_ERROR.getMessage());
-		this.resultCode = ResultCode.INTERNAL_ERROR;
+		super(ResultCode.BAD_REQUEST.getMessage());
+		this.resultCode = ResultCode.BAD_REQUEST;
 	}
 
 	public BadRequestException(String message) {
-		super(ResultCode.INTERNAL_ERROR.getMessage(message));
-		this.resultCode = ResultCode.INTERNAL_ERROR;
+		super(ResultCode.BAD_REQUEST.getMessage(message));
+		this.resultCode = ResultCode.BAD_REQUEST;
 	}
 
 	public BadRequestException(String message, Throwable cause) {
-		super(ResultCode.INTERNAL_ERROR.getMessage(message), cause);
-		this.resultCode = ResultCode.INTERNAL_ERROR;
+		super(ResultCode.BAD_REQUEST.getMessage(message), cause);
+		this.resultCode = ResultCode.BAD_REQUEST;
 	}
 
 	public BadRequestException(Throwable cause) {
-		super(ResultCode.INTERNAL_ERROR.getMessage(cause));
-		this.resultCode = ResultCode.INTERNAL_ERROR;
+		super(ResultCode.BAD_REQUEST.getMessage(cause));
+		this.resultCode = ResultCode.BAD_REQUEST;
 	}
 
 	public BadRequestException(ResultCode errorCode) {

@@ -37,7 +37,7 @@ public class PostService {
 		);
 	}
 
-	@Transactional(readOnly = true)
+	@Transactional
 	public GetPostRes findOnePost(Long postId, Long userId) {
 		return postRepository.findOnePost(postId, userId);
 	}
@@ -52,7 +52,6 @@ public class PostService {
 
 	@Transactional
 	public void modifyPost(ModifyPostReq modifyPostReq, Long postId, Long userId) {
-
 		postRepository.modifyPost(modifyPostReq, postId, userId);
 	}
 

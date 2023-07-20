@@ -26,7 +26,6 @@ public class UsersDto {
 		@Schema(description = "프로필 이미지 url")
 		private String profileImageUrl;
 
-		@QueryProjection
 		public GetPostUserRes(Long userId, String gender, String nickname, String profileImageUrl) {
 			this.userId = userId;
 			this.gender = gender;

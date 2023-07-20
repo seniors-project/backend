@@ -31,8 +31,14 @@ public class PostDto {
 		@Schema(description = "게시글 내용", defaultValue = "내용 1", example = "내용 1이요")
 		@NotBlank(message = "Input content!")
 		private String content;
-		public static PostCreateDto of(String title, String content) {
-			return PostCreateDto.builder().title(title).content(content).build();
+
+		@Schema(description = "작성자 ID")
+		@NotBlank(message = "Required userId")
+		@JsonIgnore
+		private Long userId;
+
+		public static PostCreateDto of(String title, String content, Long userId) {
+			return PostCreateDto.builder().title(title).content(content).userId(userId).build();
 		}
 	}
 
@@ -62,7 +68,6 @@ public class PostDto {
 		@Schema(description = "게시글 댓글 리스트")
 		private List<GetCommentRes> comments; // Update the field type to List<GetCommentRes>
 
-		@QueryProjection
 		public GetPostRes(Long postId, String title, String content, Integer viewCount,
 		                  LocalDateTime createdAt, LocalDateTime lastModifiedDate, Users users,
 		                  List<Comment> comments) {

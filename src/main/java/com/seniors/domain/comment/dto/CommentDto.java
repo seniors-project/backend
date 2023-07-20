@@ -1,16 +1,17 @@
 package com.seniors.domain.comment.dto;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.querydsl.core.annotations.QueryProjection;
+import com.seniors.domain.comment.entity.Comment;
 import io.swagger.v3.oas.annotations.media.Schema;
-import jakarta.validation.constraints.NotBlank;
 import lombok.*;
 
 import java.time.LocalDateTime;
 
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@Builder
+@NoArgsConstructor
 @ToString
 @Getter
-@Setter
 public class CommentDto {
 
 	@Data
@@ -19,7 +20,6 @@ public class CommentDto {
 		private Long commentId;
 
 		@Schema(description = "댓글 내용", defaultValue = "댓글 내용 1", example = "댓글 내용 1이요")
-		@NotBlank(message = "Input content!")
 		private String content;
 
 		@Schema(description = "생성 일자")
@@ -28,12 +28,23 @@ public class CommentDto {
 		@Schema(description = "최근 수정 일자")
 		private LocalDateTime lastModifiedDate;
 
-		@QueryProjection
 		public GetCommentRes(Long commentId, String content, LocalDateTime createdAt, LocalDateTime lastModifiedDate) {
 			this.commentId = commentId;
 			this.content = content;
 			this.createdAt = createdAt;
 			this.lastModifiedDate = lastModifiedDate;
 		}
+	}
+
+	@Data
+	public static class SaveCommentDto extends Comment {
+		@JsonIgnore
+		private Long userId;
+	}
+
+	@Data
+	public static class ModifyCommentDto extends Comment {
+		@JsonIgnore
+		private Long userId;
 	}
 }
