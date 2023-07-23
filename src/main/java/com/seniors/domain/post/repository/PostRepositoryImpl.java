@@ -50,13 +50,11 @@ public class PostRepositoryImpl extends BasicRepoSupport implements PostReposito
 						p.getId(),
 						p.getTitle(),
 						p.getContent(),
-						p.getViewCount(),
 						p.getCreatedAt(),
 						p.getLastModifiedDate(),
 						p.getUsers(),
 						p.getComments())).toList();
 
-		updateViewCount(content.get(0).getPostId());
 		return content.get(0);
 	}
 
@@ -81,7 +79,6 @@ public class PostRepositoryImpl extends BasicRepoSupport implements PostReposito
 						p.getId(),
 						p.getTitle(),
 						p.getContent(),
-						p.getViewCount(),
 						p.getCreatedAt(),
 						p.getLastModifiedDate(),
 						p.getUsers(),
@@ -94,14 +91,6 @@ public class PostRepositoryImpl extends BasicRepoSupport implements PostReposito
 		count = count == null ? 0 : count;
 
 		return new PageImpl<>(content, super.getValidPageable(pageable), count);
-	}
-
-	private void updateViewCount(Long postId) {
-		jpaQueryFactory
-				.update(QPost.post)
-				.set(QPost.post.viewCount, QPost.post.viewCount.add(1))
-				.where(QPost.post.id.eq(postId))
-				.execute();
 	}
 }
 

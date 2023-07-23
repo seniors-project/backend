@@ -80,7 +80,6 @@ class PostServiceTest {
 				.title("test title 1")
 				.content("test content 1")
 				.isDeleted(false)
-				.viewCount(0)
 				.likeCount(0)
 				.build();
 		postRepository.save(post);
