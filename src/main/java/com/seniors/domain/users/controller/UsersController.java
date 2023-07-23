@@ -25,6 +25,13 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/api/users")
 public class UsersController {
 
+	/**
+	 * 유저 검증 API
+	 * ex) 글쓰기 페이지 접속 시 검증 API를 사용하여
+	 * 401 에러면 로그인 유도할 수 있도록 checking
+	 * @param userDetails
+	 * @return ResponseEntity
+	 */
 	@Operation(summary = "유저 검증")
 	@ApiResponse(responseCode = "200", description = "검증 성공",
 			content = @Content(mediaType = "application/json", schema = @Schema(implementation = ResponseEntity.class)))
