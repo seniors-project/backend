@@ -1,12 +1,10 @@
 package com.seniors.domain.post.entity;
 
 import com.seniors.domain.users.entity.Users;
-import jakarta.persistence.Column;
+import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-
-import javax.persistence.*;
 
 @Entity
 @Getter
