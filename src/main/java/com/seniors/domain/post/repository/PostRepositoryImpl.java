@@ -33,12 +33,12 @@ public class PostRepositoryImpl extends BasicRepoSupport implements PostReposito
 	}
 
 	@Override
-	public GetPostRes findOnePost(Long postId, Long userId) {
+	public GetPostRes findOnePost(Long postId) {
 		List<Post> postResList = jpaQueryFactory
 				.selectFrom(post)
 				.leftJoin(post.comments, comment).fetchJoin()
 				.innerJoin(post.users, users).fetchJoin()
-				.where(post.id.eq(postId).and(post.users.id.eq(userId)))
+				.where(post.id.eq(postId))
 				.fetch();
 
 		if (postResList.isEmpty()) {
@@ -94,6 +94,25 @@ public class PostRepositoryImpl extends BasicRepoSupport implements PostReposito
 		count = count == null ? 0 : count;
 
 		return new PageImpl<>(content, super.getValidPageable(pageable), count);
+	}
+
+	@Override
+	public void removePost(Long postId, Long userId) {
+		// 댓글들을 먼저 소프트 삭제 (isDeleted 필드를 true로 설정)
+		jpaQueryFactory.update(comment)
+				.set(comment.isDeleted, true)
+				.where(comment.post.id.eq(postId)
+						.and(comment.isDeleted.eq(false))
+						.and(comment.users.id.eq(userId)))
+				.execute();
+
+		// 게시글을 소프트 삭제 (isDeleted 필드를 true로 설정)
+		jpaQueryFactory.update(post)
+				.set(post.isDeleted, true)
+				.where(post.id.eq(postId)
+						.and(post.isDeleted.eq(false))
+						.and(post.users.id.eq(userId)))
+				.execute();
 	}
 
 	private void updateViewCount(Long postId) {

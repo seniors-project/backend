@@ -7,7 +7,6 @@ import com.seniors.config.security.CustomUserDetails;
 import com.seniors.domain.post.dto.PostDto.GetPostRes;
 import com.seniors.domain.post.dto.PostDto.ModifyPostReq;
 import com.seniors.domain.post.dto.PostDto.SavePostReq;
-import com.seniors.domain.post.entity.Post;
 import com.seniors.domain.post.service.PostService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -45,9 +44,8 @@ public class PostController {
 		content = @Content(mediaType = "application/json", schema = @Schema(implementation = DataResponseDto.class)))
 	@GetMapping("/{postId}")
 	public DataResponseDto<GetPostRes> postDetails(
-			@Parameter(description = "게시글 ID") @PathVariable(value = "postId") Long postId,
-			@LoginUsers CustomUserDetails userDetails) {
-		GetPostRes post = postService.findOnePost(postId, userDetails.getUserId());
+			@Parameter(description = "게시글 ID") @PathVariable(value = "postId") Long postId) {
+		GetPostRes post = postService.findOnePost(postId);
 		return DataResponseDto.of(post);
 	}
 
@@ -80,8 +78,11 @@ public class PostController {
 	@ApiResponse(responseCode = "200", description = "단건 삭제 성공",
 			content = @Content(mediaType = "application/json", schema = @Schema(implementation = DataResponseDto.class)))
 	@DeleteMapping("/{postId}")
-	public DataResponseDto<String> postRemove(@Parameter(description = "게시글 ID") @PathVariable(value = "postId") Long postId) {
-		postService.removePost(postId);
+	public DataResponseDto<String> postRemove(
+			@Parameter(description = "게시글 ID") @PathVariable(value = "postId") Long postId,
+			@LoginUsers CustomUserDetails userDetails
+	) {
+		postService.removePost(postId, userDetails.getUserId());
 		return DataResponseDto.of("SUCCESS");
 	}
 }

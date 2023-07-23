@@ -26,17 +26,17 @@ import org.springframework.web.bind.annotation.RestController;
 public class UsersController {
 
 	@Operation(summary = "유저 검증")
-	@ApiResponse(responseCode = "200", description = "생성 성공",
-			content = @Content(mediaType = "application/json", schema = @Schema(implementation = DataResponseDto.class)))
+	@ApiResponse(responseCode = "200", description = "검증 성공",
+			content = @Content(mediaType = "application/json", schema = @Schema(implementation = ResponseEntity.class)))
+	@ApiResponse(responseCode = "401", description = "검증 실패",
+			content = @Content(mediaType = "application/json", schema = @Schema(implementation = ResponseEntity.class)))
 	@GetMapping("/validate")
 	public ResponseEntity<?> userValidate(
 			@LoginUsers CustomUserDetails userDetails
 	) {
-		if (userDetails == null) {
-			return new ResponseEntity<>(null, HttpStatus.UNAUTHORIZED);
-		} else {
-			return new ResponseEntity<>(userDetails, HttpStatus.OK);
-		}
+		return userDetails == null
+				? new ResponseEntity<>(null, HttpStatus.UNAUTHORIZED)
+				: new ResponseEntity<>(userDetails, HttpStatus.OK);
 	}
 
 
