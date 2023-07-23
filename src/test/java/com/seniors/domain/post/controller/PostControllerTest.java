@@ -154,7 +154,6 @@ class PostControllerTest {
 						.title("seniors title " + i + 1)
 						.content("seniors content " + i + 1)
 						.isDeleted(false)
-						.viewCount(0)
 						.likeCount(0)
 						.users(users)
 						.build())

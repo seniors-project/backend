@@ -33,9 +33,6 @@ public class Post extends BaseEntity {
 
 	private boolean isDeleted = Boolean.FALSE;
 
-	@Column(columnDefinition = "int unsigned not null default 0 COMMENT '게시글 조회 수'")
-	private Integer viewCount;
-
 	@Column(columnDefinition = "int unsigned not null default 0 COMMENT '게시글 좋아요 수'")
 	private Integer likeCount;
 
@@ -51,18 +48,16 @@ public class Post extends BaseEntity {
 				.title(title)
 				.content(content)
 				.isDeleted(false)
-				.viewCount(0)
 				.likeCount(0)
 				.users(users)
 				.build();
 	}
 
 	@Builder
-	public Post(String title, String content, Boolean isDeleted, Integer viewCount, Integer likeCount, Users users) {
+	public Post(String title, String content, Boolean isDeleted, Integer likeCount, Users users) {
 		this.title = title;
 		this.content = content;
 		this.isDeleted = isDeleted;
-		this.viewCount = viewCount;
 		this.likeCount = likeCount;
 		this.users = users;
 	}

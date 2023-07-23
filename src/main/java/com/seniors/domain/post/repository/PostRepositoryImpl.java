@@ -50,13 +50,11 @@ public class PostRepositoryImpl extends BasicRepoSupport implements PostReposito
 						p.getId(),
 						p.getTitle(),
 						p.getContent(),
-						p.getViewCount(),
 						p.getCreatedAt(),
 						p.getLastModifiedDate(),
 						p.getUsers(),
 						p.getComments())).toList();
 
-		updateViewCount(content.get(0).getPostId());
 		return content.get(0);
 	}
 
@@ -81,7 +79,6 @@ public class PostRepositoryImpl extends BasicRepoSupport implements PostReposito
 						p.getId(),
 						p.getTitle(),
 						p.getContent(),
-						p.getViewCount(),
 						p.getCreatedAt(),
 						p.getLastModifiedDate(),
 						p.getUsers(),
