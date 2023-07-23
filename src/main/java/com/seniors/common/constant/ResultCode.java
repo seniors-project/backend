@@ -14,20 +14,19 @@ import java.util.function.Predicate;
 public enum ResultCode {
 
 	// Common Response
-	OK(0, HttpStatus.OK, "Ok"),
+	OK(200, HttpStatus.OK, "Ok"),
 
 	// 400대 에러
-	BAD_REQUEST(10000, HttpStatus.BAD_REQUEST, "Bad request"),
-	VALIDATION_ERROR(10001, HttpStatus.BAD_REQUEST, "Validation error"),
-	NOT_FOUND(10002, HttpStatus.NOT_FOUND, "Requested resource is not found"),
+	BAD_REQUEST(400, HttpStatus.BAD_REQUEST, "Bad request"),
+	VALIDATION_ERROR(400, HttpStatus.BAD_REQUEST, "Validation error"),
+	NOT_FOUND(404, HttpStatus.NOT_FOUND, "Requested resource is not found"),
 
 	// 500대 에러
-	INTERNAL_ERROR(20000, HttpStatus.INTERNAL_SERVER_ERROR, "Internal error"),
-	DATA_ACCESS_ERROR(20001, HttpStatus.INTERNAL_SERVER_ERROR, "Data access error"),
+	INTERNAL_ERROR(500, HttpStatus.INTERNAL_SERVER_ERROR, "Internal error"),
 
 	// 인증
-	UNAUTHORIZED(40000, HttpStatus.UNAUTHORIZED, "User unauthorized"),
-	EXPIRED_REFRESH_TOKEN(40003, HttpStatus.UNAUTHORIZED, "Expired Refresh-token");
+	UNAUTHORIZED(401, HttpStatus.UNAUTHORIZED, "User unauthorized"),
+	EXPIRED_REFRESH_TOKEN(403, HttpStatus.FORBIDDEN, "Expired Refresh-token");
 
 	private final Integer code;
 	private final HttpStatus httpStatus;
