@@ -111,13 +111,5 @@ public class PostRepositoryImpl extends BasicRepoSupport implements PostReposito
 						.and(post.users.id.eq(userId)))
 				.execute();
 	}
-
-	private void updateViewCount(Long postId) {
-		jpaQueryFactory
-				.update(QPost.post)
-				.set(QPost.post.viewCount, QPost.post.viewCount.add(1))
-				.where(QPost.post.id.eq(postId))
-				.execute();
-	}
 }
 
