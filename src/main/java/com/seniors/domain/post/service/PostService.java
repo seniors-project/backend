@@ -40,8 +40,8 @@ public class PostService {
 	}
 
 	@Transactional
-	public GetPostRes findOnePost(Long postId, Long userId) {
-		return postRepository.findOnePost(postId, userId);
+	public GetPostRes findOnePost(Long postId) {
+		return postRepository.findOnePost(postId);
 	}
 
 	@Transactional(readOnly = true)
@@ -58,8 +58,8 @@ public class PostService {
 	}
 
 	@Transactional
-	public void removePost(Long postId) {
-		postRepository.deleteById(postId);
+	public void removePost(Long postId, Long userId) {
+		postRepository.removePost(postId, userId);
 	}
 
 	@Transactional
