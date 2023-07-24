@@ -64,7 +64,7 @@ public class PostService {
 
 	@Transactional
 	public void likePost(Long postId, Long userId, Integer status) {
-		postLikeRepository.likePost(postId, userId, status);
+		postLikeRepository.likePost(postId, userId, status == 1 ? 0 : 1);
 	}
 
 }
