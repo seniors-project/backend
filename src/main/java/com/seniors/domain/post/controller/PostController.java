@@ -96,7 +96,7 @@ public class PostController {
 			@RequestBody @Valid SetLikeDto likeDto,
 			@LoginUsers CustomUserDetails userDetails
 	) {
-		postService.likePost(postId, userDetails.getUserId(), likeDto.getLikeStatus());
+		postService.likePost(postId, userDetails.getUserId(), likeDto.getStatus());
 		return DataResponseDto.of("SUCCESS");
 	}
 }

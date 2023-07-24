@@ -63,8 +63,8 @@ public class PostService {
 	}
 
 	@Transactional
-	public void likePost(Long postId, Long userId, Integer likeStatus) {
-		postLikeRepository.likePost(postId, userId, likeStatus);
+	public void likePost(Long postId, Long userId, Integer status) {
+		postLikeRepository.likePost(postId, userId, status);
 	}
 
 }

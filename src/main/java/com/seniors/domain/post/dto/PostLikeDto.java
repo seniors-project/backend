@@ -10,6 +10,6 @@ public class PostLikeDto {
     @Data
     public static class SetLikeDto {
         @Schema(description = "현재 좋아요 상태")
-        private Integer likeStatus;
+        private Integer status;
     }
 }

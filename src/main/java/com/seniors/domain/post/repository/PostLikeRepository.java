@@ -10,7 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 public interface PostLikeRepository extends JpaRepository<PostLike, Long> {
     @Transactional
     @Modifying(clearAutomatically = true)
-    @Query(value = "insert into PostLike (postId, userId, status) values (:postId, :userId, :status) " +
+    @Query(value = "insert into PostLike set postId = :postId, userId = :userId, status = :status " +
             "on duplicate key update status = :status", nativeQuery = true)
     void likePost(@Param("postId") Long postId, @Param("userId") Long userId, @Param("status") Integer status);
 }
