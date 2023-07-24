@@ -2,7 +2,6 @@ package com.seniors.domain.post.entity;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
-import jakarta.persistence.JoinColumn;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -14,7 +13,7 @@ import java.io.Serializable;
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class PostLikeId implements Serializable {
+public class PostLikeEmbedded implements Serializable {
 
     @Column(name = "postId")
     private Long postId;

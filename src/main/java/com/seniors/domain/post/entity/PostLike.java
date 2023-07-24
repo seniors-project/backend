@@ -11,7 +11,7 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
-@IdClass(PostLikeId.class) // Specify the composite primary key class
+@IdClass(PostLikeEmbedded.class) // Specify the composite primary key class
 public class PostLike {
 
     @Id

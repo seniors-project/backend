@@ -13,4 +13,6 @@ public interface PostRepositoryCustom {
 	Page<GetPostRes> findAllPost(Pageable pageable);
 
 	void removePost(Long postId, Long userId);
+
+	void increaseLikeCount(Long postId, Integer status);
 }

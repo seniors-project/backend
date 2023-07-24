@@ -19,6 +19,9 @@ import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
+import static com.seniors.domain.post.entity.QPost.*;
+import static com.seniors.domain.post.entity.QPost.post;
+
 
 @Slf4j
 @Repository
@@ -109,6 +112,15 @@ public class PostRepositoryImpl extends BasicRepoSupport implements PostReposito
 				.where(post.id.eq(postId)
 						.and(post.isDeleted.eq(false))
 						.and(post.users.id.eq(userId)))
+				.execute();
+	}
+
+	public void increaseLikeCount(Long postId, Integer status) {
+		int count = status == 1 ? -1 : 1;
+		jpaQueryFactory
+				.update(post)
+				.set(post.likeCount, post.likeCount.add(count))
+				.where(post.id.eq(postId))
 				.execute();
 	}
 }
