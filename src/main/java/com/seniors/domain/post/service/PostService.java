@@ -65,7 +65,6 @@ public class PostService {
 	@Transactional
 	public void likePost(Long postId, Long userId, Integer status) {
 		int isLike = postLikeRepository.likePost(postId, userId, status == 1 ? 0 : 1);
-		log.info("{}", isLike);
 		if (isLike >= 1) {
 			postRepository.increaseLikeCount(postId, status);
 		} else {
