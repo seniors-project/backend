@@ -41,7 +41,10 @@ public class ResumeService {
 
     private final S3Uploader s3Uploader;
     @Transactional
-    public List<String> addResume(SaveResumeReq resumeReq, BindingResult bindingResult, Long userId) throws IOException {
+    public Long addResume(SaveResumeReq resumeReq, BindingResult bindingResult, Long userId) throws IOException {
+        if (resumeRepository.findByUsersId(userId).isPresent()) {
+            throw new IllegalStateException("이미 해당 유저의 이력서가 존재합니다.");
+        }
         if(bindingResult.hasErrors()) {
             List<ObjectError> errors = bindingResult.getAllErrors();
             List<String> errorMessages = new ArrayList<>();
@@ -75,8 +78,8 @@ public class ResumeService {
             Education education = Education.from(saveEducationReq);
             resume.addEducation(education);
         }
-        resumeRepository.save(resume);
-        return null;
+        Resume savedResume = resumeRepository.save(resume);
+        return savedResume.getId();
     }
 
     @Transactional(readOnly = true)

@@ -47,7 +47,7 @@ public class Certificate extends BaseTimeEntity {
     private Resume resume;
 
     @Builder
-    public Certificate(String name, String rating, int issuedYear, int issuedMonth, Boolean isIssued) {
+    public Certificate(String name, String rating, int issuedYear, int issuedMonth, Boolean isIssued, Resume resume) {
         this.name = name;
         this.rating = rating;
         this.issuedYear = issuedYear;

@@ -41,7 +41,8 @@ public class ResumeController {
             @ModelAttribute @Valid ResumeDto.SaveResumeReq resumeDto, BindingResult bindingResult,
             @LoginUsers CustomUserDetails userDetails
         ) throws IOException {
-        return DataResponseDto.of(resumeService.addResume(resumeDto, bindingResult, userDetails.getUserId()));
+        resumeService.addResume(resumeDto, bindingResult, userDetails.getUserId());
+        return DataResponseDto.of(null);
     }
 
     @Operation(summary = "이력서 조회")
