@@ -1,6 +1,7 @@
 package com.seniors.domain.resume.service;
 
 import com.seniors.common.dto.DataResponseDto;
+import com.seniors.common.exception.type.BadRequestException;
 import com.seniors.common.exception.type.NotFoundException;
 import com.seniors.config.S3Uploader;
 import com.seniors.domain.resume.dto.CareerDto;
@@ -50,7 +51,7 @@ public class ResumeService {
                 String message = fieldError.getDefaultMessage();
                 errorMessages.add(message);
             }
-            return errorMessages;
+            throw new BadRequestException(String.join(", ", errorMessages));
         }
         Users user =  usersRepository.findById(userId).orElseThrow(
                 () -> new NotFoundException()
