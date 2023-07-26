@@ -61,7 +61,7 @@ public class ResumeService {
         );
         String photoUrl = "https://seniors-for-bucket.s3.ap-northeast-2.amazonaws.com/%EA%B8%B0%EB%B3%B8%EC%9D%B4%EB%AF%B8%EC%A7%80.jpg";
 
-        if(resumeReq.getImage() != null) {
+        if(!resumeReq.getImage().isEmpty()) {
             photoUrl = s3Uploader.upload(resumeReq.getImage(), "images");
         }
         Resume resume = Resume.of(resumeReq, user);
