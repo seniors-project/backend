@@ -204,7 +204,7 @@ class PostControllerTest {
 		// given
 		Post post = postRepository.save(Post.of("글 제목1", "글 내용1", users));
 
-		PostLike postLike = PostLike.from(post.getId(), users.getId(), false);
+		PostLike postLike = PostLike.of(post.getId(), users.getId(), false);
 
 		String json = objectMapper.writeValueAsString(postLike);
 		// expected

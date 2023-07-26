@@ -29,7 +29,7 @@ public class PostLike {
     @Column(columnDefinition = "bit(1) not null default 0 COMMENT '게시글 좋아요 상태'")
     private Boolean status;
 
-    public static PostLike from(Long postId, Long userId, Boolean status) {
+    public static PostLike of(Long postId, Long userId, Boolean status) {
         return PostLike.builder()
                 .postId(postId)
                 .userId(userId)
