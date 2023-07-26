@@ -5,7 +5,9 @@ import com.seniors.common.constant.OAuthProvider;
 import com.seniors.common.constant.ResultCode;
 import com.seniors.config.security.CustomUserDetails;
 import com.seniors.domain.post.dto.PostDto.PostCreateDto;
+import com.seniors.domain.post.dto.PostLikeDto;
 import com.seniors.domain.post.entity.Post;
+import com.seniors.domain.post.entity.PostLike;
 import com.seniors.domain.post.repository.PostRepository;
 import com.seniors.domain.users.entity.Users;
 import com.seniors.domain.users.repository.UsersRepository;
@@ -29,6 +31,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
+import static com.seniors.domain.post.dto.PostLikeDto.*;
 import static org.hamcrest.Matchers.is;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
@@ -198,6 +201,25 @@ class PostControllerTest {
 
 	}
 
+	@Transactional
+	@Test
+	@DisplayName("게시글 좋아요")
+	void likePost() throws Exception {
+		// given
+		Post post = postRepository.save(Post.of("글 제목1", "글 내용1", users));
+
+		PostLike postLike = PostLike.from(post.getId(), users.getId(), 0);
+
+		String json = objectMapper.writeValueAsString(postLike);
+		// expected
+		mockMvc.perform(post("/api/posts/like?postId={postId}", post.getId())
+						.contentType(APPLICATION_JSON)
+						.content(json)
+						.principal(authentication)
+				)
+				.andExpect(status().isOk())
+				.andDo(print());
+	}
 
 
 }
