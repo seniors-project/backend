@@ -18,11 +18,11 @@ public class PostLike {
     @Column(name = "userId")
     private Long userId;
 
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "postId", insertable = false, updatable = false) // Define the correct column name
     private Post post;
 
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "userId", insertable = false, updatable = false) // Define the correct column name
     private Users users;
 

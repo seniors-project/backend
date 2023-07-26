@@ -9,7 +9,6 @@ import java.io.Serializable;
 @Embeddable
 @Getter
 @AllArgsConstructor
-@EqualsAndHashCode
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class PostLikeEmbedded implements Serializable {
 
