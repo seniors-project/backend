@@ -11,7 +11,6 @@ import com.seniors.domain.post.repository.PostRepository;
 import com.seniors.domain.users.entity.Users;
 import com.seniors.domain.users.repository.UsersRepository;
 import lombok.extern.slf4j.Slf4j;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -21,13 +20,10 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.transaction.interceptor.TransactionAspectSupport;
 
-import java.sql.Timestamp;
 import java.util.List;
 import java.util.Random;
 import java.util.stream.Collectors;
@@ -208,7 +204,7 @@ class PostControllerTest {
 		// given
 		Post post = postRepository.save(Post.of("글 제목1", "글 내용1", users));
 
-		PostLike postLike = PostLike.from(post.getId(), users.getId(), 0);
+		PostLike postLike = PostLike.from(post.getId(), users.getId(), false);
 
 		String json = objectMapper.writeValueAsString(postLike);
 		// expected

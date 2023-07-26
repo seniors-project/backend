@@ -102,6 +102,4 @@ public class PostDto {
 		private Long userId;
 	}
 
-
-
 }

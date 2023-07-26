@@ -18,18 +18,18 @@ public class PostLike {
     @Column(name = "userId")
     private Long userId;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "postId", insertable = false, updatable = false) // Define the correct column name
     private Post post;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "userId", insertable = false, updatable = false) // Define the correct column name
     private Users users;
 
-    @Column(columnDefinition = "int unsigned not null default 0 COMMENT '게시글 좋아요 상태'")
-    private Integer status;
+    @Column(columnDefinition = "bit(1) not null default 0 COMMENT '게시글 좋아요 상태'")
+    private Boolean status;
 
-    public static PostLike from(Long postId, Long userId, Integer status) {
+    public static PostLike from(Long postId, Long userId, Boolean status) {
         return PostLike.builder()
                 .postId(postId)
                 .userId(userId)
@@ -38,7 +38,7 @@ public class PostLike {
     }
 
     @Builder
-    public PostLike(Long postId, Long userId,  Integer status) {
+    public PostLike(Long postId, Long userId, Boolean status) {
         this.postId = postId;
         this.userId = userId;
         this.status = status;

@@ -63,9 +63,9 @@ public class PostService {
 	}
 
 	@Transactional
-	public void likePost(Long postId, Long userId, Integer status) {
-		int isLike = postLikeRepository.likePost(postId, userId, status == 1 ? 0 : 1);
-		if (isLike >= 1) {
+	public void likePost(Long postId, Long userId, Boolean status) {
+		int updatedRows = postLikeRepository.likePost(postId, userId, !status);
+		if (updatedRows >= 1) {
 			postRepository.increaseLikeCount(postId, status);
 		} else {
 			throw new BadRequestException();

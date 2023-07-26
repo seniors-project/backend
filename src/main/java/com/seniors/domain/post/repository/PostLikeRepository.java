@@ -12,5 +12,5 @@ public interface PostLikeRepository extends JpaRepository<PostLike, Long> {
     @Modifying(clearAutomatically = true)
     @Query(value = "insert into PostLike set postId = :postId, userId = :userId, status = :status " +
             "on duplicate key update status = :status", nativeQuery = true)
-    int likePost(@Param("postId") Long postId, @Param("userId") Long userId, @Param("status") Integer status);
+    int likePost(@Param("postId") Long postId, @Param("userId") Long userId, @Param("status") boolean status);
 }

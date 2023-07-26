@@ -115,11 +115,10 @@ public class PostRepositoryImpl extends BasicRepoSupport implements PostReposito
 				.execute();
 	}
 
-	public void increaseLikeCount(Long postId, Integer status) {
-		int count = status == 1 ? -1 : 1;
+	public void increaseLikeCount(Long postId, Boolean status) {
 		jpaQueryFactory
 				.update(post)
-				.set(post.likeCount, post.likeCount.add(count))
+				.set(post.likeCount, post.likeCount.add(status ? -1 : 1))
 				.where(post.id.eq(postId))
 				.execute();
 	}

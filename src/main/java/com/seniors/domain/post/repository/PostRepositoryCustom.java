@@ -14,5 +14,5 @@ public interface PostRepositoryCustom {
 
 	void removePost(Long postId, Long userId);
 
-	void increaseLikeCount(Long postId, Integer status);
+	void increaseLikeCount(Long postId, Boolean status);
 }
