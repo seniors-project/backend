@@ -104,4 +104,12 @@ public class Resume extends BaseTimeEntity {
     public void uploadPhotoUrl(String photoUrl){
         this.photoUrl = photoUrl;
     }
+
+    public void update(ResumeDto.ModifyResumeReq modifyResumeReq, String photoUrl){
+        this.introduce = modifyResumeReq.getIntroduce();
+        this.photoUrl = photoUrl;
+        this.occupation = modifyResumeReq.getOccupation();
+        this.isOpened = modifyResumeReq.getIsOpened();
+        this.name = modifyResumeReq.getName();
+    }
 }

@@ -66,5 +66,13 @@ public class Certificate extends BaseTimeEntity {
                 .build();
     }
 
-
+    public static Certificate from(CertificateDto.modifyCertificateReq modifyCertificateReq){
+        return Certificate.builder()
+                .name(modifyCertificateReq.getName())
+                .rating(modifyCertificateReq.getRating())
+                .issuedYear(modifyCertificateReq.getIssuedYear())
+                .issuedMonth(modifyCertificateReq.getIssuedMonth())
+                .isIssued(modifyCertificateReq.getIsIssued())
+                .build();
+    }
 }

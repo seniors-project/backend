@@ -44,6 +44,29 @@ public class EducationDto {
     }
 
     @Data
+    @Setter
+    public static class modifyEducationReq extends Education{
+
+        private Long id;
+        @NotEmpty(message = "학교/교육기관 명은 비워둘 수 없습니다.")
+        @Size(max = 30, message = "학교/교육기관 명은 30자 이하여야 합니다.")
+        private String institution;
+
+        private String process;
+
+        @NotNull(message = "시작 연도는 비워둘 수 없습니다.")
+        private int startedAt;
+
+        @NotNull(message = "종료 연도는 비워둘 수 없습니다.")
+        private int endedAt;
+
+        private String content;
+
+        private Boolean isProcessed;
+
+    }
+
+    @Data
     public static class getEducationRes {
 
         private Long id;

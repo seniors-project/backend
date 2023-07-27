@@ -70,4 +70,30 @@ public class ResumeController {
         Pageable pageable = PageRequest.of(0, size);
         return resumeService.findResumeList(pageable, lastId, userDetails.getUserId());
     }
+
+    @Operation(summary = "이력서 수정")
+    @ApiResponse(responseCode = "200", description = "수정 성공",
+            content = @Content(mediaType = "application/json", schema = @Schema(implementation = DataResponseDto.class)))
+    @PatchMapping("/{resumeId}")
+    public DataResponseDto<List<String>> resumeModify(
+            @PathVariable Long resumeId,
+            @ModelAttribute @Valid ResumeDto.ModifyResumeReq resumeDto, BindingResult bindingResult,
+            @LoginUsers CustomUserDetails userDetails
+    ) throws IOException {
+        resumeService.modifyResume(resumeId, resumeDto, bindingResult, userDetails.getUserId());
+        return DataResponseDto.of(null);
+    }
+
+    @Operation(summary = "이력서 삭제")
+    @ApiResponse(responseCode = "200", description = "삭제 성공",
+            content = @Content(mediaType = "application/json", schema = @Schema(implementation = DataResponseDto.class)))
+    @DeleteMapping("/{resumeId}")
+    public DataResponseDto<Long> resumeRemove(
+            @PathVariable Long resumeId,
+            @LoginUsers CustomUserDetails userDetails
+    ) {
+        resumeService.removeResume(resumeId, userDetails.getUserId());
+        return DataResponseDto.of(null);
+    }
+
 }

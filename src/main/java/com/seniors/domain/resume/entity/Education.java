@@ -72,4 +72,15 @@ public class Education extends BaseTimeEntity {
                 .build();
     }
 
+    public static Education from(EducationDto.modifyEducationReq modifyEducationReq){
+        return Education.builder()
+                .institution(modifyEducationReq.getInstitution())
+                .process(modifyEducationReq.getProcess())
+                .startedAt(modifyEducationReq.getStartedAt())
+                .endedAt(modifyEducationReq.getEndedAt())
+                .content(modifyEducationReq.getContent())
+                .isProcessed(modifyEducationReq.getIsProcessed())
+                .build();
+    }
+
 }

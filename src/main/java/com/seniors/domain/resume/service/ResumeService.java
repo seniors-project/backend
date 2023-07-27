@@ -107,4 +107,62 @@ public class ResumeService {
 
         return DataResponseDto.of(result);
     }
+
+    @Transactional
+    public Long modifyResume(Long resumeId, ResumeDto.ModifyResumeReq resumeReq, BindingResult bindingResult, Long userId) throws IOException {
+        Resume resume = resumeRepository.findById(resumeId).orElseThrow(
+                () ->new NotFoundException()
+        );
+
+        if(bindingResult.hasErrors()) {
+            List<ObjectError> errors = bindingResult.getAllErrors();
+            List<String> errorMessages = new ArrayList<>();
+
+            for (ObjectError error : errors) {
+                FieldError fieldError = (FieldError) error;
+                String message = fieldError.getDefaultMessage();
+                errorMessages.add(message);
+            }
+            throw new BadRequestException(String.join(", ", errorMessages));
+        }
+        Users user =  usersRepository.findById(userId).orElseThrow(
+                () -> new NotFoundException()
+        );
+
+        if(!resumeReq.getImage().isEmpty()) {
+            photoUrl = s3Uploader.upload(resumeReq.getImage(), "images");
+        }
+        resume.uploadPhotoUrl(photoUrl);
+        resume.update(resumeReq, photoUrl);
+
+        resume.getCareers().clear();
+        resume.getCertificates().clear();
+        resume.getEducations().clear();
+
+        for(CareerDto.modifyCareerReq modifyCareerReq : resumeReq.getCareerList()){
+            Career career = Career.from(modifyCareerReq);
+            resume.addCareer(career);
+        }
+
+        for(CertificateDto.modifyCertificateReq modifyCertificateReq : resumeReq.getCertificateList()){
+            Certificate certificate = Certificate.from(modifyCertificateReq);
+            resume.addCertificate(certificate);
+        }
+
+        for(EducationDto.modifyEducationReq modifyEducationReq : resumeReq.getEducationList()) {
+            Education education = Education.from(modifyEducationReq);
+            resume.addEducation(education);
+        }
+        Resume savedResume = resumeRepository.save(resume);
+
+        return savedResume.getId();
+    }
+
+    @Transactional
+    public void removeResume(Long resumeId, Long userId){
+        Users user =  usersRepository.findById(userId).orElseThrow(
+                () -> new NotFoundException()
+        );
+        resumeRepository.deleteById(resumeId);
+    }
 }

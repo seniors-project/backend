@@ -71,4 +71,16 @@ public class Career extends BaseTimeEntity {
                 .content(saveCareerReq.getContent())
                 .build();
     }
+
+    public static Career from(CareerDto.modifyCareerReq modifyCareerReq){
+        return Career.builder()
+                .startedAt(modifyCareerReq.getStartedAt())
+                .endedAt(modifyCareerReq.getEndedAt())
+                .company(modifyCareerReq.getCompany())
+                .title(modifyCareerReq.getTitle())
+                .isAttendanced(modifyCareerReq.getIsAttendanced())
+                .content(modifyCareerReq.getContent())
+                .build();
+    }
+
 }

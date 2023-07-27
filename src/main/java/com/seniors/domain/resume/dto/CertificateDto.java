@@ -39,6 +39,27 @@ public class CertificateDto {
     }
 
     @Data
+    @Setter
+    public static class modifyCertificateReq extends Certificate {
+
+        private Long id;
+        @NotEmpty(message = "자격증 명은 비워둘 수 없습니다.")
+        @Size(max = 30, message = "자격증 명은 30자 이하여야 합니다.")
+        private String name;
+
+        private String rating;
+
+        @NotNull(message = "발행 연도는 비워둘 수 없습니다.")
+        private int issuedYear;
+
+        @NotNull(message = "발행 월은 비워둘 수 없습니다.")
+        private int issuedMonth;
+
+        private Boolean isIssued;
+
+    }
+
+    @Data
     public static class getCertificateRes {
 
         private Long id;

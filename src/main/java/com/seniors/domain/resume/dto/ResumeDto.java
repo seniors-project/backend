@@ -64,6 +64,37 @@ public class ResumeDto {
 	}
 
 	@Data
+	@Setter
+	public static class ModifyResumeReq {
+
+		private Long id;
+
+		private String introduce;
+
+		@NotEmpty(message = "직종은 비워둘 수 없습니다.")
+		@Size(max = 30, message = "직종은 30자 이하여야 합니다.")
+		private String occupation;
+
+		private Boolean isOpened;
+
+		@NotEmpty(message = "이름은 비워둘 수 없습니다.")
+		@Size(max = 30, message = "이름은 30자 이하여야 합니다.")
+		private String name;
+
+		private MultipartFile image;
+
+		@Valid
+		private List<CertificateDto.modifyCertificateReq> certificateList = new ArrayList<>();
+
+		@Valid
+		private List<CareerDto.modifyCareerReq> careerList = new ArrayList<>();
+
+		@Valid
+		private List<EducationDto.modifyEducationReq> educationList = new ArrayList<>();
+
+	}
+
+	@Data
 	public static class GetResumeRes {
 
 		private Long id;
