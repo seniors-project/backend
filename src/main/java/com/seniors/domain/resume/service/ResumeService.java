@@ -2,6 +2,7 @@ package com.seniors.domain.resume.service;
 
 import com.seniors.common.dto.DataResponseDto;
 import com.seniors.common.exception.type.BadRequestException;
+import com.seniors.common.exception.type.NotAuthorizedException;
 import com.seniors.common.exception.type.NotFoundException;
 import com.seniors.config.S3Uploader;
 import com.seniors.domain.resume.dto.CareerDto;
@@ -29,6 +30,7 @@ import org.springframework.validation.ObjectError;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.nio.file.AccessDeniedException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -61,7 +63,7 @@ public class ResumeService {
             throw new BadRequestException(String.join(", ", errorMessages));
         }
         Users user =  usersRepository.findById(userId).orElseThrow(
-                () -> new NotFoundException()
+                () -> new NotFoundException("유효하지 않은 회원입니다.")
         );
 
         if(!resumeReq.getImage().isEmpty()) {
@@ -88,10 +90,10 @@ public class ResumeService {
     @Transactional(readOnly = true)
     public ResumeDto.GetResumeRes findResume(Long resumeId, Long userId){
         Users user =  usersRepository.findById(userId).orElseThrow(
-                () -> new NotFoundException()
+                () -> new NotFoundException("유효하지 않은 회원입니다.")
         );
         Resume resume =  resumeRepository.findById(resumeId).orElseThrow(
-                () -> new NotFoundException()
+                () -> new NotFoundException("이력서가 존재하지 않습니다.")
         );
 
         return ResumeDto.GetResumeRes.from(resume);
@@ -100,7 +102,7 @@ public class ResumeService {
     @Transactional(readOnly = true)
     public DataResponseDto<Slice<ResumeDto.GetResumeByQueryDslRes>> findResumeList(Pageable pageable, Long lastId, Long userId){
         Users user =  usersRepository.findById(userId).orElseThrow(
-                () -> new NotFoundException()
+                () -> new NotFoundException("유효하지 않은 회원입니다.")
         );
         Slice<ResumeDto.GetResumeByQueryDslRes> result = resumeRepository.findResumeList(pageable, lastId, user.getId());
 
@@ -111,8 +113,16 @@ public class ResumeService {
     @Transactional
     public Long modifyResume(Long resumeId, ResumeDto.ModifyResumeReq resumeReq, BindingResult bindingResult, Long userId) throws IOException {
         Resume resume = resumeRepository.findById(resumeId).orElseThrow(
-                () ->new NotFoundException()
+                () ->new NotFoundException("이력서가 존재하지 않습니다.")
         );
+
+        Users user =  usersRepository.findById(userId).orElseThrow(
+                () -> new NotFoundException("유효하지 않은 회원입니다.")
+        );
+
+        if(resume.getUsers().getId()!=user.getId()){
+            throw  new NotAuthorizedException("수정 권한이 없습니다.");
+        }
 
         if(bindingResult.hasErrors()) {
             List<ObjectError> errors = bindingResult.getAllErrors();
@@ -125,9 +135,7 @@ public class ResumeService {
             }
             throw new BadRequestException(String.join(", ", errorMessages));
         }
-        Users user =  usersRepository.findById(userId).orElseThrow(
-                () -> new NotFoundException()
-        );
+
 
         if(!resumeReq.getImage().isEmpty()) {
             photoUrl = s3Uploader.upload(resumeReq.getImage(), "images");
@@ -160,9 +168,15 @@ public class ResumeService {
 
     @Transactional
     public void removeResume(Long resumeId, Long userId){
-        Users user =  usersRepository.findById(userId).orElseThrow(
-                () -> new NotFoundException()
+        Resume resume = resumeRepository.findById(resumeId).orElseThrow(
+                () -> new NotFoundException("이력서가 존재하지 않습니다.")
         );
-        resumeRepository.deleteById(resumeId);
+        Users user =  usersRepository.findById(userId).orElseThrow(
+                () -> new NotFoundException("유효하지 않은 회원입니다.")
+        );
+        if(resume.getUsers().getId()!=user.getId()){
+            throw  new NotAuthorizedException("삭제 권한이 없습니다.");
+        }
+        resumeRepository.delete(resume);
     }
 }
