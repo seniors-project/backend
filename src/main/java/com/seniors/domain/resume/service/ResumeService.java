@@ -17,6 +17,7 @@ import com.seniors.domain.users.entity.Users;
 import com.seniors.domain.users.repository.UsersRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
@@ -39,6 +40,9 @@ public class ResumeService {
     private final ResumeRepository resumeRepository;
     private final UsersRepository usersRepository;
 
+    @Value("${photo.url}")
+    private String photoUrl;
+
     private final S3Uploader s3Uploader;
     @Transactional
     public Long addResume(SaveResumeReq resumeReq, BindingResult bindingResult, Long userId) throws IOException {
@@ -59,7 +63,6 @@ public class ResumeService {
         Users user =  usersRepository.findById(userId).orElseThrow(
                 () -> new NotFoundException()
         );
-        String photoUrl = "https://seniors-for-bucket.s3.ap-northeast-2.amazonaws.com/%EA%B8%B0%EB%B3%B8%EC%9D%B4%EB%AF%B8%EC%A7%80.jpg";
 
         if(!resumeReq.getImage().isEmpty()) {
             photoUrl = s3Uploader.upload(resumeReq.getImage(), "images");
