@@ -7,6 +7,7 @@ import com.seniors.config.security.CustomUserDetails;
 import com.seniors.domain.post.dto.PostDto.GetPostRes;
 import com.seniors.domain.post.dto.PostDto.ModifyPostReq;
 import com.seniors.domain.post.dto.PostDto.SavePostReq;
+import com.seniors.domain.post.dto.PostLikeDto.SetLikeDto;
 import com.seniors.domain.post.service.PostService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -41,7 +42,7 @@ public class PostController {
 
 	@Operation(summary = "게시글 단건 조회")
 	@ApiResponse(responseCode = "200", description = "단건 조회 성공",
-		content = @Content(mediaType = "application/json", schema = @Schema(implementation = DataResponseDto.class)))
+			content = @Content(mediaType = "application/json", schema = @Schema(implementation = DataResponseDto.class)))
 	@GetMapping("/{postId}")
 	public DataResponseDto<GetPostRes> postDetails(
 			@Parameter(description = "게시글 ID") @PathVariable(value = "postId") Long postId) {
@@ -83,6 +84,21 @@ public class PostController {
 			@LoginUsers CustomUserDetails userDetails
 	) {
 		postService.removePost(postId, userDetails.getUserId());
+		return DataResponseDto.of("SUCCESS");
+	}
+
+	@Operation(summary = "게시글 좋아요")
+	@ApiResponse(responseCode = "200", description = "좋아요 성공",
+			content = @Content(mediaType = "application/json", schema = @Schema(implementation = DataResponseDto.class)))
+	@ApiResponse(responseCode = "500", description = "좋아요 실패",
+			content = @Content(mediaType = "application/json", schema = @Schema(implementation = DataResponseDto.class)))
+	@PostMapping("/like")
+	public DataResponseDto<String> postLike(
+			@Parameter(description = "게시글 ID") @RequestParam(name = "postId", value = "postId") Long postId,
+			@RequestBody @Valid SetLikeDto likeDto,
+			@LoginUsers CustomUserDetails userDetails
+	) {
+		postService.likePost(postId, userDetails.getUserId(), likeDto.getStatus());
 		return DataResponseDto.of("SUCCESS");
 	}
 }

@@ -6,6 +6,7 @@ import com.seniors.common.constant.ResultCode;
 import com.seniors.config.security.CustomUserDetails;
 import com.seniors.domain.post.dto.PostDto.PostCreateDto;
 import com.seniors.domain.post.entity.Post;
+import com.seniors.domain.post.entity.PostLike;
 import com.seniors.domain.post.repository.PostRepository;
 import com.seniors.domain.users.entity.Users;
 import com.seniors.domain.users.repository.UsersRepository;
@@ -19,13 +20,12 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.sql.Timestamp;
 import java.util.List;
+import java.util.Random;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -41,7 +41,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @AutoConfigureMockMvc
 @SpringBootTest
 @ActiveProfiles("dev")
-@DirtiesContext
+@Transactional
 class PostControllerTest {
 
 	@Autowired
@@ -53,18 +53,24 @@ class PostControllerTest {
 	private PostRepository postRepository;
 	@Autowired
 	private UsersRepository usersRepository;
-	private static Authentication authentication;
-	private static Users users;
+	private Authentication authentication;
+	private Users users;
 
-	// 다른 테스트에 영향이 가지 않도록 사전에 deleteAll
 	@BeforeEach
-	void clean() {
+	void setUp() {
 		postRepository.deleteAll();
 		usersRepository.deleteAll();
 
+		// Random 객체 생성
+		Random random = new Random();
+
+		// 10자리 랜덤 숫자 생성
+		long randomNumber = random.nextLong() % 10000000000L; // 10자리 이하의 숫자로 제한
+		if (randomNumber < 0)
+			randomNumber *= -1; // 음수인 경우 양수로 변환
+
 		users = usersRepository.save(Users.builder()
-				// Duplicate 에러로 인해 임시로 timestamp 값으로 해결
-				.snsId(String.valueOf(new Timestamp(System.currentTimeMillis()).getTime()))
+				.snsId(String.valueOf(randomNumber))
 				.email("test@test.com")
 				.gender("male")
 				.ageRange("20~29")
@@ -80,12 +86,10 @@ class PostControllerTest {
 				users.getProfileImageUrl());
 		userDetails.setUserId(users.getId());
 
-		// Set the Authentication object
 		authentication = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
 		SecurityContextHolder.getContext().setAuthentication(authentication);
 	}
 
-	@Transactional
 	@Test
 	@DisplayName("게시글 생성")
 	void postAdd() throws Exception {
@@ -106,7 +110,6 @@ class PostControllerTest {
 				.andDo(print());
 	}
 
-	@Transactional
 	@Test
 	@DisplayName("생성 요청 시 title 값은 필수")
 	void postAddNotExistTitle() throws Exception {
@@ -128,7 +131,6 @@ class PostControllerTest {
 				.andDo(print());
 	}
 
-	@Transactional
 	@Test
 	@DisplayName("게시글 단건 조회")
 	void findOnePost() throws Exception {
@@ -144,7 +146,6 @@ class PostControllerTest {
 				.andDo(print());
 	}
 
-	@Transactional
 	@Test
 	@DisplayName("사용자 글 리스트 조회")
 	void getListTest2() throws Exception {
@@ -174,7 +175,6 @@ class PostControllerTest {
 
 	}
 
-	@Transactional
 	@Test
 	@DisplayName("게시글 수정")
 	void modifyPost() throws Exception {
@@ -198,6 +198,23 @@ class PostControllerTest {
 
 	}
 
+	@Test
+	@DisplayName("게시글 좋아요")
+	void likePost() throws Exception {
+		// given
+		Post post = postRepository.save(Post.of("글 제목1", "글 내용1", users));
 
+		PostLike postLike = PostLike.of(post.getId(), users.getId(), false);
+
+		String json = objectMapper.writeValueAsString(postLike);
+		// expected
+		mockMvc.perform(post("/api/posts/like?postId={postId}", post.getId())
+						.contentType(APPLICATION_JSON)
+						.content(json)
+						.principal(authentication)
+				)
+				.andExpect(status().isOk())
+				.andDo(print());
+	}
 
 }
