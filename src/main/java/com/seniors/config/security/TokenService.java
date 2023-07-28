@@ -132,7 +132,7 @@ public class TokenService {
 		// 꼭 UserDetailsService 인터페이스를 구현하지 않아도 되고 DB를 조회해서 userDetails에 데이터를 넣어서 리턴해주게 만들면된다.
 		Long userId = Long.parseLong(claims.get("userId").toString());
 		String userSnsId = claims.get("userSnsId") != null ? claims.get("userSnsId").toString() : null;
-		String userEmail = claims.get("userEmail").toString();
+		String userEmail = claims.get("userEmail") != null ? claims.get("userEmail").toString() : null;
 		String userNickname = claims.get("userNickname").toString();
 		String userGender = claims.get("userGender") != null ? claims.get("userGender").toString() : null;
 		String userProfileImageUrl = claims.get("userProfileImageUrl") != null ? claims.get("userProfileImageUrl").toString() : null;
