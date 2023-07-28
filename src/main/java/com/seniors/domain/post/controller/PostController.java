@@ -6,7 +6,7 @@ import com.seniors.common.dto.DataResponseDto;
 import com.seniors.config.security.CustomUserDetails;
 import com.seniors.domain.post.dto.PostDto.GetPostRes;
 import com.seniors.domain.post.dto.PostDto.ModifyPostReq;
-import com.seniors.domain.post.dto.PostDto.SavePostReq;
+import com.seniors.domain.post.dto.PostDto.PostCreateDto;
 import com.seniors.domain.post.dto.PostLikeDto.SetLikeDto;
 import com.seniors.domain.post.service.PostService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -30,11 +30,13 @@ public class PostController {
 	private final PostService postService;
 
 	@Operation(summary = "게시글 생성")
+	@io.swagger.v3.oas.annotations.parameters.RequestBody(description = "생성 요청 body",
+			content = @Content(mediaType = "application/json", schema = @Schema(implementation = PostCreateDto.class)))
 	@ApiResponse(responseCode = "200", description = "생성 성공",
 			content = @Content(mediaType = "application/json", schema = @Schema(implementation = DataResponseDto.class)))
 	@PostMapping("")
 	public DataResponseDto<String> postAdd(
-			@RequestBody @Valid SavePostReq postDto,
+			@RequestBody @Valid PostCreateDto postDto,
 			@LoginUsers CustomUserDetails userDetails) {
 		postService.addPost(postDto, userDetails.getUserId());
 		return DataResponseDto.of("SUCCESS");
@@ -42,7 +44,7 @@ public class PostController {
 
 	@Operation(summary = "게시글 단건 조회")
 	@ApiResponse(responseCode = "200", description = "단건 조회 성공",
-			content = @Content(mediaType = "application/json", schema = @Schema(implementation = DataResponseDto.class)))
+			content = @Content(mediaType = "application/json", schema = @Schema(implementation = GetPostRes.class)))
 	@GetMapping("/{postId}")
 	public DataResponseDto<GetPostRes> postDetails(
 			@Parameter(description = "게시글 ID") @PathVariable(value = "postId") Long postId) {
@@ -53,7 +55,7 @@ public class PostController {
 	@Operation(summary = "게시글 리스트 조회")
 	@ApiResponse(responseCode = "200", description = "리스트 조회 성공",
 			content = @Content(mediaType = "application/json", schema =
-			@Schema(implementation = DataResponseDto.class)))
+			@Schema(implementation = GetPostRes.class)))
 	@GetMapping("")
 	public DataResponseDto<CustomPage<GetPostRes>> postList(
 			@RequestParam(required = false, defaultValue = "1") int page,
@@ -64,6 +66,8 @@ public class PostController {
 	}
 
 	@Operation(summary = "게시글 수정")
+	@io.swagger.v3.oas.annotations.parameters.RequestBody(description = "수정 요청 body",
+			content = @Content(mediaType = "application/json", schema = @Schema(implementation = PostCreateDto.class)))
 	@ApiResponse(responseCode = "200", description = "단건 수정 성공",
 			content = @Content(mediaType = "application/json", schema = @Schema(implementation = DataResponseDto.class)))
 	@PatchMapping("/{postId}")

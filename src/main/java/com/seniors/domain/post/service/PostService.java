@@ -4,7 +4,7 @@ import com.seniors.common.dto.CustomPage;
 import com.seniors.common.exception.type.BadRequestException;
 import com.seniors.domain.post.dto.PostDto.GetPostRes;
 import com.seniors.domain.post.dto.PostDto.ModifyPostReq;
-import com.seniors.domain.post.dto.PostDto.SavePostReq;
+import com.seniors.domain.post.dto.PostDto.PostCreateDto;
 import com.seniors.domain.post.entity.Post;
 import com.seniors.domain.post.repository.PostLikeRepository;
 import com.seniors.domain.post.repository.PostRepository;
@@ -29,7 +29,7 @@ public class PostService {
 	private final UsersRepository usersRepository;
 
 	@Transactional
-	public void addPost(SavePostReq postReq, Long userId) {
+	public void addPost(PostCreateDto postReq, Long userId) {
 		if (postReq.getTitle() == null || postReq.getTitle().isEmpty() || postReq.getContent() == null || postReq.getContent().isEmpty()) {
 			throw new BadRequestException("Title or Content is required");
 		}
