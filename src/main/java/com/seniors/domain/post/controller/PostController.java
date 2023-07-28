@@ -3,10 +3,12 @@ package com.seniors.domain.post.controller;
 import com.seniors.common.annotation.LoginUsers;
 import com.seniors.common.dto.CustomPage;
 import com.seniors.common.dto.DataResponseDto;
+import com.seniors.common.dto.ErrorResponse;
 import com.seniors.config.security.CustomUserDetails;
 import com.seniors.domain.post.dto.PostDto.GetPostRes;
 import com.seniors.domain.post.dto.PostDto.ModifyPostReq;
 import com.seniors.domain.post.dto.PostDto.PostCreateDto;
+import com.seniors.domain.post.dto.PostDto.SavePostReq;
 import com.seniors.domain.post.dto.PostLikeDto.SetLikeDto;
 import com.seniors.domain.post.service.PostService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -36,7 +38,7 @@ public class PostController {
 			content = @Content(mediaType = "application/json", schema = @Schema(implementation = DataResponseDto.class)))
 	@PostMapping("")
 	public DataResponseDto<String> postAdd(
-			@RequestBody @Valid PostCreateDto postDto,
+			@RequestBody @Valid SavePostReq postDto,
 			@LoginUsers CustomUserDetails userDetails) {
 		postService.addPost(postDto, userDetails.getUserId());
 		return DataResponseDto.of("SUCCESS");
@@ -55,7 +57,7 @@ public class PostController {
 	@Operation(summary = "게시글 리스트 조회")
 	@ApiResponse(responseCode = "200", description = "리스트 조회 성공",
 			content = @Content(mediaType = "application/json", schema =
-			@Schema(implementation = GetPostRes.class)))
+			@Schema(implementation = CustomPage.class)))
 	@GetMapping("")
 	public DataResponseDto<CustomPage<GetPostRes>> postList(
 			@RequestParam(required = false, defaultValue = "1") int page,
@@ -92,10 +94,12 @@ public class PostController {
 	}
 
 	@Operation(summary = "게시글 좋아요")
+	@io.swagger.v3.oas.annotations.parameters.RequestBody(description = "좋아요 상태 값 body",
+			content = @Content(mediaType = "application/json", schema = @Schema(implementation = SetLikeDto.class)))
 	@ApiResponse(responseCode = "200", description = "좋아요 성공",
 			content = @Content(mediaType = "application/json", schema = @Schema(implementation = DataResponseDto.class)))
 	@ApiResponse(responseCode = "500", description = "좋아요 실패",
-			content = @Content(mediaType = "application/json", schema = @Schema(implementation = DataResponseDto.class)))
+			content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class)))
 	@PostMapping("/like")
 	public DataResponseDto<String> postLike(
 			@Parameter(description = "게시글 ID") @RequestParam(name = "postId", value = "postId") Long postId,

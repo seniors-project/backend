@@ -6,6 +6,7 @@ import com.seniors.config.security.CustomUserDetails;
 import com.seniors.domain.comment.dto.CommentDto;
 import com.seniors.domain.comment.entity.Comment;
 import com.seniors.domain.comment.service.CommentService;
+import com.seniors.domain.post.dto.PostDto;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -29,6 +30,8 @@ public class CommentController {
     private final CommentService commentService;
 
     @Operation(summary = "댓글 생성")
+    @io.swagger.v3.oas.annotations.parameters.RequestBody(description = "생성 요청 body",
+            content = @Content(mediaType = "application/json", schema = @Schema(implementation = CommentCreateDto.class)))
     @ApiResponse(responseCode = "200", description = "생성 성공",
             content = @Content(mediaType = "application/json", schema = @Schema(implementation = DataResponseDto.class)))
     @PostMapping("")
@@ -41,6 +44,8 @@ public class CommentController {
     }
 
     @Operation(summary = "댓글 수정")
+    @io.swagger.v3.oas.annotations.parameters.RequestBody(description = "수정 요청 body",
+            content = @Content(mediaType = "application/json", schema = @Schema(implementation = CommentCreateDto.class)))
     @ApiResponse(responseCode = "200", description = "수정 성공",
             content = @Content(mediaType = "application/json", schema = @Schema(implementation = DataResponseDto.class)))
     @PatchMapping("/{commentId}")
