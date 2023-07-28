@@ -111,7 +111,7 @@ public class ResumeService {
     }
 
     @Transactional
-    public Long modifyResume(Long resumeId, ResumeDto.ModifyResumeReq resumeReq, BindingResult bindingResult, Long userId) throws IOException {
+    public void modifyResume(Long resumeId, ResumeDto.ModifyResumeReq resumeReq, BindingResult bindingResult, Long userId) throws IOException {
         Resume resume = resumeRepository.findById(resumeId).orElseThrow(
                 () ->new NotFoundException("이력서가 존재하지 않습니다.")
         );
@@ -161,9 +161,6 @@ public class ResumeService {
             Education education = Education.from(modifyEducationReq);
             resume.addEducation(education);
         }
-        Resume savedResume = resumeRepository.save(resume);
-
-        return savedResume.getId();
     }
 
     @Transactional
