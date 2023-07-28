@@ -87,7 +87,7 @@ public class ResumeService {
         return savedResume.getId();
     }
 
-    @Transactional(readOnly = true)
+    @Transactional
     public ResumeDto.GetResumeRes findResume(Long resumeId, Long userId){
         Users user =  usersRepository.findById(userId).orElseThrow(
                 () -> new NotFoundException("유효하지 않은 회원입니다.")
@@ -99,7 +99,7 @@ public class ResumeService {
         return ResumeDto.GetResumeRes.from(resume);
     }
 
-    @Transactional(readOnly = true)
+    @Transactional
     public DataResponseDto<Slice<ResumeDto.GetResumeByQueryDslRes>> findResumeList(Pageable pageable, Long lastId, Long userId){
         Users user =  usersRepository.findById(userId).orElseThrow(
                 () -> new NotFoundException("유효하지 않은 회원입니다.")
