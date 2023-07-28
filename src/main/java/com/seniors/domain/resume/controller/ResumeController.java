@@ -80,7 +80,7 @@ public class ResumeController {
     @GetMapping("")
     public DataResponseDto<Slice<ResumeDto.GetResumeByQueryDslRes>> resumeList(
             @RequestParam int size,
-            @RequestParam Long lastId,
+            @RequestParam(required = false) Long lastId,
             @LoginUsers CustomUserDetails userDetails
     ) {
         Pageable pageable = PageRequest.of(0, size);
