@@ -36,6 +36,8 @@ public class PostController {
 			content = @Content(mediaType = "application/json", schema = @Schema(implementation = PostCreateDto.class)))
 	@ApiResponse(responseCode = "200", description = "생성 성공",
 			content = @Content(mediaType = "application/json", schema = @Schema(implementation = DataResponseDto.class)))
+	@ApiResponse(responseCode = "500", description = "생성 실패",
+			content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class)))
 	@PostMapping("")
 	public DataResponseDto<String> postAdd(
 			@RequestBody @Valid SavePostReq postDto,
@@ -47,6 +49,8 @@ public class PostController {
 	@Operation(summary = "게시글 단건 조회")
 	@ApiResponse(responseCode = "200", description = "단건 조회 성공",
 			content = @Content(mediaType = "application/json", schema = @Schema(implementation = GetPostRes.class)))
+	@ApiResponse(responseCode = "500", description = "단건 조회 실패",
+			content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class)))
 	@GetMapping("/{postId}")
 	public DataResponseDto<GetPostRes> postDetails(
 			@Parameter(description = "게시글 ID") @PathVariable(value = "postId") Long postId) {
@@ -58,6 +62,8 @@ public class PostController {
 	@ApiResponse(responseCode = "200", description = "리스트 조회 성공",
 			content = @Content(mediaType = "application/json", schema =
 			@Schema(implementation = CustomPage.class)))
+	@ApiResponse(responseCode = "500", description = "리스트 조회 실패",
+			content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class)))
 	@GetMapping("")
 	public DataResponseDto<CustomPage<GetPostRes>> postList(
 			@RequestParam(required = false, defaultValue = "1") int page,
@@ -72,6 +78,8 @@ public class PostController {
 			content = @Content(mediaType = "application/json", schema = @Schema(implementation = PostCreateDto.class)))
 	@ApiResponse(responseCode = "200", description = "단건 수정 성공",
 			content = @Content(mediaType = "application/json", schema = @Schema(implementation = DataResponseDto.class)))
+	@ApiResponse(responseCode = "500", description = "단건 수정 실패",
+			content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class)))
 	@PatchMapping("/{postId}")
 	public DataResponseDto<String> postModify(
 			@Parameter(description = "게시글 ID") @PathVariable(value = "postId") Long postId,
@@ -84,6 +92,8 @@ public class PostController {
 	@Operation(summary = "게시글 단건 삭제")
 	@ApiResponse(responseCode = "200", description = "단건 삭제 성공",
 			content = @Content(mediaType = "application/json", schema = @Schema(implementation = DataResponseDto.class)))
+	@ApiResponse(responseCode = "500", description = "단건 삭제 실패",
+			content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class)))
 	@DeleteMapping("/{postId}")
 	public DataResponseDto<String> postRemove(
 			@Parameter(description = "게시글 ID") @PathVariable(value = "postId") Long postId,
