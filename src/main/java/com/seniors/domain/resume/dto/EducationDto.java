@@ -5,6 +5,7 @@ import com.querydsl.core.annotations.QueryProjection;
 import com.seniors.domain.resume.entity.Certificate;
 import com.seniors.domain.resume.entity.Education;
 import com.seniors.domain.resume.entity.Resume;
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
@@ -23,45 +24,58 @@ public class EducationDto {
 
     @Data
     @Setter
-    public static class saveEducationReq extends Education{
+    public static class saveEducationReq {
 
         @NotEmpty(message = "학교/교육기관 명은 비워둘 수 없습니다.")
         @Size(max = 30, message = "학교/교육기관 명은 30자 이하여야 합니다.")
+        @Schema(description = "기관")
         private String institution;
 
+        @Schema(description = "전공/과정")
         private String process;
 
         @NotNull(message = "시작 연도는 비워둘 수 없습니다.")
+        @Schema(description = "시작 연도")
         private int startedAt;
 
         @NotNull(message = "종료 연도는 비워둘 수 없습니다.")
+        @Schema(description = "종료 연도")
         private int endedAt;
 
+        @Schema(description = "내용")
         private String content;
 
+        @Schema(description = "진행 여부")
         private Boolean isProcessed;
 
     }
 
     @Data
     @Setter
-    public static class modifyEducationReq extends Education{
+    public static class modifyEducationReq {
 
+        @Schema(description = "기본키")
         private Long id;
         @NotEmpty(message = "학교/교육기관 명은 비워둘 수 없습니다.")
         @Size(max = 30, message = "학교/교육기관 명은 30자 이하여야 합니다.")
+        @Schema(description = "학교/교육기관")
         private String institution;
 
+        @Schema(description = "전공/과정")
         private String process;
 
         @NotNull(message = "시작 연도는 비워둘 수 없습니다.")
+        @Schema(description = "시작 연도")
         private int startedAt;
 
         @NotNull(message = "종료 연도는 비워둘 수 없습니다.")
+        @Schema(description = "종료 연도")
         private int endedAt;
 
+        @Schema(description = "내용")
         private String content;
 
+        @Schema(description = "진행 여부")
         private Boolean isProcessed;
 
     }
@@ -69,17 +83,24 @@ public class EducationDto {
     @Data
     public static class getEducationRes {
 
+        @Schema(description = "기본키")
         private Long id;
 
+        @Schema(description = "기관")
         private String institution;
 
+        @Schema(description = "전공/과정")
         private String process;
 
+        @Schema(description = "시작 연도")
         private int startedAt;
 
+        @Schema(description = "종료 연도")
         private int endedAt;
 
+        @Schema(description = "내용")
         private String content;
+        @Schema(description = "진행 여부")
         private Boolean isProcessed;
 
         @Builder
@@ -106,17 +127,26 @@ public class EducationDto {
     @Getter
     @Setter
     public static class getEducationByQueryDslRes {
+
+        @Schema(description = "기본키")
         private Long id;
 
+        @Schema(description = "기관")
         private String institution;
 
+        @Schema(description = "전공/과정")
         private String process;
 
+        @Schema(description = "시작 연도")
         private int startedAt;
 
+        @Schema(description = "종료 연도")
         private int endedAt;
 
+        @Schema(description = "내용")
         private String content;
+
+        @Schema(description = "진행 여부")
         private Boolean isProcessed;
 
         public getEducationByQueryDslRes(Education education) {

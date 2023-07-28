@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.querydsl.core.annotations.QueryProjection;
 import com.seniors.domain.resume.entity.Career;
 import com.seniors.domain.resume.entity.Resume;
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
@@ -22,26 +23,32 @@ public class CareerDto {
 
     @Data
     @Setter
-    public static class saveCareerReq extends Career {
+    public static class saveCareerReq {
 
 
         @NotNull(message = "입사연도는 비워둘 수 없습니다.")
+        @Schema(description = "입사 연도")
         private int startedAt;
 
+        @Schema(description = "퇴사 연도")
         @NotNull(message = "퇴사연도는 비워둘 수 없습니다.")
         private int endedAt;
 
+        @Schema(description = "회사")
         @NotEmpty(message = "회사명은 비워둘 수 없습니다.")
         @Size(max = 30, message = "회사명은 30자 이하여야 합니다.")
         private String company;
 
+        @Schema(description = "직함")
         @NotEmpty(message = "직함은 비워둘 수 없습니다.")
         @Size(max = 30, message = "직함은 30자 이하여야 합니다.")
         private String title;
 
+        @Schema(description = "재직 여부")
         private Boolean isAttendanced;
 
         @NotEmpty(message = "내용은 비워둘 수 없습니다.")
+        @Schema(description = "내용")
         private String content;
 
 
@@ -49,26 +56,33 @@ public class CareerDto {
 
     @Data
     @Setter
-    public static class modifyCareerReq extends Career {
+    public static class modifyCareerReq {
 
+        @Schema(description = "고유키")
         private Long id;
 
+        @Schema(description = "입사 연도")
         @NotNull(message = "입사연도는 비워둘 수 없습니다.")
         private int startedAt;
 
+        @Schema(description = "퇴사 연도")
         @NotNull(message = "퇴사연도는 비워둘 수 없습니다.")
         private int endedAt;
 
+        @Schema(description = "회사")
         @NotEmpty(message = "회사명은 비워둘 수 없습니다.")
         @Size(max = 30, message = "회사명은 30자 이하여야 합니다.")
         private String company;
 
+        @Schema(description = "직함")
         @NotEmpty(message = "직함은 비워둘 수 없습니다.")
         @Size(max = 30, message = "직함은 30자 이하여야 합니다.")
         private String title;
 
+        @Schema(description = "재직 여부")
         private Boolean isAttendanced;
 
+        @Schema(description = "내용")
         @NotEmpty(message = "내용은 비워둘 수 없습니다.")
         private String content;
 
@@ -77,14 +91,26 @@ public class CareerDto {
 
     @Data
     public static class getCareerRes {
+
+        @Schema(description = "고유키")
         private Long id;
+
+        @Schema(description = "입사 연도")
         private int startedAt;
+
+        @Schema(description = "퇴사 연도")
         private int endedAt;
+
+        @Schema(description = "회사")
         private String company;
 
+        @Schema(description = "직함")
         private String title;
+
+        @Schema(description = "재직 여부")
         private Boolean isAttendanced;
 
+        @Schema(description = "내용")
         private String content;
 
         @Builder
@@ -110,14 +136,26 @@ public class CareerDto {
     @Getter
     @Setter
     public static class getCareerQueryDslRes{
+
+        @Schema(description = "고유키")
         private Long id;
+
+        @Schema(description = "입사 연도")
         private int startedAt;
+
+        @Schema(description = "퇴사 연도")
         private int endedAt;
+
+        @Schema(description = "회사")
         private String company;
 
+        @Schema(description = "직함")
         private String title;
+
+        @Schema(description = "재직 여부")
         private Boolean isAttendanced;
 
+        @Schema(description = "내용")
         private String content;
 
         public getCareerQueryDslRes(Career career){

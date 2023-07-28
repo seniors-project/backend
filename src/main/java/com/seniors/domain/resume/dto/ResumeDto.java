@@ -38,18 +38,23 @@ public class ResumeDto {
 	@Setter
 	public static class SaveResumeReq {
 
+		@Schema(description = "소개글")
 		private String introduce;
 
 		@NotEmpty(message = "직종은 비워둘 수 없습니다.")
 		@Size(max = 30, message = "직종은 30자 이하여야 합니다.")
+		@Schema(description = "직종")
 		private String occupation;
 
+		@Schema(description = "공개 여부")
 		private Boolean isOpened;
 
 		@NotEmpty(message = "이름은 비워둘 수 없습니다.")
 		@Size(max = 30, message = "이름은 30자 이하여야 합니다.")
+		@Schema(description = "이름")
 		private String name;
 
+		@Schema(description = "사진")
 		private MultipartFile image;
 
 		@Valid
@@ -67,20 +72,26 @@ public class ResumeDto {
 	@Setter
 	public static class ModifyResumeReq {
 
+		@Schema(description = "기본키")
 		private Long id;
 
+		@Schema(description = "소개글")
 		private String introduce;
 
 		@NotEmpty(message = "직종은 비워둘 수 없습니다.")
 		@Size(max = 30, message = "직종은 30자 이하여야 합니다.")
+		@Schema(description = "직종")
 		private String occupation;
 
+		@Schema(description = "공개 여부")
 		private Boolean isOpened;
 
 		@NotEmpty(message = "이름은 비워둘 수 없습니다.")
 		@Size(max = 30, message = "이름은 30자 이하여야 합니다.")
+		@Schema(description = "이름")
 		private String name;
 
+		@Schema(description = "사진")
 		private MultipartFile image;
 
 		@Valid
@@ -97,16 +108,22 @@ public class ResumeDto {
 	@Data
 	public static class GetResumeRes {
 
+		@Schema(description = "기본키")
 		private Long id;
 
+		@Schema(description = "소개글")
 		private String introduce;
 
+		@Schema(description = "사진 URL")
 		private String photoUrl;
 
+		@Schema(description = "직종")
 		private String occupation;
 
+		@Schema(description = "공개 여부")
 		private Boolean isOpened;
 
+		@Schema(description = "이름")
 		private String name;
 
 		private List<CertificateDto.getCertificateRes> certificates;
@@ -145,15 +162,22 @@ public class ResumeDto {
 	@Setter
 	public static class GetResumeByQueryDslRes {
 
+		@Schema(description = "기본키")
 		private Long id;
+
+		@Schema(description = "소개글")
 		private String introduce;
 
+		@Schema(description = "사진 URL")
 		private String photoUrl;
 
+		@Schema(description = "직종")
 		private String occupation;
 
+		@Schema(description = "공개 여부")
 		private Boolean isOpened;
 
+		@Schema(description = "이름")
 		private String name;
 
 		private List<CertificateDto.getCertificateQueryDslRes> certificates;
