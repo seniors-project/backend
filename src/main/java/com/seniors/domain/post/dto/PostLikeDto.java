@@ -11,7 +11,7 @@ public class PostLikeDto {
 
     @Data
     public static class SetLikeDto {
-        @Schema(description = "현재 좋아요 상태")
+        @Schema(description = "현재 좋아요 상태", defaultValue = "false")
         private Boolean status;
     }
 }
