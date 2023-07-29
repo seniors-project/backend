@@ -57,7 +57,7 @@ public class ResumeController {
 
     @Operation(summary = "이력서 조회")
     @ApiResponse(responseCode = "200", description = "조회 성공",
-            content = @Content(mediaType = "application/json", schema = @Schema(implementation = DataResponseDto.class)))
+            content = @Content(mediaType = "application/json", schema = @Schema(implementation = ResumeDto.GetResumeRes.class)))
     @ApiResponse(responseCode = "404", description = "유효하지 않은 회원입니다.",
             content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class)))
     @ApiResponse(responseCode = "404", description = "이력서가 존재하지 않습니다.",
@@ -74,7 +74,7 @@ public class ResumeController {
 
     @Operation(summary = "이력서 리스트 조회")
     @ApiResponse(responseCode = "200", description = "리스트 조회 성공",
-            content = @Content(mediaType = "application/json", schema = @Schema(implementation = DataResponseDto.class)))
+            content = @Content(mediaType = "application/json", schema = @Schema(implementation = ResumeDto.GetResumeByQueryDslRes.class)))
     @ApiResponse(responseCode = "404", description = "유효하지 않은 회원입니다.",
             content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class)))
     @GetMapping("")
