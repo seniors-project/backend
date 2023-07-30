@@ -1,4 +1,4 @@
-package com.seniors.domain.post.repository;
+package com.seniors.domain.post.repository.post;
 
 import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
@@ -18,9 +18,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
-
-import static com.seniors.domain.post.entity.QPost.*;
-import static com.seniors.domain.post.entity.QPost.post;
 
 
 @Slf4j

@@ -1,13 +1,11 @@
 package com.seniors.config;
 
 import com.amazonaws.services.s3.AmazonS3;
-import com.amazonaws.services.s3.AmazonS3Client;
 import com.amazonaws.services.s3.model.CannedAccessControlList;
 import com.amazonaws.services.s3.model.PutObjectRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -15,6 +13,8 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 @Slf4j
@@ -35,6 +35,15 @@ public class S3Uploader {
         return upload(uploadFile, dirName);
     }
 
+//    public List<String> multiUpload(List<MultipartFile> multipartFile, String dirName) throws IOException {
+//        List<File> uploadFiles = new ArrayList<>();
+//        for (MultipartFile file : multipartFile) {
+//            uploadFiles.add(convert(file)
+//                    .orElseThrow(() -> new IllegalArgumentException("MultipartFile -> File 전환 실패")));
+//        }
+//        return multiUpload(uploadFiles, dirName);
+//    }
+
     private String upload(File uploadFile, String dirName) {
         String fileName = dirName + "/" + uploadFile.getName();
         String uploadImageUrl = putS3(uploadFile, fileName);
@@ -43,6 +52,16 @@ public class S3Uploader {
 
         return uploadImageUrl;      // 업로드된 파일의 S3 URL 주소 반환
     }
+
+//    private List<String> multiUpload(List<File> uploadFile, String dirName) {
+//        List<String> uploadImageUrls = new ArrayList<>();
+//        for (File file : uploadFile) {
+//            String fileName = dirName + "/" + file.getName();
+//            uploadImageUrls.add(putS3(file, fileName));
+//            removeNewFile(file);  // 로컬에 생성된 File 삭제 (MultipartFile -> File 전환 하며 로컬에 파일 생성됨)
+//        }
+//        return uploadImageUrls;      // 업로드된 파일의 S3 URL 주소 반환
+//    }
 
     private String putS3(File uploadFile, String fileName) {
         amazonS3Client.putObject(

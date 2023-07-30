@@ -1,4 +1,4 @@
-package com.seniors.domain.post.repository;
+package com.seniors.domain.post.repository.post;
 
 import com.seniors.domain.post.dto.PostDto.GetPostRes;
 import com.seniors.domain.post.dto.PostDto.ModifyPostReq;
@@ -15,4 +15,5 @@ public interface PostRepositoryCustom {
 	void removePost(Long postId, Long userId);
 
 	void increaseLikeCount(Long postId, Boolean status);
+
 }

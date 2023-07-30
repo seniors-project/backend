@@ -1,8 +1,6 @@
-package com.seniors.domain.comment.entity;
+package com.seniors.domain.post.entity;
 
 import com.seniors.domain.common.BaseEntity;
-import com.seniors.domain.post.entity.Post;
-import com.seniors.domain.users.entity.Users;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -16,15 +14,16 @@ import org.hibernate.annotations.Where;
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@SQLDelete(sql = "UPDATE Comment SET isDeleted = true WHERE id = ?")
 @Where(clause = "isDeleted = false")
-public class Comment extends BaseEntity {
+@SQLDelete(sql = "UPDATE PostMedia SET isDeleted = true WHERE id = ?")
+public class PostMedia extends BaseEntity {
+
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
-	@Column(columnDefinition = "text not null COMMENT '댓글 내용'")
-	private String content;
+	@Column(columnDefinition = "text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci not null COMMENT '게시글 이미지 및 동영상 url'")
+	private String mediaUrl;
 
 	private boolean isDeleted = Boolean.FALSE;
 
@@ -33,20 +32,18 @@ public class Comment extends BaseEntity {
 	@OnDelete(action = OnDeleteAction.CASCADE)
 	private Post post;
 
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "userId")
-	private Users users;
-
-	public static Comment of(String content, Post post, Users users) {
-		return Comment.builder().content(content)
-				.isDeleted(false).post(post).users(users).build();
+	public static PostMedia of(String mediaUrl, Post post) {
+		return PostMedia.builder()
+				.mediaUrl(mediaUrl)
+				.isDeleted(false)
+				.post(post)
+				.build();
 	}
 
 	@Builder
-	public Comment(String content, Boolean isDeleted, Post post, Users users) {
-		this.content = content;
+	public PostMedia(String mediaUrl, Boolean isDeleted, Post post) {
+		this.mediaUrl = mediaUrl;
 		this.isDeleted = isDeleted;
 		this.post = post;
-		this.users = users;
 	}
 }

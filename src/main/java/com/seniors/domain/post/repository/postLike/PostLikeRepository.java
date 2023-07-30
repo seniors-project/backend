@@ -1,4 +1,4 @@
-package com.seniors.domain.post.repository;
+package com.seniors.domain.post.repository.postLike;
 
 import com.seniors.domain.post.entity.PostLike;
 import org.springframework.data.jpa.repository.JpaRepository;
