@@ -16,4 +16,11 @@ public class PostMediaRepositoryImpl extends BasicRepoSupport implements PostMed
 	protected PostMediaRepositoryImpl(JPAQueryFactory jpaQueryFactory, EntityManager em) {
 		super(jpaQueryFactory, em);
 	}
+
+	@Override
+	public void deleteByPostId(Long postId) {
+		jpaQueryFactory.delete(postMedia)
+				.where(postMedia.post.id.eq(postId))
+				.execute();
+	}
 }

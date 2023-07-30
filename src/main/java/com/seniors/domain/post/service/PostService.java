@@ -71,8 +71,17 @@ public class PostService {
 	}
 
 	@Transactional
-	public void modifyPost(ModifyPostReq modifyPostReq, Long postId, Long userId) {
-		postRepository.modifyPost(modifyPostReq, postId, userId);
+	public void modifyPost(String title, String content, List<MultipartFile> files, Long postId, Long userId) throws IOException {
+		Post post = postRepository.findById(postId).orElseThrow(() -> new NotFoundException("유효하지 않은 게시글입니다."));
+		postRepository.modifyPost(title, content, postId, userId);
+		postMediaRepository.deleteByPostId(postId);
+
+		if (files != null && !files.isEmpty()) {
+			for (MultipartFile file : files) {
+				String uploadImagePath = s3Uploader.upload(file, "posts/media/" + post.getId().toString());
+				postMediaRepository.save(PostMedia.of(uploadImagePath, post));
+			}
+		}
 	}
 
 	@Transactional

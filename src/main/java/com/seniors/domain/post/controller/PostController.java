@@ -92,9 +92,11 @@ public class PostController {
 	@PatchMapping("/{postId}")
 	public DataResponseDto<String> postModify(
 			@Parameter(description = "게시글 ID") @PathVariable(value = "postId") Long postId,
-			@LoginUsers CustomUserDetails userDetails,
-			@RequestBody @Valid ModifyPostReq postDto) {
-		postService.modifyPost(postDto, postId, userDetails.getUserId());
+			@RequestParam(value = "files", required = false) List<MultipartFile> files,
+			@RequestParam(value = "title") String title,
+			@RequestParam(value = "content") String content,
+			@LoginUsers CustomUserDetails userDetails) throws IOException {
+		postService.modifyPost(title, content, files, postId, userDetails.getUserId());
 		return DataResponseDto.of("SUCCESS");
 	}
 
