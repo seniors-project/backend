@@ -51,7 +51,7 @@ public class PostService {
 		Post post = postRepository.save(Post.of(title, content, users));
 		if (files != null && !files.isEmpty()) {
 			for (MultipartFile file : files) {
-				String uploadImagePath = s3Uploader.upload(file, "images/posts/" + post.getId().toString());
+				String uploadImagePath = s3Uploader.upload(file, "posts/media/" + post.getId().toString());
 				postMediaRepository.save(PostMedia.of(uploadImagePath, post));
 			}
 		}

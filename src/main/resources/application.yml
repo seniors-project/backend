@@ -43,6 +43,10 @@ spring:
   config:
     activate:
       on-profile: default
+  servlet:
+    multipart:
+      maxFileSize: 30MB
+      maxRequestSize: 60MB
 
 springdoc:
   api-docs:
