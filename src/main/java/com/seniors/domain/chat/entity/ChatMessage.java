@@ -7,14 +7,12 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.hibernate.annotations.SQLDelete;
-import org.hibernate.annotations.Where;
 
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@SQLDelete(sql = "UPDATE Chat SET isDeleted = true WHERE id = ?")
-@Where(clause = "isDeleted = false")
+//@SQLDelete(sql = "UPDATE ChatMessage SET isDeleted = true WHERE id = ?")
+//@Where(clause = "isDeleted = false")
 public class ChatMessage extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -24,7 +22,7 @@ public class ChatMessage extends BaseEntity {
     @Lob
     private String content;
 
-    private boolean isDeleted = Boolean.FALSE;
+//    private boolean isDeleted = Boolean.FALSE;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "userId")
@@ -34,13 +32,18 @@ public class ChatMessage extends BaseEntity {
     @JoinColumn(name = "chatroomId")
     private ChatRoom chatRoom;
 
-    public static ChatMessage from(String content) {
-        return ChatMessage.builder().content(content).isDeleted(false).build();
+    public static ChatMessage of(ChatRoom chatRoom, Users users, String content) {
+        return ChatMessage.builder()
+                .chatRoom(chatRoom)
+                .users(users)
+                .content(content)
+                .build();
     }
 
     @Builder
-    public ChatMessage(String content, Boolean isDeleted) {
+    public ChatMessage(String content, ChatRoom chatRoom, Users users) {
+        this.chatRoom = chatRoom;
+        this.users = users;
         this.content = content;
-        this.isDeleted = isDeleted;
     }
 }

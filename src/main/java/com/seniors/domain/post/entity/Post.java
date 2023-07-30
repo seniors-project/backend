@@ -40,7 +40,7 @@ public class Post extends BaseEntity {
 	private Integer likeCount;
 
 	@OneToMany(mappedBy = "post", orphanRemoval = true, cascade = CascadeType.ALL)
-	private List<Comment> comments = new ArrayList<>();
+	private List<Comment>  	comments = new ArrayList<>();
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "userId")
