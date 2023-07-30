@@ -74,6 +74,12 @@ public class PostService {
 	public void modifyPost(String title, String content, List<MultipartFile> files, Long postId, Long userId) throws IOException {
 		Post post = postRepository.findById(postId).orElseThrow(() -> new NotFoundException("유효하지 않은 게시글입니다."));
 		postRepository.modifyPost(title, content, postId, userId);
+
+		// 기존 미디어 파일 삭제
+		List<PostMedia> existingMediaList = postMediaRepository.findByPostId(postId);
+		for (PostMedia media : existingMediaList) {
+			s3Uploader.deleteS3Object("posts/media/" + post.getId().toString());
+		}
 		postMediaRepository.deleteByPostId(postId);
 
 		if (files != null && !files.isEmpty()) {
