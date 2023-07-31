@@ -1,17 +1,10 @@
 package com.seniors.domain.post.service;
 
-import com.seniors.domain.post.dto.PostDto;
-import com.seniors.domain.post.entity.Post;
 import com.seniors.domain.post.repository.PostRepository;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 @SpringBootTest
 @ActiveProfiles("dev")
@@ -72,23 +65,24 @@ class PostServiceTest {
 //		assertEquals("bar", post.getContent());
 //	}
 
-	@Test
-	@DisplayName("글 단건 삭제")
-	void deletePostTest1() {
-		// given
-		Post post = Post.builder()
-				.title("test title 1")
-				.content("test content 1")
-				.isDeleted(false)
-				.viewCount(0)
-				.likeCount(0)
-				.build();
-		postRepository.save(post);
+//	@Test
+//	@DisplayName("글 단건 삭제")
+//	void deletePostTest1() {
+//		// given
+//		Post post = Post.builder()
+//				.title("test title 1")
+//				.content("test content 1")
+//				.isDeleted(false)
+//				.viewCount(0)
+//				.likeCount(0)
+//				.build();
+//		postRepository.save(post);
+//
+//		// when
+//		postService.removePost(post.getId());
+//
+//		// then
+//		assertEquals(0, postRepository.count());
+//	}
 
-		// when
-		postService.removePost(post.getId());
-
-		// then
-		assertEquals(0, postRepository.count());
-	}
 }

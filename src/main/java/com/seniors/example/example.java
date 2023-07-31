@@ -11,7 +11,7 @@ public class example {
 
     @RequestMapping("/ex")
     public String ex(){
-        return "hello my name is apple......I'm sweet";
+        return "hello my name is apple.....I'm sweet";
     }
 
 
