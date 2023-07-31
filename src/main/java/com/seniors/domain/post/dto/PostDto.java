@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.querydsl.core.annotations.QueryProjection;
 import com.seniors.domain.comment.entity.Comment;
 import com.seniors.domain.post.entity.Post;
+import com.seniors.domain.post.entity.PostMedia;
 import com.seniors.domain.users.dto.UsersDto.GetPostUserRes;
 import com.seniors.domain.users.entity.Users;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -65,9 +66,12 @@ public class PostDto {
 		@Schema(description = "게시글 댓글 리스트")
 		private List<GetCommentRes> comments; // Update the field type to List<GetCommentRes>
 
+		@Schema(description = "게시글 이미지 및 동영상")
+		private List<GetPostMediaRes> postMedias;
+
 		public GetPostRes(Long postId, String title, String content,
 		                  LocalDateTime createdAt, LocalDateTime lastModifiedDate, Users users,
-		                  List<Comment> comments) {
+		                  List<Comment> comments, List<PostMedia> postMedias) {
 			this.postId = postId;
 			this.title = title;
 			this.content = content;
@@ -87,6 +91,36 @@ public class PostDto {
 							comment.getLastModifiedDate()
 					))
 					.collect(Collectors.toList());
+			this.postMedias = postMedias.stream()
+					.map(postMedia -> new GetPostMediaRes(
+							postMedia.getId(),
+							postMedia.getMediaUrl(),
+							postMedia.getCreatedAt(),
+							postMedia.getLastModifiedDate()
+					))
+					.collect(Collectors.toList());
+		}
+	}
+
+	@Data
+	public static class GetPostMediaRes {
+		@Schema(description = "게시글 미디어 ID")
+		private Long postMediaId;
+
+		@Schema(description = "게시글 미디어 url")
+		private String mediaUrl;
+
+		@Schema(description = "생성 일자")
+		private LocalDateTime createdAt;
+
+		@Schema(description = "최근 수정 일자")
+		private LocalDateTime lastModifiedDate;
+
+		public GetPostMediaRes(Long postMediaId, String mediaUrl, LocalDateTime createdAt, LocalDateTime lastModifiedDate) {
+			this.postMediaId = postMediaId;
+			this.mediaUrl = mediaUrl;
+			this.createdAt = createdAt;
+			this.lastModifiedDate = lastModifiedDate;
 		}
 	}
 

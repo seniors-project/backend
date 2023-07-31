@@ -9,6 +9,7 @@ import com.seniors.domain.post.dto.PostDto.GetPostRes;
 import com.seniors.domain.post.dto.PostDto.ModifyPostReq;
 import com.seniors.domain.post.entity.Post;
 import com.seniors.domain.post.entity.QPost;
+import com.seniors.domain.post.entity.QPostMedia;
 import com.seniors.domain.users.entity.QUsers;
 import jakarta.persistence.EntityManager;
 import lombok.extern.slf4j.Slf4j;
@@ -25,6 +26,7 @@ import java.util.List;
 public class PostRepositoryImpl extends BasicRepoSupport implements PostRepositoryCustom {
 
 	private final static QPost post = QPost.post;
+	private final static QPostMedia postMedia = QPostMedia.postMedia;
 	private final static QComment comment = QComment.comment;
 	private final static QUsers users = QUsers.users;
 
@@ -37,6 +39,7 @@ public class PostRepositoryImpl extends BasicRepoSupport implements PostReposito
 		List<Post> postResList = jpaQueryFactory
 				.selectFrom(post)
 				.leftJoin(post.comments, comment).fetchJoin()
+				.leftJoin(post.postMedias, postMedia)
 				.innerJoin(post.users, users).fetchJoin()
 				.where(post.id.eq(postId))
 				.fetch();
@@ -53,7 +56,8 @@ public class PostRepositoryImpl extends BasicRepoSupport implements PostReposito
 						p.getCreatedAt(),
 						p.getLastModifiedDate(),
 						p.getUsers(),
-						p.getComments())).toList();
+						p.getComments(),
+						p.getPostMedias())).toList();
 
 		return content.get(0);
 	}
@@ -72,6 +76,7 @@ public class PostRepositoryImpl extends BasicRepoSupport implements PostReposito
 		JPAQuery<Post> query = jpaQueryFactory
 				.selectFrom(post)
 				.leftJoin(post.comments, comment).fetchJoin()
+				.leftJoin(post.postMedias, postMedia)
 				.join(post.users, users).fetchJoin();
 		super.setPageQuery(query, pageable, post);
 		List<GetPostRes> content = query.fetch().stream()
@@ -82,7 +87,8 @@ public class PostRepositoryImpl extends BasicRepoSupport implements PostReposito
 						p.getCreatedAt(),
 						p.getLastModifiedDate(),
 						p.getUsers(),
-						p.getComments())).toList();
+						p.getComments(),
+						p.getPostMedias())).toList();
 
 		JPAQuery<Long> countQuery = jpaQueryFactory
 				.select(post.id.count())

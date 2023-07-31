@@ -1,6 +1,6 @@
 package com.seniors.domain.post.entity;
 
-import com.seniors.domain.common.BaseEntity;
+import com.seniors.domain.common.BaseTimeEntity;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -16,7 +16,7 @@ import org.hibernate.annotations.Where;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Where(clause = "isDeleted = false")
 @SQLDelete(sql = "UPDATE PostMedia SET isDeleted = true WHERE id = ?")
-public class PostMedia extends BaseEntity {
+public class PostMedia extends BaseTimeEntity {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
