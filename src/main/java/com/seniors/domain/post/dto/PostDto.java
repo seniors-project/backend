@@ -53,9 +53,6 @@ public class PostDto {
 		@Schema(description = "게시글 내용", defaultValue = "내용 1", example = "내용 1이요")
 		private String content;
 
-		@Schema(description = "조회 수")
-		private Integer viewCount;
-
 		@Schema(description = "생성 일자")
 		private LocalDateTime createdAt;
 
@@ -68,13 +65,12 @@ public class PostDto {
 		@Schema(description = "게시글 댓글 리스트")
 		private List<GetCommentRes> comments; // Update the field type to List<GetCommentRes>
 
-		public GetPostRes(Long postId, String title, String content, Integer viewCount,
+		public GetPostRes(Long postId, String title, String content,
 		                  LocalDateTime createdAt, LocalDateTime lastModifiedDate, Users users,
 		                  List<Comment> comments) {
 			this.postId = postId;
 			this.title = title;
 			this.content = content;
-			this.viewCount = viewCount;
 			this.createdAt = createdAt;
 			this.lastModifiedDate = lastModifiedDate;
 			this.users = new GetPostUserRes(

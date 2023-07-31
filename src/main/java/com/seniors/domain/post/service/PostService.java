@@ -2,10 +2,13 @@ package com.seniors.domain.post.service;
 
 import com.seniors.common.dto.CustomPage;
 import com.seniors.common.exception.type.BadRequestException;
+import com.seniors.domain.post.dto.PostDto;
 import com.seniors.domain.post.dto.PostDto.GetPostRes;
 import com.seniors.domain.post.dto.PostDto.ModifyPostReq;
+import com.seniors.domain.post.dto.PostDto.PostCreateDto;
 import com.seniors.domain.post.dto.PostDto.SavePostReq;
 import com.seniors.domain.post.entity.Post;
+import com.seniors.domain.post.repository.PostLikeRepository;
 import com.seniors.domain.post.repository.PostRepository;
 import com.seniors.domain.users.repository.UsersRepository;
 import lombok.RequiredArgsConstructor;
@@ -24,6 +27,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class PostService {
 
 	private final PostRepository postRepository;
+	private final PostLikeRepository postLikeRepository;
 	private final UsersRepository usersRepository;
 
 	@Transactional
@@ -38,8 +42,8 @@ public class PostService {
 	}
 
 	@Transactional
-	public GetPostRes findOnePost(Long postId, Long userId) {
-		return postRepository.findOnePost(postId, userId);
+	public GetPostRes findOnePost(Long postId) {
+		return postRepository.findOnePost(postId);
 	}
 
 	@Transactional(readOnly = true)
@@ -56,8 +60,18 @@ public class PostService {
 	}
 
 	@Transactional
-	public void removePost(Long postId) {
-		postRepository.deleteById(postId);
+	public void removePost(Long postId, Long userId) {
+		postRepository.removePost(postId, userId);
+	}
+
+	@Transactional
+	public void likePost(Long postId, Long userId, Boolean status) {
+		int updatedRows = postLikeRepository.likePost(postId, userId, !status);
+		if (updatedRows >= 1) {
+			postRepository.increaseLikeCount(postId, status);
+		} else {
+			throw new BadRequestException();
+		}
 	}
 
 }

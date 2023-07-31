@@ -19,6 +19,9 @@ import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
+import static com.seniors.domain.post.entity.QPost.*;
+import static com.seniors.domain.post.entity.QPost.post;
+
 
 @Slf4j
 @Repository
@@ -33,12 +36,12 @@ public class PostRepositoryImpl extends BasicRepoSupport implements PostReposito
 	}
 
 	@Override
-	public GetPostRes findOnePost(Long postId, Long userId) {
+	public GetPostRes findOnePost(Long postId) {
 		List<Post> postResList = jpaQueryFactory
 				.selectFrom(post)
 				.leftJoin(post.comments, comment).fetchJoin()
 				.innerJoin(post.users, users).fetchJoin()
-				.where(post.id.eq(postId).and(post.users.id.eq(userId)))
+				.where(post.id.eq(postId))
 				.fetch();
 
 		if (postResList.isEmpty()) {
@@ -50,13 +53,11 @@ public class PostRepositoryImpl extends BasicRepoSupport implements PostReposito
 						p.getId(),
 						p.getTitle(),
 						p.getContent(),
-						p.getViewCount(),
 						p.getCreatedAt(),
 						p.getLastModifiedDate(),
 						p.getUsers(),
 						p.getComments())).toList();
 
-		updateViewCount(content.get(0).getPostId());
 		return content.get(0);
 	}
 
@@ -81,7 +82,6 @@ public class PostRepositoryImpl extends BasicRepoSupport implements PostReposito
 						p.getId(),
 						p.getTitle(),
 						p.getContent(),
-						p.getViewCount(),
 						p.getCreatedAt(),
 						p.getLastModifiedDate(),
 						p.getUsers(),
@@ -96,11 +96,30 @@ public class PostRepositoryImpl extends BasicRepoSupport implements PostReposito
 		return new PageImpl<>(content, super.getValidPageable(pageable), count);
 	}
 
-	private void updateViewCount(Long postId) {
+	@Override
+	public void removePost(Long postId, Long userId) {
+		// 댓글들을 먼저 소프트 삭제 (isDeleted 필드를 true로 설정)
+		jpaQueryFactory.update(comment)
+				.set(comment.isDeleted, true)
+				.where(comment.post.id.eq(postId)
+						.and(comment.isDeleted.eq(false))
+						.and(comment.users.id.eq(userId)))
+				.execute();
+
+		// 게시글을 소프트 삭제 (isDeleted 필드를 true로 설정)
+		jpaQueryFactory.update(post)
+				.set(post.isDeleted, true)
+				.where(post.id.eq(postId)
+						.and(post.isDeleted.eq(false))
+						.and(post.users.id.eq(userId)))
+				.execute();
+	}
+
+	public void increaseLikeCount(Long postId, Boolean status) {
 		jpaQueryFactory
-				.update(QPost.post)
-				.set(QPost.post.viewCount, QPost.post.viewCount.add(1))
-				.where(QPost.post.id.eq(postId))
+				.update(post)
+				.set(post.likeCount, post.likeCount.add(status ? -1 : 1))
+				.where(post.id.eq(postId))
 				.execute();
 	}
 }

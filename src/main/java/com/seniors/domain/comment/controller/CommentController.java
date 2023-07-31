@@ -2,10 +2,12 @@ package com.seniors.domain.comment.controller;
 
 import com.seniors.common.annotation.LoginUsers;
 import com.seniors.common.dto.DataResponseDto;
+import com.seniors.common.dto.ErrorResponse;
 import com.seniors.config.security.CustomUserDetails;
 import com.seniors.domain.comment.dto.CommentDto;
 import com.seniors.domain.comment.entity.Comment;
 import com.seniors.domain.comment.service.CommentService;
+import com.seniors.domain.post.dto.PostDto;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -29,8 +31,12 @@ public class CommentController {
     private final CommentService commentService;
 
     @Operation(summary = "댓글 생성")
+    @io.swagger.v3.oas.annotations.parameters.RequestBody(description = "생성 요청 body",
+            content = @Content(mediaType = "application/json", schema = @Schema(implementation = CommentCreateDto.class)))
     @ApiResponse(responseCode = "200", description = "생성 성공",
             content = @Content(mediaType = "application/json", schema = @Schema(implementation = DataResponseDto.class)))
+    @ApiResponse(responseCode = "500", description = "생성 실패",
+            content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class)))
     @PostMapping("")
     public DataResponseDto<String> commentAdd(
             @RequestBody @Valid SaveCommentDto commentDto,
@@ -41,8 +47,12 @@ public class CommentController {
     }
 
     @Operation(summary = "댓글 수정")
+    @io.swagger.v3.oas.annotations.parameters.RequestBody(description = "수정 요청 body",
+            content = @Content(mediaType = "application/json", schema = @Schema(implementation = CommentCreateDto.class)))
     @ApiResponse(responseCode = "200", description = "수정 성공",
             content = @Content(mediaType = "application/json", schema = @Schema(implementation = DataResponseDto.class)))
+    @ApiResponse(responseCode = "500", description = "수정 실패",
+            content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class)))
     @PatchMapping("/{commentId}")
     public DataResponseDto<String> commentModify(
             @Parameter(description = "댓글 ID") @PathVariable(value = "commentId") Long commentId,
@@ -55,6 +65,8 @@ public class CommentController {
     @Operation(summary = "댓글 삭제")
     @ApiResponse(responseCode = "200", description = "삭제 성공",
             content = @Content(mediaType = "application/json", schema = @Schema(implementation = DataResponseDto.class)))
+    @ApiResponse(responseCode = "500", description = "삭제 실패",
+            content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class)))
     @DeleteMapping("/{commentId}")
     public DataResponseDto<String> commentRemove(
             @Parameter(description = "댓글 ID") @PathVariable(value = "commentId") Long commentId,
