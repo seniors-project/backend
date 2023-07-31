@@ -131,20 +131,4 @@ public class PostController {
 		return DataResponseDto.of("SUCCESS");
 	}
 
-	@Operation(summary = "게시글 이미지 및 동영상 업로드")
-	@io.swagger.v3.oas.annotations.parameters.RequestBody(description = "postMedia 업로드 body",
-			content = @Content(mediaType = "application/json", schema = @Schema(implementation = SetLikeDto.class)))
-	@ApiResponse(responseCode = "200", description = "업로드 성공",
-			content = @Content(mediaType = "application/json", schema = @Schema(implementation = DataResponseDto.class)))
-	@ApiResponse(responseCode = "500", description = "업로드 실패",
-			content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class)))
-	@PostMapping("/upload")
-	public DataResponseDto<String> postMediaUpload(
-			@RequestParam("file") MultipartFile file,
-			@RequestParam("postId") Long postId
-	) throws IOException {
-		String uploadImagePath = s3Uploader.upload(file, "images/posts/" + postId.toString());
-		postService.postMediaAdd(uploadImagePath, postId);
-		return DataResponseDto.of("SUCCESS");
-	}
 }
