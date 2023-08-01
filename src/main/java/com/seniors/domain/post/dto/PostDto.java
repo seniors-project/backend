@@ -9,7 +9,9 @@ import com.seniors.domain.users.dto.UsersDto.GetPostUserRes;
 import com.seniors.domain.users.entity.Users;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotEmpty;
 import lombok.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -25,22 +27,16 @@ public class PostDto {
 	@Data
 	@Builder
 	public static class PostCreateDto {
+		@NotEmpty(message = "제목은 비워둘 수 없습니다.")
 		@Schema(description = "게시글 제목", defaultValue = "제목 1", example = "제목 1이요")
-		@NotBlank(message = "Input title!")
 		private String title;
 
+		@NotEmpty(message = "내용은 비워둘 수 없습니다.")
 		@Schema(description = "게시글 내용", defaultValue = "내용 1", example = "내용 1이요")
-		@NotBlank(message = "Input content!")
 		private String content;
 
-		@Schema(description = "작성자 ID")
-		@NotBlank(message = "Required userId")
-		@JsonIgnore
-		private Long userId;
-
-		public static PostCreateDto of(String title, String content, Long userId) {
-			return PostCreateDto.builder().title(title).content(content).userId(userId).build();
-		}
+		@Schema(description = "사진 및 동영상")
+		private List<MultipartFile> files;
 	}
 
 	@Data

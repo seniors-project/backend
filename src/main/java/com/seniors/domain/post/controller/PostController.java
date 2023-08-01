@@ -22,6 +22,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -47,11 +48,12 @@ public class PostController {
 			content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class)))
 	@PostMapping("")
 	public DataResponseDto<String> postAdd(
-			@RequestParam(value = "files", required = false) List<MultipartFile> files,
-			@RequestParam(value = "title") String title,
-			@RequestParam(value = "content") String content,
+//			@RequestParam(value = "files", required = false) List<MultipartFile> files,
+//			@RequestParam(value = "title") String title,
+//			@RequestParam(value = "content") String content,
+			@ModelAttribute @Valid PostCreateDto postCreateDto, BindingResult bindingResult,
 			@LoginUsers CustomUserDetails userDetails) throws IOException {
-		postService.addPost(title, content, files, userDetails.getUserId());
+		postService.addPost(postCreateDto, bindingResult, userDetails.getUserId());
 		return DataResponseDto.of("SUCCESS");
 	}
 
@@ -92,11 +94,9 @@ public class PostController {
 	@PatchMapping("/{postId}")
 	public DataResponseDto<String> postModify(
 			@Parameter(description = "게시글 ID") @PathVariable(value = "postId") Long postId,
-			@RequestParam(value = "files", required = false) List<MultipartFile> files,
-			@RequestParam(value = "title") String title,
-			@RequestParam(value = "content") String content,
+			@ModelAttribute @Valid PostCreateDto postCreateDto, BindingResult bindingResult,
 			@LoginUsers CustomUserDetails userDetails) throws IOException {
-		postService.modifyPost(title, content, files, postId, userDetails.getUserId());
+		postService.modifyPost(postCreateDto, bindingResult, postId, userDetails.getUserId());
 		return DataResponseDto.of("SUCCESS");
 	}
 
