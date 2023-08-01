@@ -4,6 +4,7 @@ import com.seniors.domain.notification.dto.NotificationDto;
 import com.seniors.domain.notification.entity.Notification;
 import com.seniors.domain.notification.repository.EmitterRepository;
 import com.seniors.domain.users.entity.Users;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
@@ -11,14 +12,11 @@ import java.io.IOException;
 import java.util.Map;
 
 @Service
+@RequiredArgsConstructor
 public class NotificationService {
 	private static final Long DEFAULT_TIMEOUT = 60L * 1000 * 60;
 
 	private final EmitterRepository emitterRepository;
-
-	public NotificationService(EmitterRepository emitterRepository) {
-		this.emitterRepository = emitterRepository;
-	}
 
 	public SseEmitter subscribe(Long userId, String lastEventId) {
 		// 1

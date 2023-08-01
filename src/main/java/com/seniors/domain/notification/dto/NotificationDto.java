@@ -2,16 +2,13 @@ package com.seniors.domain.notification.dto;
 
 import com.seniors.common.util.LocalDateTimeToArray;
 import com.seniors.domain.notification.entity.Notification;
-import lombok.Builder;
-import lombok.Data;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.time.LocalDateTime;
 
 @Getter
 @Data
-@NoArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class NotificationDto {
 	/**
 	 * 알림 id
