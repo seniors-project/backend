@@ -52,24 +52,13 @@ public class UsersDto {
 		@Schema(description = "채팅방 리스트")
 		private List<GetChatRoomMembersRes> chatRoomMembers;
 
-//		public GetChatUserRes(Long userId, String nickname, String profileImageUrl, List<ChatRoomMembers> chatRoomMembers) {
-//			this.userId = userId;
-//			this.nickname = nickname;
-//			this.profileImageUrl = profileImageUrl;
-//			this.chatRoomMembers = chatRoomMembers.stream()
-//					.map(chatRoomMember -> new GetChatRoomMembersRes(
-//							chatRoomMember.getChatRoom()
-//					))
-//					.collect(Collectors.toList());
-//		}
 		public GetChatUserRes(Long userId, String nickname, String profileImageUrl, List<ChatRoomMembers> chatRoomMembers) {
 			this.userId = userId;
 			this.nickname = nickname;
 			this.profileImageUrl = profileImageUrl;
 			this.chatRoomMembers = chatRoomMembers.stream()
 					.map(chatRoomMember -> new GetChatRoomMembersRes(
-//							chatRoomMember.getRoomName(),
-//							chatRoomMember.getChatRoom()
+
 							chatRoomMember.getRoomName()
 					))
 					.collect(Collectors.toList());

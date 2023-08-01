@@ -38,37 +38,12 @@ public class UsersRepositoryImpl extends BasicRepoSupport implements UsersReposi
 		return user;
 	}
 
-//	@Override
-//	public Page<GetChatUserRes> findAllChatRoom(Long userId, Pageable pageable) {
-//		JPAQuery<Users> query = jpaQueryFactory
-//				.selectFrom(users)
-//				.where(users.id.eq(userId))
-//				.leftJoin(users.chatRoomMembers, chatRoomMembers).fetchJoin();
-//		super.setPageQuery(query, pageable, users);
-//		List<GetChatUserRes> content = query.fetch().stream()
-//				.map(p -> new GetChatUserRes(
-//						p.getId(),
-//						p.getNickname(),
-//						p.getProfileImageUrl(),
-//						p.getChatRoomMembers())).toList();
-//
-//		JPAQuery<Long> countQuery = jpaQueryFactory
-//				.select(users.id.count())
-//				.from(users);
-//		Long count = countQuery.fetchOne();
-//		count = count == null ? 0 : count;
-//
-//		return new PageImpl<>(content, super.getValidPageable(pageable), count);
-//	}
 	@Override
 	public Page<GetChatUserRes> findAllChatRoom(Long userId, Pageable pageable) {
 		JPAQuery<Users> query = jpaQueryFactory
 				.selectFrom(users)
 				.leftJoin(users.chatRoomMembers, chatRoomMembers).fetchJoin()
 				.where(users.id.eq(userId));
-//				.join(chatRoomMembers.chatRoom, chatRoom);
-//				.leftJoin(chatRoomMembers.chatRoom, chatRoom).fetchJoin()
-//				.distinct();
 		super.setPageQuery(query, pageable, users);
 		List<GetChatUserRes> content = query.fetch().stream()
 				.map(p -> new GetChatUserRes(
