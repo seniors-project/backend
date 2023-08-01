@@ -4,12 +4,9 @@ import com.seniors.common.annotation.LoginUsers;
 import com.seniors.common.dto.CustomPage;
 import com.seniors.common.dto.DataResponseDto;
 import com.seniors.common.dto.ErrorResponse;
-import com.seniors.config.S3Uploader;
 import com.seniors.config.security.CustomUserDetails;
 import com.seniors.domain.post.dto.PostDto.GetPostRes;
-import com.seniors.domain.post.dto.PostDto.ModifyPostReq;
 import com.seniors.domain.post.dto.PostDto.PostCreateDto;
-import com.seniors.domain.post.dto.PostDto.SavePostReq;
 import com.seniors.domain.post.dto.PostLikeDto.SetLikeDto;
 import com.seniors.domain.post.service.PostService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -21,13 +18,10 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.util.List;
 
 @Tag(name = "게시글", description = "게시글 API 명세서")
 @Slf4j
@@ -37,7 +31,6 @@ import java.util.List;
 public class PostController {
 
 	private final PostService postService;
-	private final S3Uploader s3Uploader;
 
 	@Operation(summary = "게시글 생성")
 	@io.swagger.v3.oas.annotations.parameters.RequestBody(description = "생성 요청 body",
@@ -48,9 +41,6 @@ public class PostController {
 			content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class)))
 	@PostMapping("")
 	public DataResponseDto<String> postAdd(
-//			@RequestParam(value = "files", required = false) List<MultipartFile> files,
-//			@RequestParam(value = "title") String title,
-//			@RequestParam(value = "content") String content,
 			@ModelAttribute @Valid PostCreateDto postCreateDto, BindingResult bindingResult,
 			@LoginUsers CustomUserDetails userDetails) throws IOException {
 		postService.addPost(postCreateDto, bindingResult, userDetails.getUserId());

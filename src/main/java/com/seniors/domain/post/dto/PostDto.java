@@ -1,14 +1,12 @@
 package com.seniors.domain.post.dto;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.querydsl.core.annotations.QueryProjection;
 import com.seniors.domain.comment.entity.Comment;
 import com.seniors.domain.post.entity.Post;
 import com.seniors.domain.post.entity.PostMedia;
 import com.seniors.domain.users.dto.UsersDto.GetPostUserRes;
 import com.seniors.domain.users.entity.Users;
 import io.swagger.v3.oas.annotations.media.Schema;
-import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;
 import lombok.*;
 import org.springframework.web.multipart.MultipartFile;
