@@ -26,9 +26,9 @@ public class ChatMessageController {
     @ApiResponse(responseCode = "200", description = "송/수신 성공",
             content = @Content(mediaType = "application/json"))
     @MessageMapping("/chat/sendMessage")
-    public void sendMessage(@Payload ChatMessageTransDto chat) {
+    public void chatMessageSend(@Payload ChatMessageTransDto chat) {
 
-        chatMessageService.saveMessage(chat);
+        chatMessageService.saveChatMessage(chat);
 
         template.convertAndSend("/sub/chat/room/" + chat.getChatRoomId(), chat);
 

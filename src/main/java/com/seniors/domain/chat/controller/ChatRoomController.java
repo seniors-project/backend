@@ -29,7 +29,7 @@ public class ChatRoomController {
     @ApiResponse(responseCode = "200", description = "생성 성공",
             content = @Content(mediaType = "application/json", schema = @Schema(implementation = DataResponseDto.class)))
     @PostMapping("")
-    public DataResponseDto createRoom(
+    public DataResponseDto chatRoomAdd(
             @RequestBody ChatRoomDto.ChatRoomCreateDto chatRoomCreateDto,
             @LoginUsers CustomUserDetails userDetails) {
 
@@ -55,9 +55,8 @@ public class ChatRoomController {
     @Operation(summary = "채팅방 입장")
     @ApiResponse(responseCode = "200", description = "입장 성공",
             content = @Content(mediaType = "application/json", schema = @Schema(implementation = DataResponseDto.class)))
-    @GetMapping("{roomId}")
-    public DataResponseDto<ChatRoomDto.GetChatRoomRes> chatRoom (
-//            @LoginUsers CustomUserDetails userDetails,
+    @GetMapping("/{roomId}")
+    public DataResponseDto<ChatRoomDto.GetChatRoomRes> chatRoomEnter (
             @PathVariable Long roomId) {
 
         ChatRoomDto.GetChatRoomRes getChatRoomRes = chatRoomService.findOneChatRoom(roomId);

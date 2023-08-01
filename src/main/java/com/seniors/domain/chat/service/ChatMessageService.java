@@ -23,7 +23,7 @@ public class ChatMessageService {
 
 
     @Transactional
-    public void saveMessage (ChatMessageDto.ChatMessageTransDto chat) {
+    public void saveChatMessage (ChatMessageDto.ChatMessageTransDto chat) {
         Users users = usersRepository.findById(chat.getUserId()).orElseThrow();
         ChatRoom chatRoom = chatRoomRepository.findById(chat.getChatRoomId()).orElseThrow();
         ChatMessage chatMessage = ChatMessage.of(chatRoom, users, chat.getContent());
