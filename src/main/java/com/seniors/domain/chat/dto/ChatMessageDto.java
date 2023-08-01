@@ -27,7 +27,7 @@ public class ChatMessageDto {
 
     @Data
     @Builder
-    @AllArgsConstructor     //  DTO를 이용해서 메세지를 받을 때, 기본 생성자가 있어야 함.
+    @AllArgsConstructor
     @NoArgsConstructor
     public static class ChatMessageTransDto {
         @Schema(description = "채팅방 ID")

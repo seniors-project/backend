@@ -27,8 +27,7 @@ public class ChatMessageController {
             content = @Content(mediaType = "application/json"))
     @MessageMapping("/chat/sendMessage")
     public void sendMessage(@Payload ChatMessageTransDto chat) {
-        log.info("채팅메세지 생성");
-        log.info("CHAT {}", chat);
+
         chatMessageService.saveMessage(chat);
 
         template.convertAndSend("/sub/chat/room/" + chat.getChatRoomId(), chat);
