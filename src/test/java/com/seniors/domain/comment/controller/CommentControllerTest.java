@@ -4,16 +4,12 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.seniors.common.constant.OAuthProvider;
 import com.seniors.common.constant.ResultCode;
 import com.seniors.config.security.CustomUserDetails;
-import com.seniors.domain.comment.dto.CommentDto;
 import com.seniors.domain.comment.entity.Comment;
 import com.seniors.domain.comment.repository.CommentRepository;
-import com.seniors.domain.post.dto.PostDto;
-import com.seniors.domain.post.dto.PostDto.PostCreateDto;
 import com.seniors.domain.post.entity.Post;
-import com.seniors.domain.post.repository.PostRepository;
+import com.seniors.domain.post.repository.post.PostRepository;
 import com.seniors.domain.users.entity.Users;
 import com.seniors.domain.users.repository.UsersRepository;
-import io.jsonwebtoken.Claims;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -31,7 +27,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.sql.Timestamp;
 
-import static com.seniors.domain.comment.dto.CommentDto.*;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;

@@ -1,13 +1,12 @@
 package com.seniors.config;
 
 import com.amazonaws.services.s3.AmazonS3;
-import com.amazonaws.services.s3.AmazonS3Client;
 import com.amazonaws.services.s3.model.CannedAccessControlList;
+import com.amazonaws.services.s3.model.DeleteObjectRequest;
 import com.amazonaws.services.s3.model.PutObjectRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -15,6 +14,8 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 @Slf4j
@@ -42,6 +43,16 @@ public class S3Uploader {
         removeNewFile(uploadFile);  // 로컬에 생성된 File 삭제 (MultipartFile -> File 전환 하며 로컬에 파일 생성됨)
 
         return uploadImageUrl;      // 업로드된 파일의 S3 URL 주소 반환
+    }
+
+    // S3 스토리지에 있는 파일 삭제
+    public void deleteS3Object(String objectKey) {
+        try {
+            amazonS3Client.deleteObject(new DeleteObjectRequest(bucket, objectKey));
+            log.info("S3 스토리지에서 파일을 삭제했습니다. ObjectKey: {}", objectKey);
+        } catch (Exception e) {
+            log.error("S3 스토리지 파일 삭제 중 오류가 발생했습니다. ObjectKey: {}", objectKey, e);
+        }
     }
 
     private String putS3(File uploadFile, String fileName) {

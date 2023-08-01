@@ -1,14 +1,12 @@
 package com.seniors.domain.comment.service;
 
 import com.seniors.common.exception.type.BadRequestException;
-import com.seniors.domain.comment.dto.CommentDto;
 import com.seniors.domain.comment.dto.CommentDto.ModifyCommentDto;
 import com.seniors.domain.comment.dto.CommentDto.SaveCommentDto;
 import com.seniors.domain.comment.entity.Comment;
 import com.seniors.domain.comment.repository.CommentRepository;
 import com.seniors.domain.post.entity.Post;
-import com.seniors.domain.post.repository.PostRepository;
-import com.seniors.domain.users.entity.Users;
+import com.seniors.domain.post.repository.post.PostRepository;
 import com.seniors.domain.users.repository.UsersRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
