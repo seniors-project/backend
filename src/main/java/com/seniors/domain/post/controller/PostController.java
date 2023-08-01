@@ -6,9 +6,7 @@ import com.seniors.common.dto.DataResponseDto;
 import com.seniors.common.dto.ErrorResponse;
 import com.seniors.config.security.CustomUserDetails;
 import com.seniors.domain.post.dto.PostDto.GetPostRes;
-import com.seniors.domain.post.dto.PostDto.ModifyPostReq;
 import com.seniors.domain.post.dto.PostDto.PostCreateDto;
-import com.seniors.domain.post.dto.PostDto.SavePostReq;
 import com.seniors.domain.post.dto.PostLikeDto.SetLikeDto;
 import com.seniors.domain.post.service.PostService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -20,7 +18,10 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+
+import java.io.IOException;
 
 @Tag(name = "게시글", description = "게시글 API 명세서")
 @Slf4j
@@ -40,9 +41,9 @@ public class PostController {
 			content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class)))
 	@PostMapping("")
 	public DataResponseDto<String> postAdd(
-			@RequestBody @Valid SavePostReq postDto,
-			@LoginUsers CustomUserDetails userDetails) {
-		postService.addPost(postDto, userDetails.getUserId());
+			@ModelAttribute @Valid PostCreateDto postCreateDto, BindingResult bindingResult,
+			@LoginUsers CustomUserDetails userDetails) throws IOException {
+		postService.addPost(postCreateDto, bindingResult, userDetails.getUserId());
 		return DataResponseDto.of("SUCCESS");
 	}
 
@@ -83,9 +84,9 @@ public class PostController {
 	@PatchMapping("/{postId}")
 	public DataResponseDto<String> postModify(
 			@Parameter(description = "게시글 ID") @PathVariable(value = "postId") Long postId,
-			@LoginUsers CustomUserDetails userDetails,
-			@RequestBody @Valid ModifyPostReq postDto) {
-		postService.modifyPost(postDto, postId, userDetails.getUserId());
+			@ModelAttribute @Valid PostCreateDto postCreateDto, BindingResult bindingResult,
+			@LoginUsers CustomUserDetails userDetails) throws IOException {
+		postService.modifyPost(postCreateDto, bindingResult, postId, userDetails.getUserId());
 		return DataResponseDto.of("SUCCESS");
 	}
 
@@ -119,4 +120,5 @@ public class PostController {
 		postService.likePost(postId, userDetails.getUserId(), likeDto.getStatus());
 		return DataResponseDto.of("SUCCESS");
 	}
+
 }

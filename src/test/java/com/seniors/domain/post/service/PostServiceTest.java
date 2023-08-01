@@ -1,6 +1,6 @@
 package com.seniors.domain.post.service;
 
-import com.seniors.domain.post.repository.PostRepository;
+import com.seniors.domain.post.repository.post.PostRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;

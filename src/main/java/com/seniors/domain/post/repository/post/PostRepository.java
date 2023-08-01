@@ -1,4 +1,4 @@
-package com.seniors.domain.post.repository;
+package com.seniors.domain.post.repository.post;
 
 
 import com.seniors.domain.post.entity.Post;
