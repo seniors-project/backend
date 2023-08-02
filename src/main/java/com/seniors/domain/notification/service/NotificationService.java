@@ -6,6 +6,7 @@ import com.seniors.domain.notification.dto.NotificationDto;
 import com.seniors.domain.notification.entity.Notification;
 import com.seniors.domain.notification.repository.EmitterRepository;
 import com.seniors.domain.notification.repository.NotificationRepository;
+import com.seniors.domain.post.entity.Post;
 import com.seniors.domain.post.entity.PostLike;
 import com.seniors.domain.resume.entity.Resume;
 import com.seniors.domain.users.entity.Users;
@@ -71,8 +72,8 @@ public class NotificationService {
 	private <T> Notification createNotification(Users receiver, T entity, String content) {
 		String url = "/api";
 
-		if (entity instanceof PostLike) {
-			url += "/posts/like/" + ((PostLike) entity).getPost().getId();
+		if (entity instanceof Post) {
+			url += "/posts/like?postId=" + ((Post) entity).getId();
 		} else if (entity instanceof Comment) {
 			url += "/comments?postId=" +((Comment) entity).getPost().getId();
 		} else if (entity instanceof Resume) {

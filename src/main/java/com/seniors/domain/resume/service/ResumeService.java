@@ -5,6 +5,7 @@ import com.seniors.common.exception.type.BadRequestException;
 import com.seniors.common.exception.type.NotAuthorizedException;
 import com.seniors.common.exception.type.NotFoundException;
 import com.seniors.config.S3Uploader;
+import com.seniors.domain.notification.service.NotificationService;
 import com.seniors.domain.resume.dto.CareerDto;
 import com.seniors.domain.resume.dto.CertificateDto;
 import com.seniors.domain.resume.dto.EducationDto;
@@ -41,6 +42,7 @@ public class ResumeService {
 
     private final ResumeRepository resumeRepository;
     private final UsersRepository usersRepository;
+    private final NotificationService notificationService;
 
     @Value("${photo.url}")
     private String photoUrl;
@@ -95,6 +97,9 @@ public class ResumeService {
         Resume resume =  resumeRepository.findById(resumeId).orElseThrow(
                 () -> new NotFoundException("이력서가 존재하지 않습니다.")
         );
+        if (!resume.getUsers().getId().equals(user.getId())) {
+            notificationService.send(resume.getUsers(), resume, "누군가가 이력서를 조회했습니다!");
+        }
 
         return ResumeDto.GetResumeRes.from(resume);
     }
