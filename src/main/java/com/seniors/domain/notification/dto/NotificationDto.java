@@ -36,8 +36,7 @@ public class NotificationDto {
 	private boolean read;
 
 	@Builder
-	public NotificationDto(Long id, String content, String url, LocalDateTime createdAt, boolean read) {
-		this.id = id;
+	public NotificationDto(String content, String url, LocalDateTime createdAt, boolean read) {
 		this.content = content;
 		this.url = url;
 		this.createdAt = LocalDateTimeToArray.convert(createdAt);
@@ -46,7 +45,6 @@ public class NotificationDto {
 
 	public static NotificationDto from(Notification notification) {
 		return NotificationDto.builder()
-				.id(notification.getId())
 				.content(notification.getContent())
 				.url(notification.getUrl())
 				.createdAt(notification.getCreatedAt())

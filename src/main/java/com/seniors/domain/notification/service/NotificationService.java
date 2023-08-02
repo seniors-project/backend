@@ -38,7 +38,7 @@ public class NotificationService {
 
 		// 3
 		// 503 에러를 방지하기 위한 더미 이벤트 전송
-		sendToClient(emitter, id, "EventStream Created. [userId=" + userId + "]");
+//		sendToClient(emitter, id, "EventStream Created. [userId=" + userId + "]");
 
 		// 4
 		// 클라이언트가 미수신한 Event 목록이 존재할 경우 전송하여 Event 유실을 예방
@@ -53,10 +53,20 @@ public class NotificationService {
 	}
 
 	@Transactional
-	public void send(Users receiver, Comment entity, String content) {
-		Notification notification = createNotification(receiver, entity, content);
-		String id = String.valueOf(receiver.getId());
+	public <T> void send(Users receiver, T entity, String content) {
+//		Notification notification = createNotification(receiver, entity, content);
+		String url = "/api";
+
+		if (entity instanceof PostLike) {
+			url += "/posts/like/" + ((PostLike) entity).getPost().getId();
+		} else if (entity instanceof Comment) {
+			url += "/comments?postId=" +((Comment) entity).getPost().getId();
+		} else if (entity instanceof Resume) {
+			url += "/resumes/" + ((Resume) entity).getId();
+		}
+		Notification notification = Notification.of(receiver, content, url);
 		notificationRepository.save(notification);
+		String id = String.valueOf(receiver.getId());
 
 		Map<String, SseEmitter> sseEmitters = emitterRepository.findAllStartWithById(id);
 		sseEmitters.forEach(
@@ -67,22 +77,19 @@ public class NotificationService {
 		);
 	}
 
-	private Notification createNotification(Users receiver, Comment entity, String content) {
+	private <T> Notification createNotification(Users receiver, T entity, String content) {
 		String url = "/api";
 
-//		if (entity instanceof PostLike) {
-//			url += "/posts/like/" + ((PostLike) entity).getPost().getId();
-//		} else
-			if (entity != null) {
-			url += "/comments?postId=" + entity.getPost().getId();
+		if (entity instanceof PostLike) {
+			url += "/posts/like/" + ((PostLike) entity).getPost().getId();
+		} else if (entity instanceof Comment) {
+			url += "/comments?postId=" +((Comment) entity).getPost().getId();
+		} else if (entity instanceof Resume) {
+			url += "/resumes/" + ((Resume) entity).getId();
 		}
-//			else if (entity instanceof Resume) {
-//			url += "/resumes/" + ((Resume) entity).getId();
-//		}
 
 		return Notification.builder()
 				.users(receiver)
-				.comment(entity)
 				.content(content)
 				.url(url)
 				.isRead(false)

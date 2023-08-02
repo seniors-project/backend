@@ -41,9 +41,6 @@ public class Comment extends BaseEntity {
 	@JoinColumn(name = "userId")
 	private Users users;
 
-	@OneToMany(mappedBy = "comment", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
-	private Set<Notification> notifications = new HashSet<>();
-
 	public static Comment of(String content, Post post, Users users) {
 		return Comment.builder().content(content)
 				.isDeleted(false).post(post).users(users).build();

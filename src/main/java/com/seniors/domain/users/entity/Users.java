@@ -67,7 +67,7 @@ public class Users extends BaseEntity {
 	private List<ChatRoomMembers> chatRoomMembers = new ArrayList<>();
 
 	@OneToMany(mappedBy = "users", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
-	private Set<Notification> notifications = new HashSet<>();
+	private List<Notification> notifications = new ArrayList<>();
 
 	public static Users of(
 			String snsId, String email, String nickname, OAuthProvider oAuthProvider,

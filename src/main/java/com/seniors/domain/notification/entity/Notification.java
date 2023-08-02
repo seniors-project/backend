@@ -1,6 +1,5 @@
 package com.seniors.domain.notification.entity;
 
-import com.seniors.domain.comment.entity.Comment;
 import com.seniors.domain.common.BaseTimeEntity;
 import com.seniors.domain.users.entity.Users;
 import jakarta.persistence.*;
@@ -18,12 +17,8 @@ public class Notification extends BaseTimeEntity {
 	private Long id;
 
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "userId", insertable = false, updatable = false)
+	@JoinColumn(name = "userId")
 	private Users users;
-
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "commentId", insertable = false, updatable = false)
-	private Comment comment;
 
 	private String content;
 
@@ -32,12 +27,20 @@ public class Notification extends BaseTimeEntity {
 	private boolean isRead;
 
 	@Builder
-	public Notification(Users users, Comment comment, String content, String url, boolean isRead) {
+	public Notification(Users users, String content, String url, boolean isRead) {
 		this.users = users;
-		this.comment = comment;
 		this.content = content;
 		this.url = url;
 		this.isRead = isRead;
+	}
+
+	public static Notification of(Users users, String content, String url) {
+		return Notification.builder()
+				.users(users)
+				.content(content)
+				.url(url)
+				.isRead(false)
+				.build();
 	}
 
 	public void read() {
