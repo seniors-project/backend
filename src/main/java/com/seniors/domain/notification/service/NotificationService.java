@@ -1,9 +1,15 @@
 package com.seniors.domain.notification.service;
 
+import com.seniors.config.security.CustomUserDetails;
+import com.seniors.domain.comment.entity.Comment;
 import com.seniors.domain.notification.dto.NotificationDto;
 import com.seniors.domain.notification.entity.Notification;
 import com.seniors.domain.notification.repository.EmitterRepository;
+import com.seniors.domain.notification.repository.NotificationRepository;
+import com.seniors.domain.post.entity.PostLike;
+import com.seniors.domain.resume.entity.Resume;
 import com.seniors.domain.users.entity.Users;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
@@ -17,8 +23,10 @@ public class NotificationService {
 	private static final Long DEFAULT_TIMEOUT = 60L * 1000 * 60;
 
 	private final EmitterRepository emitterRepository;
+	private final NotificationRepository notificationRepository;
 
 	public SseEmitter subscribe(Long userId, String lastEventId) {
+//		Long userId = user.getUserId();
 		// 1
 		String id = userId + "_" + System.currentTimeMillis();
 
@@ -44,27 +52,39 @@ public class NotificationService {
 		return emitter;
 	}
 
-	public void send(Users receiver, String content) {
-		Notification notification = createNotification(receiver, content);
+	@Transactional
+	public void send(Users receiver, Comment entity, String content) {
+		Notification notification = createNotification(receiver, entity, content);
 		String id = String.valueOf(receiver.getId());
+		notificationRepository.save(notification);
 
-		// 로그인 한 유저의 SseEmitter 모두 가져오기
 		Map<String, SseEmitter> sseEmitters = emitterRepository.findAllStartWithById(id);
 		sseEmitters.forEach(
 				(key, emitter) -> {
-					// 데이터 캐시 저장(유실된 데이터 처리하기 위함)
 					emitterRepository.saveEventCache(key, notification);
-					// 데이터 전송
 					sendToClient(emitter, key, NotificationDto.from(notification));
 				}
 		);
 	}
 
-	private Notification createNotification(Users users, String content) {
+	private Notification createNotification(Users receiver, Comment entity, String content) {
+		String url = "/api";
+
+//		if (entity instanceof PostLike) {
+//			url += "/posts/like/" + ((PostLike) entity).getPost().getId();
+//		} else
+			if (entity != null) {
+			url += "/comments?postId=" + entity.getPost().getId();
+		}
+//			else if (entity instanceof Resume) {
+//			url += "/resumes/" + ((Resume) entity).getId();
+//		}
+
 		return Notification.builder()
-				.users(users)
+				.users(receiver)
+				.comment(entity)
 				.content(content)
-				.url("/reviews/" + users.getId())
+				.url(url)
 				.isRead(false)
 				.build();
 	}
