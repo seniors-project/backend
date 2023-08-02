@@ -37,6 +37,7 @@ public class Post extends BaseEntity {
 	@Column(columnDefinition = "int unsigned not null default 0 COMMENT '게시글 좋아요 수'")
 	private Integer likeCount;
 
+
 	@BatchSize(size = 100)
 	@OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
 	private List<Comment> comments = new ArrayList<>();

@@ -1,5 +1,6 @@
 package com.seniors.domain.users.entity;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.seniors.common.constant.OAuthProvider;
 import com.seniors.domain.chat.entity.ChatMessage;
 import com.seniors.domain.chat.entity.ChatRoom;
@@ -63,6 +64,7 @@ public class Users extends BaseEntity {
 	@OneToMany(mappedBy = "users", cascade = CascadeType.PERSIST)
 	private List<ChatMessage> chatMessages = new ArrayList<>();
 
+	@JsonManagedReference
 	@OneToMany(mappedBy = "users", cascade = CascadeType.PERSIST)
 	private List<ChatRoomMembers> chatRoomMembers = new ArrayList<>();
 
