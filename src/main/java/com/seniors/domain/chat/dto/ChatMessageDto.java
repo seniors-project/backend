@@ -1,9 +1,6 @@
 package com.seniors.domain.chat.dto;
 
-import com.querydsl.core.annotations.QueryProjection;
-import com.seniors.domain.chat.entity.ChatRoom;
-import com.seniors.domain.users.dto.UsersDto.GetPostUserRes;
-import com.seniors.domain.chat.dto.ChatRoomDto.GetChatRoomRes;
+import com.seniors.domain.users.dto.UsersDto;
 import com.seniors.domain.users.entity.Users;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
@@ -11,9 +8,9 @@ import lombok.*;
 
 import java.time.LocalDateTime;
 
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @ToString
 @Getter
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class ChatMessageDto {
 
     @Data
@@ -25,6 +22,32 @@ public class ChatMessageDto {
 
         public static ChatMessageCreateDto from(String chatMessage) {
             return ChatMessageCreateDto.builder().chatMessage(chatMessage).build();
+        }
+    }
+
+    @Data
+    @Builder
+    @AllArgsConstructor
+    @NoArgsConstructor
+    public static class ChatMessageTransDto {
+        @Schema(description = "채팅방 ID")
+        private Long chatRoomId;
+
+        @Schema(description = "보내는 사람")
+        private Long userId;
+
+        @Schema(description = "메세지 내용")
+        private String content;
+
+        public static ChatMessageTransDto of(
+                Long chatRoomId, Long userId,
+                String content) {
+
+            return ChatMessageTransDto.builder()
+                    .chatRoomId(chatRoomId)
+                    .userId(userId)
+                    .content(content)
+                    .build();
         }
     }
 
@@ -42,22 +65,24 @@ public class ChatMessageDto {
         @Schema(description = "최근 수정 일자")
         private LocalDateTime lastModifiedDate;
 
-//        @Schema(description = "작성자")
-//        private GetPostUserRes users;
+        @Schema(description = "작성자")
+        private UsersDto.GetPostUserRes users;
 
-        @QueryProjection
-        public GetChatMessageRes(Long chatMessageId, String content,
-                                 LocalDateTime createdAt, LocalDateTime lastModifiedDate) {
+        public GetChatMessageRes(
+                Long chatMessageId, String content,
+                LocalDateTime createdAt, LocalDateTime lastModifiedDate,
+                Users users
+        ) {
             this.chatMessageId = chatMessageId;
             this.content = content;
             this.createdAt = createdAt;
             this.lastModifiedDate = lastModifiedDate;
-//            this.users = new GetPostUserRes(
-//                    users.getId(),
-//                    users.getGender(),
-//                    users.getNickname(),
-//                    users.getProfileImageUrl()
-//            );
+            this.users = new UsersDto.GetPostUserRes(
+                    users.getId(),
+                    users.getGender(),
+                    users.getNickname(),
+                    users.getProfileImageUrl()
+            );
         }
     }
 
