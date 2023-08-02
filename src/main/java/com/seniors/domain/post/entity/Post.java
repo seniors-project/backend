@@ -8,6 +8,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import com.seniors.domain.common.BaseEntity;
+import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Where;
 
@@ -35,9 +36,15 @@ public class Post extends BaseEntity {
 
 	@Column(columnDefinition = "int unsigned not null default 0 COMMENT '게시글 좋아요 수'")
 	private Integer likeCount;
-  
+
+
+	@BatchSize(size = 100)
 	@OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
 	private List<Comment> comments = new ArrayList<>();
+
+	@BatchSize(size = 100)
+	@OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
+	private List<PostMedia> postMedias = new ArrayList<>();
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "userId")

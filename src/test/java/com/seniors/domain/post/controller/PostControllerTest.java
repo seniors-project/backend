@@ -7,7 +7,7 @@ import com.seniors.config.security.CustomUserDetails;
 import com.seniors.domain.post.dto.PostDto.PostCreateDto;
 import com.seniors.domain.post.entity.Post;
 import com.seniors.domain.post.entity.PostLike;
-import com.seniors.domain.post.repository.PostRepository;
+import com.seniors.domain.post.repository.post.PostRepository;
 import com.seniors.domain.users.entity.Users;
 import com.seniors.domain.users.repository.UsersRepository;
 import lombok.extern.slf4j.Slf4j;

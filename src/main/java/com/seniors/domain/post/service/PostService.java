@@ -2,14 +2,16 @@ package com.seniors.domain.post.service;
 
 import com.seniors.common.dto.CustomPage;
 import com.seniors.common.exception.type.BadRequestException;
-import com.seniors.domain.post.dto.PostDto;
+import com.seniors.common.exception.type.NotFoundException;
+import com.seniors.config.S3Uploader;
 import com.seniors.domain.post.dto.PostDto.GetPostRes;
-import com.seniors.domain.post.dto.PostDto.ModifyPostReq;
 import com.seniors.domain.post.dto.PostDto.PostCreateDto;
-import com.seniors.domain.post.dto.PostDto.SavePostReq;
 import com.seniors.domain.post.entity.Post;
-import com.seniors.domain.post.repository.PostLikeRepository;
-import com.seniors.domain.post.repository.PostRepository;
+import com.seniors.domain.post.entity.PostMedia;
+import com.seniors.domain.post.repository.post.PostRepository;
+import com.seniors.domain.post.repository.postLike.PostLikeRepository;
+import com.seniors.domain.post.repository.postMedia.PostMediaRepository;
+import com.seniors.domain.users.entity.Users;
 import com.seniors.domain.users.repository.UsersRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -20,6 +22,14 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.FieldError;
+import org.springframework.validation.ObjectError;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 @Slf4j
 @Service
@@ -27,21 +37,38 @@ import org.springframework.transaction.annotation.Transactional;
 public class PostService {
 
 	private final PostRepository postRepository;
+	private final PostMediaRepository postMediaRepository;
 	private final PostLikeRepository postLikeRepository;
 	private final UsersRepository usersRepository;
+	private final S3Uploader s3Uploader;
 
 	@Transactional
-	public void addPost(SavePostReq postReq, Long userId) {
-		if (postReq.getTitle() == null || postReq.getTitle().isEmpty() || postReq.getContent() == null || postReq.getContent().isEmpty()) {
-			throw new BadRequestException("Title or Content is required");
+	public void addPost(PostCreateDto postCreateDto, BindingResult bindingResult, Long userId) throws IOException {
+		if (bindingResult.hasErrors()) {
+			List<ObjectError> errors = bindingResult.getAllErrors();
+			List<String> errorMessages = new ArrayList<>();
+
+			for (ObjectError error : errors) {
+				FieldError fieldError = (FieldError) error;
+				String message = fieldError.getDefaultMessage();
+				errorMessages.add(message);
+			}
+			throw new BadRequestException(String.join(", ", errorMessages));
 		}
 
-		usersRepository.findById(userId).ifPresent(users ->
-				postRepository.save(Post.of(postReq.getTitle(), postReq.getContent(), users))
+		Users users = usersRepository.findById(userId).orElseThrow(
+				() -> new NotFoundException("유효하지 않은 회원입니다.")
 		);
+		Post post = postRepository.save(Post.of(postCreateDto.getTitle(), postCreateDto.getContent(), users));
+		if (postCreateDto.getFiles() != null && !postCreateDto.getFiles().isEmpty()) {
+			for (MultipartFile file : postCreateDto.getFiles()) {
+				String uploadImagePath = s3Uploader.upload(file, "posts/media/" + post.getId().toString());
+				postMediaRepository.save(PostMedia.of(uploadImagePath, post));
+			}
+		}
 	}
 
-	@Transactional
+	@Transactional(readOnly = true)
 	public GetPostRes findOnePost(Long postId) {
 		return postRepository.findOnePost(postId);
 	}
@@ -55,8 +82,33 @@ public class PostService {
 	}
 
 	@Transactional
-	public void modifyPost(ModifyPostReq modifyPostReq, Long postId, Long userId) {
-		postRepository.modifyPost(modifyPostReq, postId, userId);
+	public void modifyPost(PostCreateDto postCreateDto, BindingResult bindingResult, Long postId, Long userId) throws IOException {
+
+		if (bindingResult.hasErrors()) {
+			List<ObjectError> errors = bindingResult.getAllErrors();
+			List<String> errorMessages = new ArrayList<>();
+
+			for (ObjectError error : errors) {
+				FieldError fieldError = (FieldError) error;
+				String message = fieldError.getDefaultMessage();
+				errorMessages.add(message);
+			}
+			throw new BadRequestException(String.join(", ", errorMessages));
+		}
+		Post post = postRepository.findById(postId).orElseThrow(() -> new NotFoundException("유효하지 않은 게시글입니다."));
+		postRepository.modifyPost(postCreateDto.getTitle(), postCreateDto.getContent(), postId, userId);
+
+		// 기존 미디어 파일 삭제
+		s3Uploader.deleteS3Object("posts/media/" + post.getId().toString());
+
+		postMediaRepository.deleteByPostId(postId);
+
+		if (postCreateDto.getFiles() != null && !postCreateDto.getFiles().isEmpty()) {
+			for (MultipartFile file : postCreateDto.getFiles()) {
+				String uploadImagePath = s3Uploader.upload(file, "posts/media/" + post.getId().toString());
+				postMediaRepository.save(PostMedia.of(uploadImagePath, post));
+			}
+		}
 	}
 
 	@Transactional
@@ -74,4 +126,10 @@ public class PostService {
 		}
 	}
 
+	@Transactional
+	public void postMediaAdd(String uploadImagePath, Long postId) {
+		postRepository.findById(postId).ifPresent(posts ->
+				postMediaRepository.save(PostMedia.of(uploadImagePath, posts))
+		);
+	}
 }
