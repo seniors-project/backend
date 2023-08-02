@@ -11,6 +11,7 @@ import com.seniors.domain.resume.entity.Resume;
 import com.seniors.domain.users.entity.Users;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
@@ -26,7 +27,6 @@ public class NotificationService {
 	private final NotificationRepository notificationRepository;
 
 	public SseEmitter subscribe(Long userId, String lastEventId) {
-//		Long userId = user.getUserId();
 		// 1
 		String id = userId + "_" + System.currentTimeMillis();
 
@@ -38,7 +38,7 @@ public class NotificationService {
 
 		// 3
 		// 503 에러를 방지하기 위한 더미 이벤트 전송
-//		sendToClient(emitter, id, "EventStream Created. [userId=" + userId + "]");
+		sendToClient(emitter, id, "EventStream Created. [userId=" + userId + "]");
 
 		// 4
 		// 클라이언트가 미수신한 Event 목록이 존재할 경우 전송하여 Event 유실을 예방
@@ -54,19 +54,10 @@ public class NotificationService {
 
 	@Transactional
 	public <T> void send(Users receiver, T entity, String content) {
-//		Notification notification = createNotification(receiver, entity, content);
-		String url = "/api";
-
-		if (entity instanceof PostLike) {
-			url += "/posts/like/" + ((PostLike) entity).getPost().getId();
-		} else if (entity instanceof Comment) {
-			url += "/comments?postId=" +((Comment) entity).getPost().getId();
-		} else if (entity instanceof Resume) {
-			url += "/resumes/" + ((Resume) entity).getId();
-		}
-		Notification notification = Notification.of(receiver, content, url);
-		notificationRepository.save(notification);
+		Notification notification = createNotification(receiver, entity, content);
 		String id = String.valueOf(receiver.getId());
+
+		notificationRepository.save(notification);
 
 		Map<String, SseEmitter> sseEmitters = emitterRepository.findAllStartWithById(id);
 		sseEmitters.forEach(
@@ -88,15 +79,11 @@ public class NotificationService {
 			url += "/resumes/" + ((Resume) entity).getId();
 		}
 
-		return Notification.builder()
-				.users(receiver)
-				.content(content)
-				.url(url)
-				.isRead(false)
-				.build();
+		return Notification.of(receiver, content, url);
 	}
 
-	private void sendToClient(SseEmitter emitter, String id, Object data) {
+	@Async
+	public void sendToClient(SseEmitter emitter, String id, Object data) {
 		try {
 			emitter.send(SseEmitter.event()
 					.id(id)
