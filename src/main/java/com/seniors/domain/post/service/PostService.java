@@ -70,12 +70,10 @@ public class PostService {
 		}
 	}
 
-	@Transactional(readOnly = true)
 	public GetPostRes findOnePost(Long postId) {
 		return postRepository.findOnePost(postId);
 	}
 
-	@Transactional(readOnly = true)
 	public CustomPage<GetPostRes> findPost(int page, int size) {
 		Direction direction = Direction.DESC;
 		Pageable pageable = PageRequest.of(page, size, Sort.by(direction, "id"));

@@ -12,6 +12,7 @@ import com.seniors.domain.resume.entity.Resume;
 import com.seniors.domain.users.entity.Users;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
@@ -20,6 +21,7 @@ import java.io.IOException;
 import java.util.Map;
 
 @Service
+@Slf4j
 @RequiredArgsConstructor
 public class NotificationService {
 	private static final Long DEFAULT_TIMEOUT = 60L * 1000 * 60;
@@ -39,7 +41,7 @@ public class NotificationService {
 
 		// 3
 		// 503 에러를 방지하기 위한 더미 이벤트 전송
-		sendToClient(emitter, id, "EventStream Created. [userId=" + userId + "]");
+		sendToClient(emitter, id, "{\"message\": \"EventStream Created. [userId=" + userId + "]\", \"url\": \"test\", \"content\": \"테스트 내용\"}");
 
 		// 4
 		// 클라이언트가 미수신한 Event 목록이 존재할 경우 전송하여 Event 유실을 예방
@@ -73,9 +75,9 @@ public class NotificationService {
 		String url = "/api";
 
 		if (entity instanceof Post) {
-			url += "/posts/like?postId=" + ((Post) entity).getId();
+			url += "/posts/" + ((Post) entity).getId();
 		} else if (entity instanceof Comment) {
-			url += "/comments?postId=" +((Comment) entity).getPost().getId();
+			url += "/posts/" +((Comment) entity).getPost().getId();
 		} else if (entity instanceof Resume) {
 			url += "/resumes/" + ((Resume) entity).getId();
 		}

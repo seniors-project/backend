@@ -15,7 +15,15 @@
 
         const eventSource = new EventSource(`/subscribe`);
         eventSource.addEventListener("sse", function (event) {
-            const data = JSON.parse(event.data);
+            console.log(event.data)
+            let data;
+            try {
+                data = JSON.parse(event.data);
+                // 이후 코드는 그대로 유지
+            } catch (error) {
+                console.error("Error parsing JSON data:", error);
+                return;
+            }
             (async () => {
                 // 브라우저 알림
                 const showNotification = () => {
@@ -40,7 +48,7 @@
                     error.textContent = 'You blocked the notifications';
                 }
 
-                // 브라우저 알림 허용 권한
+                // check notification permission
                 let granted = false;
 
                 if (Notification.permission === 'granted') {
@@ -50,7 +58,7 @@
                     granted = permission === 'granted';
                 }
 
-                // 알림 보여주기
+                // show notification or error
                 granted ? showNotification() : showError();
             })();
         })
