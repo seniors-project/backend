@@ -37,9 +37,9 @@ public class CommentService {
                 () -> new NotFoundException("유효하지 않은 회원입니다.")
         );
         Comment savedComment = commentRepository.save(Comment.of(commentReq.getContent(), post, users));
-        if (!savedComment.getPost().getUsers().getId().equals(users.getId())) {
+//        if (!savedComment.getPost().getUsers().getId().equals(users.getId())) {
             notificationService.send(savedComment.getPost().getUsers(), savedComment, "새로운 댓글이 작성되었습니다!");
-        }
+//        }
     }
 
     @Transactional

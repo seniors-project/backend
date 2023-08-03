@@ -28,7 +28,7 @@ public class NotificationDto {
 	/**
 	 * 알림이 생성된 날짜(몇일 전 계산 위함)
 	 */
-	private Integer[] createdAt;
+	private LocalDateTime createdAt;
 
 	/**
 	 * 알림 읽음 여부
@@ -36,15 +36,17 @@ public class NotificationDto {
 	private boolean read;
 
 	@Builder
-	public NotificationDto(String content, String url, LocalDateTime createdAt, boolean read) {
+	public NotificationDto(Long id, String content, String url, LocalDateTime createdAt, boolean read) {
+		this.id = id;
 		this.content = content;
 		this.url = url;
-		this.createdAt = LocalDateTimeToArray.convert(createdAt);
+		this.createdAt = createdAt;
 		this.read = read;
 	}
 
 	public static NotificationDto from(Notification notification) {
 		return NotificationDto.builder()
+				.id(notification.getId())
 				.content(notification.getContent())
 				.url(notification.getUrl())
 				.createdAt(notification.getCreatedAt())

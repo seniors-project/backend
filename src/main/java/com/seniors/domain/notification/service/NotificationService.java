@@ -41,7 +41,8 @@ public class NotificationService {
 
 		// 3
 		// 503 에러를 방지하기 위한 더미 이벤트 전송
-		sendToClient(emitter, id, "{\"message\": \"EventStream Created. [userId=" + userId + "]\", \"url\": \"test\", \"content\": \"테스트 내용\"}");
+		sendToClient(emitter, id, "{\"message\": \"EventStream Created. [userId=" + userId + "]\"," +
+				" \"url\": \"/api/posts\", \"content\": \"시니어스 구독\", \"id\":25, \"isRead\": false, \"createdAt\": \"2023-08-02 15:15:40.648816\"}");
 
 		// 4
 		// 클라이언트가 미수신한 Event 목록이 존재할 경우 전송하여 Event 유실을 예방
