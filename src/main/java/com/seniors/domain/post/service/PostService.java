@@ -127,7 +127,7 @@ public class PostService {
 			Users users = usersRepository.findById(userId).orElseThrow(
 					() -> new NotFoundException("유효하지 않은 회원입니다.")
 			);
-			if (!post.getUsers().getId().equals(users.getId())) {
+			if (!post.getUsers().getId().equals(users.getId()) && !status) {
 				notificationService.send(post.getUsers(), post, "누군가 피드에 좋아요를 눌렀습니다.");
 			}
 		} else {

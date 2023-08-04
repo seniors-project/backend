@@ -1,5 +1,6 @@
 package com.seniors.domain.notification.service;
 
+import com.seniors.common.exception.type.NotFoundException;
 import com.seniors.config.security.CustomUserDetails;
 import com.seniors.domain.comment.entity.Comment;
 import com.seniors.domain.notification.dto.NotificationDto;
@@ -18,7 +19,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @Service
 @Slf4j
@@ -86,7 +89,6 @@ public class NotificationService {
 		return Notification.of(receiver, content, url);
 	}
 
-	@Async
 	public void sendToClient(SseEmitter emitter, String id, Object data) {
 		try {
 			emitter.send(SseEmitter.event()
@@ -97,5 +99,24 @@ public class NotificationService {
 			emitterRepository.deleteById(id);
 			throw new RuntimeException("연결 오류!");
 		}
+	}
+
+//	@Transactional
+//	public NotificationDto findAllById(CustomUserDetails userDetails) {
+//		List<NotificationDto> responses = notificationRepository.findAllByReceiverId(userDetails.getId()).stream()
+//				.map(NotificationDto::from)
+//				.collect(Collectors.toList());
+//		long unreadCount = responses.stream()
+//				.filter(notification -> !notification.isRead())
+//				.count();
+//
+//		return NotificationDto.from(responses, unreadCount);
+//	}
+
+	@Transactional
+	public void readNotification(Long id) {
+		Notification notification = notificationRepository.findById(id)
+				.orElseThrow(() -> new NotFoundException("존재하지 않는 알림입니다."));
+		notification.read();
 	}
 }
