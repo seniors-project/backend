@@ -91,7 +91,7 @@ public class ResumeService {
     }
 
     @Transactional
-    public ResumeDto.GetResumeRes findResume(Long resumeId, Long userId) throws JsonProcessingException {
+    public ResumeDto.GetResumeRes findResume(Long resumeId, Long userId) {
         Users user =  usersRepository.findById(userId).orElseThrow(
                 () -> new NotFoundException("유효하지 않은 회원입니다.")
         );

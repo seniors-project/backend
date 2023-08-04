@@ -1,6 +1,5 @@
 package com.seniors.domain.comment.controller;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.seniors.common.annotation.LoginUsers;
 import com.seniors.common.dto.DataResponseDto;
 import com.seniors.common.dto.ErrorResponse;
@@ -39,7 +38,7 @@ public class CommentController {
     public DataResponseDto<String> commentAdd(
             @RequestBody @Valid CommentCreateDto commentDto,
             @RequestParam(value = "postId") Long postId,
-            @LoginUsers CustomUserDetails userDetails) throws JsonProcessingException {
+            @LoginUsers CustomUserDetails userDetails) {
         commentService.addComment(commentDto, postId, userDetails.getUserId());
         return DataResponseDto.of("SUCCESS");
     }

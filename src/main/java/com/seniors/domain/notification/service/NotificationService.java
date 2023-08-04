@@ -60,7 +60,7 @@ public class NotificationService {
 	}
 
 	@Transactional
-	public void send(Users receiver, Object entity, String content) throws JsonProcessingException {
+	public void send(Users receiver, Object entity, String content) {
 		Notification notification = createNotification(receiver, entity, content);
 		notificationRepository.save(notification);
 

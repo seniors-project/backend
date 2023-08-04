@@ -1,6 +1,5 @@
 package com.seniors.domain.post.service;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.seniors.common.dto.CustomPage;
 import com.seniors.common.exception.type.BadRequestException;
 import com.seniors.common.exception.type.NotFoundException;
@@ -118,7 +117,7 @@ public class PostService {
 	}
 
 	@Transactional
-	public void likePost(Long postId, Long userId, Boolean status) throws JsonProcessingException {
+	public void likePost(Long postId, Long userId, Boolean status) {
 		int updatedRows = postLikeRepository.likePost(postId, userId, !status);
 		if (updatedRows >= 1) {
 			postRepository.increaseLikeCount(postId, status);
