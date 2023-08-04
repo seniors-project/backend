@@ -2,6 +2,7 @@ package com.seniors.domain.notification.dto;
 
 import com.seniors.common.util.LocalDateTimeToArray;
 import com.seniors.domain.notification.entity.Notification;
+import com.seniors.domain.users.entity.Users;
 import lombok.*;
 
 import java.time.LocalDateTime;
@@ -14,6 +15,7 @@ public class NotificationDto {
 	 * 알림 id
 	 */
 	private Long id;
+	private Long userId;
 
 	/**
 	 * 알림 내용
@@ -36,17 +38,19 @@ public class NotificationDto {
 	private boolean read;
 
 	@Builder
-	public NotificationDto(Long id, String content, String url, LocalDateTime createdAt, boolean read) {
+	public NotificationDto(Long id, Long userId, String content, String url, LocalDateTime createdAt, boolean read) {
 		this.id = id;
+		this.userId = userId;
 		this.content = content;
 		this.url = url;
 		this.createdAt = createdAt;
 		this.read = read;
 	}
 
-	public static NotificationDto from(Notification notification) {
+	public static NotificationDto of(Notification notification) {
 		return NotificationDto.builder()
 				.id(notification.getId())
+				.userId(notification.getUsers().getId())
 				.content(notification.getContent())
 				.url(notification.getUrl())
 				.createdAt(notification.getCreatedAt())

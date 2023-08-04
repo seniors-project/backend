@@ -6,35 +6,71 @@
 </head>
 <body>
 <input type="text" id="id"/>
-<button type="button" onclick="login()">로그인</button>
+<button type="button" onclick="helloWorld()">로그인</button>
 </body>
 </html>
 <script type="text/javaScript">
-    function login() {
-        const id = document.getElementById('id').value;
+    // function login() {
+    //     // const id = document.getElementById('id').value;
+    //
+    //     const eventSource = new EventSource(`/subscribe`);
+    //     eventSource.addEventListener("sse", function (event) {
+    //         let data;
+    //         try {
+    //             data = JSON.parse(event.data);
+    //             console.log(data)
+    //             // Create a new notification
+    //             const notification = new Notification('Seniors', {
+    //                 body: data.content
+    //             });
+    //
+    //             // navigate to a URL when clicked
+    //             notification.addEventListener('click', () => {
+    //                 window.open(data.url, '_blank');
+    //             });
+    //
+    //             // Close the notification after 10 seconds
+    //             setTimeout(() => {
+    //                 notification.close();
+    //             }, 10000);
+    //         } catch (error) {
+    //             console.error("Error parsing JSON data:", error);
+    //             return;
+    //         }
+    //     })
+    // }
 
+    function helloWorld(){
+        let date = new Date().toLocaleString();
+        let notification;
+        let notificationPermission = Notification.permission;
         const eventSource = new EventSource(`/subscribe`);
+
         eventSource.addEventListener("sse", function (event) {
-            let data;
-            try {
-                data = JSON.parse(event.data);
-                // Create a new notification
-                const notification = new Notification('Seniors', {
+            const data = JSON.parse(event.data);
+            console.log(data)
+            if (notificationPermission === "granted") {
+                //Notification을 이미 허용한 사람들에게 보여주는 알람창
+                notification = new Notification('Seniors', {
                     body: data.content
                 });
-
-                // navigate to a URL when clicked
-                notification.addEventListener('click', () => {
-                    window.open(data.url, '_blank');
+            } else if (notificationPermission !== 'denied') {
+                //Notification을 거부했을 경우 재 허용 창 띄우기
+                Notification.requestPermission(function (permission) {
+                    if (permission === "granted") {
+                        notification = new Notification('Seniors', {
+                            body: data.content
+                        });
+                        notification.onclick = () => {
+                            window.open(data.url, '_blank');
+                        };
+                        setTimeout(() => {
+                            notification.close();
+                        }, 10000);
+                    } else {
+                        alert("알람 허용이 거부되었습니다.")
+                    }
                 });
-
-                // Close the notification after 10 seconds
-                setTimeout(() => {
-                    notification.close();
-                }, 10000);
-            } catch (error) {
-                console.error("Error parsing JSON data:", error);
-                return;
             }
         })
     }

@@ -34,7 +34,7 @@ public class NotificationService {
 
 	public SseEmitter subscribe(Long userId, String lastEventId) {
 		// 1
-		String id = userId + "_" + System.currentTimeMillis();
+		String id = userId.toString();
 
 		// 2
 		SseEmitter emitter = emitterRepository.save(id, new SseEmitter(DEFAULT_TIMEOUT));
@@ -70,7 +70,7 @@ public class NotificationService {
 		sseEmitters.forEach(
 				(key, emitter) -> {
 					emitterRepository.saveEventCache(key, notification);
-					sendToClient(emitter, key, NotificationDto.from(notification));
+					sendToClient(emitter, key, NotificationDto.of(notification));
 				}
 		);
 	}
@@ -89,7 +89,7 @@ public class NotificationService {
 		return Notification.of(receiver, content, url);
 	}
 
-	public void sendToClient(SseEmitter emitter, String id, Object data) {
+	public <T> void sendToClient(SseEmitter emitter, String id, T data) {
 		try {
 			emitter.send(SseEmitter.event()
 					.id(id)
