@@ -1,5 +1,6 @@
 package com.seniors.domain.resume.controller;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.seniors.common.annotation.LoginUsers;
 import com.seniors.common.dto.DataResponseDto;
 import com.seniors.common.dto.ErrorResponse;
@@ -66,7 +67,7 @@ public class ResumeController {
     public DataResponseDto<ResumeDto.GetResumeRes> resumeDetails(
             @PathVariable Long resumeId,
             @LoginUsers CustomUserDetails userDetails
-    ) {
+    ) throws JsonProcessingException {
         ResumeDto.GetResumeRes getResumeRes = resumeService.findResume(resumeId, userDetails.getUserId());
         return DataResponseDto.of(getResumeRes);
     }

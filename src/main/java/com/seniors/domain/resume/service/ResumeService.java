@@ -1,5 +1,6 @@
 package com.seniors.domain.resume.service;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.seniors.common.dto.DataResponseDto;
 import com.seniors.common.exception.type.BadRequestException;
 import com.seniors.common.exception.type.NotAuthorizedException;
@@ -90,7 +91,7 @@ public class ResumeService {
     }
 
     @Transactional
-    public ResumeDto.GetResumeRes findResume(Long resumeId, Long userId){
+    public ResumeDto.GetResumeRes findResume(Long resumeId, Long userId) throws JsonProcessingException {
         Users user =  usersRepository.findById(userId).orElseThrow(
                 () -> new NotFoundException("유효하지 않은 회원입니다.")
         );
@@ -100,7 +101,6 @@ public class ResumeService {
         if (!resume.getUsers().getId().equals(user.getId())) {
             notificationService.send(resume.getUsers(), resume, "누군가가 이력서를 조회했습니다!");
         }
-
         return ResumeDto.GetResumeRes.from(resume);
     }
 

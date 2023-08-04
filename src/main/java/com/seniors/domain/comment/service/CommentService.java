@@ -1,5 +1,6 @@
 package com.seniors.domain.comment.service;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.seniors.common.exception.type.BadRequestException;
 import com.seniors.common.exception.type.NotFoundException;
 import com.seniors.domain.comment.dto.CommentDto.CommentCreateDto;
@@ -26,7 +27,7 @@ public class CommentService {
     private final NotificationService notificationService;
 
     @Transactional
-    public void addComment(CommentCreateDto commentReq, Long postId, Long userId) {
+    public void addComment(CommentCreateDto commentReq, Long postId, Long userId) throws JsonProcessingException {
         if (commentReq.getContent() == null || commentReq.getContent().isEmpty()) {
             throw new BadRequestException("Content is required");
         }

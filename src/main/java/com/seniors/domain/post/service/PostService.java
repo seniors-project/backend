@@ -1,5 +1,6 @@
 package com.seniors.domain.post.service;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.seniors.common.dto.CustomPage;
 import com.seniors.common.exception.type.BadRequestException;
 import com.seniors.common.exception.type.NotFoundException;
@@ -117,7 +118,7 @@ public class PostService {
 	}
 
 	@Transactional
-	public void likePost(Long postId, Long userId, Boolean status) {
+	public void likePost(Long postId, Long userId, Boolean status) throws JsonProcessingException {
 		int updatedRows = postLikeRepository.likePost(postId, userId, !status);
 		if (updatedRows >= 1) {
 			postRepository.increaseLikeCount(postId, status);
@@ -128,7 +129,7 @@ public class PostService {
 					() -> new NotFoundException("유효하지 않은 회원입니다.")
 			);
 			if (!post.getUsers().getId().equals(users.getId()) && !status) {
-				notificationService.send(post.getUsers(), post, "누군가 피드에 좋아요를 눌렀습니다.");
+				notificationService.send(post.getUsers(), post, "누군가 내 피드에 좋아요를 눌렀습니다.");
 			}
 		} else {
 			throw new BadRequestException();

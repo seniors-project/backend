@@ -1,5 +1,6 @@
 package com.seniors.domain.post.controller;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.seniors.common.annotation.LoginUsers;
 import com.seniors.common.dto.CustomPage;
 import com.seniors.common.dto.DataResponseDto;
@@ -116,7 +117,7 @@ public class PostController {
 			@Parameter(description = "게시글 ID") @RequestParam(name = "postId", value = "postId") Long postId,
 			@RequestBody @Valid SetLikeDto likeDto,
 			@LoginUsers CustomUserDetails userDetails
-	) {
+	) throws JsonProcessingException {
 		postService.likePost(postId, userDetails.getUserId(), likeDto.getStatus());
 		return DataResponseDto.of("SUCCESS");
 	}

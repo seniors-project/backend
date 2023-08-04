@@ -6,7 +6,7 @@
 </head>
 <body>
 <input type="text" id="id"/>
-<button type="button" onclick="helloWorld()">로그인</button>
+<!--<button type="button" onclick="helloWorld()">로그인</button>-->
 </body>
 </html>
 <script type="text/javaScript">
@@ -40,7 +40,6 @@
     //     })
     // }
 
-    function helloWorld(){
         let date = new Date().toLocaleString();
         let notification;
         let notificationPermission = Notification.permission;
@@ -48,12 +47,18 @@
 
         eventSource.addEventListener("sse", function (event) {
             const data = JSON.parse(event.data);
-            console.log(data)
             if (notificationPermission === "granted") {
+                console.log(data)
                 //Notification을 이미 허용한 사람들에게 보여주는 알람창
                 notification = new Notification('Seniors', {
                     body: data.content
                 });
+                notification.onclick = () => {
+                    window.open(data.url, '_blank');
+                };
+                setTimeout(() => {
+                    notification.close();
+                }, 10000);
             } else if (notificationPermission !== 'denied') {
                 //Notification을 거부했을 경우 재 허용 창 띄우기
                 Notification.requestPermission(function (permission) {
@@ -73,5 +78,4 @@
                 });
             }
         })
-    }
 </script>
