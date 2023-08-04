@@ -10,8 +10,6 @@ import com.seniors.domain.notification.dto.NotificationDto;
 import com.seniors.domain.notification.entity.Notification;
 import com.seniors.domain.notification.repository.EmitterRepository;
 import com.seniors.domain.notification.repository.NotificationRepository;
-import com.seniors.domain.post.dto.PostDto;
-import com.seniors.domain.post.dto.PostDto.GetPostRes;
 import com.seniors.domain.post.entity.Post;
 import com.seniors.domain.resume.entity.Resume;
 import com.seniors.domain.users.entity.Users;
@@ -26,9 +24,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
 import java.io.IOException;
-import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 @Service
 @Slf4j

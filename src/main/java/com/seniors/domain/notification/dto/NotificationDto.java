@@ -1,8 +1,6 @@
 package com.seniors.domain.notification.dto;
 
-import com.seniors.common.util.LocalDateTimeToArray;
 import com.seniors.domain.notification.entity.Notification;
-import com.seniors.domain.users.entity.Users;
 import lombok.*;
 
 import java.time.LocalDateTime;

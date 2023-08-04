@@ -6,8 +6,6 @@ import com.seniors.common.repository.BasicRepoSupport;
 import com.seniors.domain.notification.dto.NotificationDto;
 import com.seniors.domain.notification.entity.Notification;
 import com.seniors.domain.notification.entity.QNotification;
-import com.seniors.domain.post.dto.PostDto;
-import com.seniors.domain.post.entity.Post;
 import jakarta.persistence.EntityManager;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
