@@ -35,16 +35,16 @@ public class NotificationDto {
 	/**
 	 * 알림 읽음 여부
 	 */
-	private boolean read;
+	private boolean isRead;
 
 	@Builder
-	public NotificationDto(Long id, Long userId, String content, String url, LocalDateTime createdAt, boolean read) {
+	public NotificationDto(Long id, Long userId, String content, String url, LocalDateTime createdAt, boolean isRead) {
 		this.id = id;
 		this.userId = userId;
 		this.content = content;
 		this.url = url;
 		this.createdAt = createdAt;
-		this.read = read;
+		this.isRead = isRead;
 	}
 
 	public static NotificationDto of(Notification notification) {
@@ -54,7 +54,7 @@ public class NotificationDto {
 				.content(notification.getContent())
 				.url(notification.getUrl())
 				.createdAt(notification.getCreatedAt())
-				.read(notification.isRead())
+				.isRead(notification.isRead())
 				.build();
 	}
 }

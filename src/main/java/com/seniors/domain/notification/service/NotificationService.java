@@ -2,23 +2,33 @@ package com.seniors.domain.notification.service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.seniors.common.dto.CustomPage;
 import com.seniors.common.exception.type.NotFoundException;
+import com.seniors.config.security.CustomUserDetails;
 import com.seniors.domain.comment.entity.Comment;
 import com.seniors.domain.notification.dto.NotificationDto;
 import com.seniors.domain.notification.entity.Notification;
 import com.seniors.domain.notification.repository.EmitterRepository;
 import com.seniors.domain.notification.repository.NotificationRepository;
+import com.seniors.domain.post.dto.PostDto;
+import com.seniors.domain.post.dto.PostDto.GetPostRes;
 import com.seniors.domain.post.entity.Post;
 import com.seniors.domain.resume.entity.Resume;
 import com.seniors.domain.users.entity.Users;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @Service
 @Slf4j
@@ -105,16 +115,12 @@ public class NotificationService {
 	}
 
 //	@Transactional
-//	public NotificationDto findAllById(CustomUserDetails userDetails) {
-//		List<NotificationDto> responses = notificationRepository.findAllByReceiverId(userDetails.getId()).stream()
-//				.map(NotificationDto::from)
-//				.collect(Collectors.toList());
-//		long unreadCount = responses.stream()
-//				.filter(notification -> !notification.isRead())
-//				.count();
-//
-//		return NotificationDto.from(responses, unreadCount);
-//	}
+	public CustomPage<NotificationDto> findAllById(CustomUserDetails userDetails, int page, int size) {
+		Sort.Direction direction = Sort.Direction.DESC;
+		Pageable pageable = PageRequest.of(page, size, Sort.by(direction, "id"));
+		Page<NotificationDto> responses = notificationRepository.findAllByUsersId(userDetails.getUserId(), pageable);
+		return CustomPage.of(responses);
+	}
 
 	@Transactional
 	public void readNotification(Long id) {
