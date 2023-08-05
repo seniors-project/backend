@@ -32,7 +32,7 @@ import java.util.Map;
 @Slf4j
 @RequiredArgsConstructor
 public class NotificationService {
-	private static final Long DEFAULT_TIMEOUT = (1000 * 60L * 60 * 24); // 1일
+	private static final long DEFAULT_TIMEOUT = 1000 * 60 * 60 * 24; // 1일
 
 	private final EmitterRepository emitterRepository;
 	private final NotificationRepository notificationRepository;
@@ -52,7 +52,7 @@ public class NotificationService {
 //				" \"url\": \"/api/posts\", \"content\": \"시니어스 구독 userId " + userId + " \", \"id\": " + userId + ", \"isRead\": false, \"createdAt\": \"2023-08-02 15:15:40.648816\"}");
 
 		// 클라이언트가 미수신한 Event 목록이 존재할 경우 전송하여 Event 유실을 예방
-		if (!lastEventId.isEmpty()) {
+		if (lastEventId != null && !lastEventId.isEmpty()) {
 			Map<String, Object> events = emitterRepository.findAllEventCacheStartWithId(String.valueOf(userId));
 			events.entrySet().stream()
 					.filter(entry -> lastEventId.compareTo(entry.getKey()) < 0)
@@ -106,6 +106,8 @@ public class NotificationService {
 					.data(data));
 		} catch (IOException exception) {
 			emitterRepository.deleteById(id);
+			emitter.complete();
+			log.error("Connection error:", exception);
 			throw new RuntimeException("연결 오류!");
 		}
 	}
