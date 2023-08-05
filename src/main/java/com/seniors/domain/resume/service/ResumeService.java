@@ -126,7 +126,7 @@ public class ResumeService {
         );
 
         if(resume.getUsers().getId()!=user.getId()){
-            throw  new NotAuthorizedException("수정 권한이 없습니다.");
+            throw new NotAuthorizedException("수정 권한이 없습니다.");
         }
 
         if(bindingResult.hasErrors()) {

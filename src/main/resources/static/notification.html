@@ -11,7 +11,7 @@
     let date = new Date().toLocaleString();
     let notification;
     let notificationPermission = Notification.permission;
-    const eventSource = new EventSource(`/subscribe`);
+    const eventSource = new EventSource(`/api/notifications/subscribe`);
     eventSource.addEventListener("sse", function (event) {
         const data = JSON.parse(event.data);
         if (notificationPermission === "granted") {

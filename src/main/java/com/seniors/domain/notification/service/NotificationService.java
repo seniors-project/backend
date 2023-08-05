@@ -3,6 +3,7 @@ package com.seniors.domain.notification.service;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.seniors.common.dto.CustomPage;
+import com.seniors.common.exception.type.NotAuthorizedException;
 import com.seniors.common.exception.type.NotFoundException;
 import com.seniors.config.security.CustomUserDetails;
 import com.seniors.domain.comment.entity.Comment;
@@ -13,12 +14,13 @@ import com.seniors.domain.notification.repository.NotificationRepository;
 import com.seniors.domain.post.entity.Post;
 import com.seniors.domain.resume.entity.Resume;
 import com.seniors.domain.users.entity.Users;
+import com.seniors.domain.users.repository.UsersRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
@@ -30,10 +32,12 @@ import java.util.Map;
 @Slf4j
 @RequiredArgsConstructor
 public class NotificationService {
-	private static final Long DEFAULT_TIMEOUT = 60L * 1000 * 60;
+	private static final Long DEFAULT_TIMEOUT = 1000 * 60L
+			* 60 * 24;
 
 	private final EmitterRepository emitterRepository;
 	private final NotificationRepository notificationRepository;
+	private final UsersRepository usersRepository;
 	private final ObjectMapper objectMapper;
 
 	public SseEmitter subscribe(Long userId, String lastEventId) {
@@ -110,18 +114,28 @@ public class NotificationService {
 		}
 	}
 
-//	@Transactional
-	public CustomPage<NotificationDto> findAllById(CustomUserDetails userDetails, int page, int size) {
+	@Transactional
+	public CustomPage<NotificationDto> findNotificationList(CustomUserDetails userDetails, int size, Long lastId) {
 		Sort.Direction direction = Sort.Direction.DESC;
-		Pageable pageable = PageRequest.of(page, size, Sort.by(direction, "id"));
-		Page<NotificationDto> responses = notificationRepository.findAllByUsersId(userDetails.getUserId(), pageable);
-		return CustomPage.of(responses);
+		Pageable pageable = PageRequest.of(0, size, Sort.by(direction, "id"));
+		Users users =  usersRepository.findById(userDetails.getUserId()).orElseThrow(
+				() -> new NotFoundException("유효하지 않은 회원입니다.")
+		);
+		Slice<NotificationDto> results = notificationRepository.findNotificationList(users.getId(), pageable, lastId);
+		return CustomPage.of(results);
 	}
 
 	@Transactional
-	public void readNotification(Long id) {
+	public void readNotification(CustomUserDetails userDetails, Long id) {
+		Users users = usersRepository.findById(userDetails.getUserId()).orElseThrow(
+				() -> new NotFoundException("유효하지 않은 회원입니다.")
+		);
 		Notification notification = notificationRepository.findById(id)
 				.orElseThrow(() -> new NotFoundException("존재하지 않는 알림입니다."));
+
+		if (!users.getId().equals(notification.getUsers().getId())) {
+			throw new NotAuthorizedException("읽기 권한이 없습니다.");
+		}
 		notification.read();
 	}
 }
