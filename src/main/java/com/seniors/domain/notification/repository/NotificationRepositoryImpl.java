@@ -32,8 +32,8 @@ public class NotificationRepositoryImpl extends BasicRepoSupport implements Noti
 				.join(notification.users, users).fetchJoin()
 				.where(
 						userIdEq(userId),
-						ltNotificationId(lastId),
-						notification.isRead.eq(false))
+						ltNotificationId(lastId))
+//						notification.isRead.eq(false))
 				.orderBy(notification.id.desc())
 				.limit(pageable.getPageSize() + 1)
 				.fetch();

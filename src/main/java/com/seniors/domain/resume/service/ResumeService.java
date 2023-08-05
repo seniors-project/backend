@@ -99,7 +99,7 @@ public class ResumeService {
                 () -> new NotFoundException("이력서가 존재하지 않습니다.")
         );
         if (!resume.getUsers().getId().equals(user.getId())) {
-            notificationService.send(resume.getUsers(), resume, "누군가가 이력서를 조회했습니다!");
+            notificationService.send(resume.getUsers(), resume, "누군가가 내 이력서를 조회했습니다!");
         }
         return ResumeDto.GetResumeRes.from(resume);
     }
