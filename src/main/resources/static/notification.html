@@ -8,41 +8,35 @@
 </body>
 </html>
 <script type="text/javaScript">
-    let date = new Date().toLocaleString();
     let notification;
-    let notificationPermission = Notification.permission;
+    const NOTIFICATION_TIMEOUT = 10000;
+    const showNotification = (data) => {
+        notification = new Notification('Seniors', {
+            body: data.content
+        });
+        notification.onclick = () => {
+            window.open(data.url, '_blank');
+        };
+        setTimeout(() => {
+            notification.close();
+        }, NOTIFICATION_TIMEOUT);
+    }
+
+    const checkNotificationPermission = () => {
+        let notificationPermission = Notification.permission;
+        if (notificationPermission === 'granted') {
+            return true;
+        } else {
+            alert("알람 허용이 거부되었습니다.");
+            return false;
+        }
+    }
+
     const eventSource = new EventSource(`/api/notifications/subscribe`);
     eventSource.addEventListener("sse", function (event) {
         const data = JSON.parse(event.data);
-        if (notificationPermission === "granted") {
-            console.log(data)
-            //Notification을 이미 허용한 사람들에게 보여주는 알람창
-            notification = new Notification('Seniors', {
-                body: data.content
-            });
-            notification.onclick = () => {
-                window.open(data.url, '_blank');
-            };
-            setTimeout(() => {
-                notification.close();
-            }, 10000);
-        } else if (notificationPermission !== 'denied') {
-            //Notification을 거부했을 경우 재 허용 창 띄우기
-            Notification.requestPermission(function (permission) {
-                if (permission === "granted") {
-                    notification = new Notification('Seniors', {
-                        body: data.content
-                    });
-                    notification.onclick = () => {
-                        window.open(data.url, '_blank');
-                    };
-                    setTimeout(() => {
-                        notification.close();
-                    }, 10000);
-                } else {
-                    alert("알람 허용이 거부되었습니다.")
-                }
-            });
+        if (checkNotificationPermission()) {
+            showNotification(data);
         }
     })
 </script>

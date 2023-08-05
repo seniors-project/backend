@@ -26,9 +26,13 @@ public class NotificationDto {
 	private String url;
 
 	/**
-	 * 알림이 생성된 날짜(몇일 전 계산 위함)
+	 * 알림이 생성된 날짜
 	 */
 	private LocalDateTime createdAt;
+	/**
+	 * 알림이 수정된 날짜
+	 */
+	private LocalDateTime lastModifiedDate;
 
 	/**
 	 * 알림 읽음 여부
@@ -36,12 +40,13 @@ public class NotificationDto {
 	private boolean isRead;
 
 	@Builder
-	public NotificationDto(Long id, Long userId, String content, String url, LocalDateTime createdAt, boolean isRead) {
+	public NotificationDto(Long id, Long userId, String content, String url, LocalDateTime createdAt, LocalDateTime lastModifiedDate, boolean isRead) {
 		this.id = id;
 		this.userId = userId;
 		this.content = content;
 		this.url = url;
 		this.createdAt = createdAt;
+		this.lastModifiedDate = lastModifiedDate;
 		this.isRead = isRead;
 	}
 
@@ -52,7 +57,9 @@ public class NotificationDto {
 				.content(notification.getContent())
 				.url(notification.getUrl())
 				.createdAt(notification.getCreatedAt())
+				.lastModifiedDate(notification.getLastModifiedDate())
 				.isRead(notification.isRead())
 				.build();
 	}
+
 }

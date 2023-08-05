@@ -20,27 +20,29 @@ public class Notification extends BaseTimeEntity {
 	@JoinColumn(name = "userId")
 	private Users users;
 
+	@Column(columnDefinition = "varchar(50) not null COMMENT '알림 내용'")
 	private String content;
 
+	@Column(columnDefinition = "varchar(100) not null COMMENT '알림 redirect API url'")
 	private String url;
 
-	private boolean isRead;
+	private boolean isRead = Boolean.FALSE;
 
-	@Builder
-	public Notification(Users users, String content, String url, boolean isRead) {
-		this.users = users;
-		this.content = content;
-		this.url = url;
-		this.isRead = isRead;
-	}
-
-	public static Notification of(Users users, String content, String url) {
+	public static Notification of(Users users, String content, String url, Boolean isRead) {
 		return Notification.builder()
 				.users(users)
 				.content(content)
 				.url(url)
-				.isRead(false)
+				.isRead(isRead)
 				.build();
+	}
+
+	@Builder
+	public Notification(Users users, String content, String url, Boolean isRead) {
+		this.users = users;
+		this.content = content;
+		this.url = url;
+		this.isRead = isRead;
 	}
 
 	public void read() {

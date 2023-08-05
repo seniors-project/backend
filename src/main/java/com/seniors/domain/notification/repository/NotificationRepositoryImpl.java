@@ -44,6 +44,7 @@ public class NotificationRepositoryImpl extends BasicRepoSupport implements Noti
 						n.getContent(),
 						n.getUrl(),
 						n.getCreatedAt(),
+						n.getLastModifiedDate(),
 						n.isRead()
 				))
 				.collect(Collectors.toList());

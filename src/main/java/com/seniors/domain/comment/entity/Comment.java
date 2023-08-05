@@ -1,7 +1,6 @@
 package com.seniors.domain.comment.entity;
 
 import com.seniors.domain.common.BaseEntity;
-import com.seniors.domain.notification.entity.Notification;
 import com.seniors.domain.post.entity.Post;
 import com.seniors.domain.users.entity.Users;
 import jakarta.persistence.*;
@@ -13,9 +12,6 @@ import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Where;
-
-import java.util.HashSet;
-import java.util.Set;
 
 @Entity
 @Getter

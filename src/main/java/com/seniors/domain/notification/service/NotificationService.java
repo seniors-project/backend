@@ -32,8 +32,7 @@ import java.util.Map;
 @Slf4j
 @RequiredArgsConstructor
 public class NotificationService {
-	private static final Long DEFAULT_TIMEOUT = 1000 * 60L
-			* 60 * 24;
+	private static final Long DEFAULT_TIMEOUT = (1000 * 60L * 60 * 24); // 1일
 
 	private final EmitterRepository emitterRepository;
 	private final NotificationRepository notificationRepository;
@@ -74,18 +73,15 @@ public class NotificationService {
 		sseEmitters.forEach(
 				(key, emitter) -> {
 					try {
-						emitterRepository.saveEventCache(key, objectMapper.writeValueAsString(NotificationDto.of(notification)));
+						String notificationJson = objectMapper.writeValueAsString(NotificationDto.of(notification));
+						emitterRepository.saveEventCache(key, notificationJson);
+						sendToClient(emitter, key, notificationJson);
 					} catch (JsonProcessingException e) {
-						throw new RuntimeException(e);
-					}
-					try {
-						sendToClient(emitter, key, objectMapper.writeValueAsString(NotificationDto.of(notification)));
-					} catch (JsonProcessingException e) {
+						log.error("Error processing JSON:", e);
 						throw new RuntimeException(e);
 					}
 				}
 		);
-
 	}
 
 	private Notification createNotification(Users receiver, Object entity, String content) {
@@ -99,7 +95,7 @@ public class NotificationService {
 			url += "/resumes/" + ((Resume) entity).getId();
 		}
 
-		return Notification.of(receiver, content, url);
+		return Notification.of(receiver, content, url, false);
 	}
 
 	public void sendToClient(SseEmitter emitter, String id, Object data) {
