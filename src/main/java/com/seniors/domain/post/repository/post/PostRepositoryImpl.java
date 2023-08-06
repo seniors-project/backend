@@ -51,9 +51,11 @@ public class PostRepositoryImpl extends BasicRepoSupport implements PostReposito
 			throw new NotFoundException("Post Not Found");
 		}
 
-		List<PostLike> filteredPostLikes = posts.getPostLikes().stream()
+		Boolean filteredPostLikes = posts.getPostLikes().stream()
 				.filter(postLike -> postLike.getUsers().getId().equals(userId))
-				.collect(Collectors.toList());
+				.map(PostLike::getStatus)
+				.findFirst() // 첫 번째 요소 가져오거나 없으면 Optional.empty 반환
+				.orElse(false); // 리스트가 비어있을 경우 기본값으로 false 설정
 
 		return new GetPostRes(
 				posts.getId(),
@@ -91,9 +93,11 @@ public class PostRepositoryImpl extends BasicRepoSupport implements PostReposito
 
 		List<GetPostRes> content = results.stream()
 				.map(p -> {
-					List<PostLike> filteredPostLikes = p.getPostLikes().stream()
+					Boolean filteredPostLikes = p.getPostLikes().stream()
 							.filter(postLike -> postLike.getUsers().getId().equals(userId))
-							.collect(Collectors.toList());
+							.map(PostLike::getStatus)
+							.findFirst() // 첫 번째 요소 가져오거나 없으면 Optional.empty 반환
+							.orElse(false); // 리스트가 비어있을 경우 기본값으로 false 설정
 
 					return new GetPostRes(
 							p.getId(),
