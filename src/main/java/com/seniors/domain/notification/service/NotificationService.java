@@ -104,10 +104,11 @@ public class NotificationService {
 					.id(id)
 					.name("sse")
 					.data(data));
+			emitter.complete(); // 리소스 정리를 위해 emitter를 완료합니다
 		} catch (IOException exception) {
+			log.error("Error sending SSE event:", exception);
 			emitterRepository.deleteById(id);
-			emitter.complete();
-			log.error("Connection error:", exception);
+			emitter.complete(); // 리소스 정리를 위해 emitter를 완료합니다
 			throw new RuntimeException("연결 오류!");
 		}
 	}
