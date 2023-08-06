@@ -47,7 +47,7 @@ public class Post extends BaseEntity {
 
 	@BatchSize(size = 100)
 	@OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
-	private List<PostMedia> postMedias = new ArrayList<>();
+	private Set<PostMedia> postMedias = new HashSet<>();
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "userId")
@@ -55,7 +55,7 @@ public class Post extends BaseEntity {
 
 	@BatchSize(size = 100)
 	@OneToMany(mappedBy = "post", fetch = FetchType.LAZY)
-	private List<PostLike> postLikes = new ArrayList<>();
+	private Set<PostLike> postLikes = new HashSet<>();
 
 	public static Post of(String title, String content, Users users) {
 		return Post.builder()

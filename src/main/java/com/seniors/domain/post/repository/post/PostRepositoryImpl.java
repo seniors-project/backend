@@ -40,10 +40,10 @@ public class PostRepositoryImpl extends BasicRepoSupport implements PostReposito
 
 		Post posts = jpaQueryFactory
 				.selectFrom(post)
-				.innerJoin(post.users, users).fetchJoin()
 				.leftJoin(post.comments, comment).fetchJoin()
-				.leftJoin(post.postMedias, postMedia)
-				.leftJoin(post.postLikes, postLike)
+				.innerJoin(post.users, users).fetchJoin()
+				.leftJoin(post.postMedias, postMedia).fetchJoin()
+				.leftJoin(post.postLikes, postLike).fetchJoin()
 				.where(post.id.eq(postId))
 				.fetchOne();
 
@@ -85,8 +85,8 @@ public class PostRepositoryImpl extends BasicRepoSupport implements PostReposito
 				.selectFrom(post)
 				.innerJoin(post.users, users).fetchJoin()
 				.leftJoin(post.comments, comment).fetchJoin()
-				.leftJoin(post.postMedias, postMedia)
-				.leftJoin(post.postLikes, postLike); // LAZY로 변경한 후에는 fetchJoin으로 가져올 필요 없음
+				.leftJoin(post.postMedias, postMedia).fetchJoin()
+				.leftJoin(post.postLikes, postLike).fetchJoin(); // LAZY로 변경한 후에는 fetchJoin으로 가져올 필요 없음
 
 		super.setPageQuery(query, pageable, post);
 		List<Post> results = query.fetch();
@@ -111,14 +111,7 @@ public class PostRepositoryImpl extends BasicRepoSupport implements PostReposito
 							p.getPostMedias()
 					);
 				}).toList();
-
-		JPAQuery<Long> countQuery = jpaQueryFactory
-				.select(post.id.count())
-				.from(post);
-		Long count = countQuery.fetchOne();
-		count = count == null ? 0 : count;
-
-		return new PageImpl<>(content, super.getValidPageable(pageable), count);
+		return new PageImpl<>(content);
 	}
 
 

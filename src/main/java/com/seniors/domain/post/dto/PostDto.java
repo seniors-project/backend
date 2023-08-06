@@ -14,6 +14,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import static com.seniors.domain.comment.dto.CommentDto.GetCommentRes;
@@ -65,11 +66,11 @@ public class PostDto {
 		private List<GetCommentRes> comments; // Update the field type to List<GetCommentRes>
 
 		@Schema(description = "게시글 이미지 및 동영상")
-		private List<GetPostMediaRes> postMedias;
+		private Set<GetPostMediaRes> postMedias;
 
 		public GetPostRes(Long postId, String title, String content, Boolean likeStatus,
 		                  LocalDateTime createdAt, LocalDateTime lastModifiedDate, Users users,
-		                  List<Comment> comments, List<PostMedia> postMedias) {
+		                  List<Comment> comments, Set<PostMedia> postMedias) {
 			this.postId = postId;
 			this.title = title;
 			this.content = content;
@@ -97,7 +98,7 @@ public class PostDto {
 							postMedia.getCreatedAt(),
 							postMedia.getLastModifiedDate()
 					))
-					.collect(Collectors.toList());
+					.collect(Collectors.toSet());
 		}
 	}
 
