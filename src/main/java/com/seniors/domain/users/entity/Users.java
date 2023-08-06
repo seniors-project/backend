@@ -61,7 +61,7 @@ public class Users extends BaseEntity {
 
 	@BatchSize(size = 100)
 	@OneToMany(mappedBy = "users", orphanRemoval = true, cascade = CascadeType.ALL)
-	private Set<Comment> comments = new HashSet<>();
+	private List<Comment> comments = new ArrayList<>();
 
 	@BatchSize(size = 100)
 	@OneToMany(mappedBy = "users", cascade = CascadeType.PERSIST)
@@ -73,7 +73,7 @@ public class Users extends BaseEntity {
 
 	@BatchSize(size = 100)
 	@OneToMany(mappedBy = "users", cascade = CascadeType.PERSIST)
-	private Set<PostLike> postLikes = new HashSet<>();
+	private List<PostLike> postLikes = new ArrayList<>();
 
 	public static Users of(
 			String snsId, String email, String nickname, OAuthProvider oAuthProvider,

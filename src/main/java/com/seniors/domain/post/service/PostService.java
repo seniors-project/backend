@@ -68,14 +68,14 @@ public class PostService {
 		}
 	}
 
-	public GetPostRes findOnePost(Long postId) {
-		return postRepository.findOnePost(postId);
+	public GetPostRes findOnePost(Long postId, Long userId) {
+		return postRepository.findOnePost(postId, userId);
 	}
 
-	public CustomPage<GetPostRes> findPost(int page, int size) {
+	public CustomPage<GetPostRes> findPost(int page, int size, Long userId) {
 		Direction direction = Direction.DESC;
 		Pageable pageable = PageRequest.of(page, size, Sort.by(direction, "id"));
-		Page<GetPostRes> posts = postRepository.findAllPost(pageable);
+		Page<GetPostRes> posts = postRepository.findAllPost(pageable, userId);
 		return CustomPage.of(posts);
 	}
 

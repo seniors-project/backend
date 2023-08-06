@@ -17,6 +17,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 
 @Slf4j
@@ -35,50 +36,30 @@ public class PostRepositoryImpl extends BasicRepoSupport implements PostReposito
 	}
 
 	@Override
-	public GetPostRes findOnePost(Long postId) {
+	public GetPostRes findOnePost(Long postId, Long userId) {
 
 		Post posts = jpaQueryFactory
 				.selectFrom(post)
 				.innerJoin(post.users, users).fetchJoin()
 				.leftJoin(post.comments, comment).fetchJoin()
 				.leftJoin(post.postMedias, postMedia)
-				.innerJoin(post.postLikes, postLike) // LAZY로 변경한 후에는 fetchJoin으로 가져올 필요 없음
-				.where(QPost.post.id.eq(postId))
+				.leftJoin(post.postLikes, postLike)
+				.where(post.id.eq(postId))
 				.fetchOne();
 
 		if (posts == null) {
 			throw new NotFoundException("Post Not Found");
 		}
 
-		//		List<Post> postResList = jpaQueryFactory
-//				.selectFrom(post)
-//				.innerJoin(post.postLikes, postLike)
-//				.leftJoin(post.comments, comment).fetchJoin()
-//				.leftJoin(post.postMedias, postMedia)
-//				.innerJoin(post.users, users).fetchJoin()
-//				.where(post.id.eq(postId))
-//				.fetch();
-//		if (postResList.isEmpty()) {
-//			throw new NotFoundException("Post Not Found");
-//		}
-//
-//		List<GetPostRes> content = postResList.stream()
-//				.map(p -> new GetPostRes(
-//						p.getId(),
-//						p.getTitle(),
-//						p.getContent(),
-//						p.getPostLikes().get(0).getStatus(),
-//						p.getCreatedAt(),
-//						p.getLastModifiedDate(),
-//						p.getUsers(),
-//						p.getComments(),
-//						p.getPostMedias())).toList();
+		List<PostLike> filteredPostLikes = posts.getPostLikes().stream()
+				.filter(postLike -> postLike.getUsers().getId().equals(userId))
+				.collect(Collectors.toList());
 
 		return new GetPostRes(
 				posts.getId(),
 				posts.getTitle(),
 				posts.getContent(),
-				posts.getPostLikes().get(0).getStatus(), // 여러 개의 좋아요 정보가 존재할 수 있으므로, 첫 번째 요소만 사용 (조건에 맞게 변경 가능)
+				filteredPostLikes,
 				posts.getCreatedAt(),
 				posts.getLastModifiedDate(),
 				posts.getUsers(),
@@ -97,25 +78,35 @@ public class PostRepositoryImpl extends BasicRepoSupport implements PostReposito
 	}
 
 	@Override
-	public Page<GetPostRes> findAllPost(Pageable pageable) {
+	public Page<GetPostRes> findAllPost(Pageable pageable, Long userId) {
 		JPAQuery<Post> query = jpaQueryFactory
 				.selectFrom(post)
-				.innerJoin(post.postLikes, postLike)
+				.innerJoin(post.users, users).fetchJoin()
 				.leftJoin(post.comments, comment).fetchJoin()
 				.leftJoin(post.postMedias, postMedia)
-				.innerJoin(post.users, users).fetchJoin();
+				.leftJoin(post.postLikes, postLike); // LAZY로 변경한 후에는 fetchJoin으로 가져올 필요 없음
+
 		super.setPageQuery(query, pageable, post);
-		List<GetPostRes> content = query.fetch().stream()
-				.map(p -> new GetPostRes(
-						p.getId(),
-						p.getTitle(),
-						p.getContent(),
-						p.getPostLikes().get(0).getStatus(),
-						p.getCreatedAt(),
-						p.getLastModifiedDate(),
-						p.getUsers(),
-						p.getComments(),
-						p.getPostMedias())).toList();
+		List<Post> results = query.fetch();
+
+		List<GetPostRes> content = results.stream()
+				.map(p -> {
+					List<PostLike> filteredPostLikes = p.getPostLikes().stream()
+							.filter(postLike -> postLike.getUsers().getId().equals(userId))
+							.collect(Collectors.toList());
+
+					return new GetPostRes(
+							p.getId(),
+							p.getTitle(),
+							p.getContent(),
+							filteredPostLikes,
+							p.getCreatedAt(),
+							p.getLastModifiedDate(),
+							p.getUsers(),
+							p.getComments(),
+							p.getPostMedias()
+					);
+				}).toList();
 
 		JPAQuery<Long> countQuery = jpaQueryFactory
 				.select(post.id.count())
@@ -125,6 +116,7 @@ public class PostRepositoryImpl extends BasicRepoSupport implements PostReposito
 
 		return new PageImpl<>(content, super.getValidPageable(pageable), count);
 	}
+
 
 	@Override
 	public void removePost(Long postId, Long userId) {

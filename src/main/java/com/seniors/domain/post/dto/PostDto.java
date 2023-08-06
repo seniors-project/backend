@@ -3,6 +3,7 @@ package com.seniors.domain.post.dto;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.seniors.domain.comment.entity.Comment;
 import com.seniors.domain.post.entity.Post;
+import com.seniors.domain.post.entity.PostLike;
 import com.seniors.domain.post.entity.PostMedia;
 import com.seniors.domain.users.dto.UsersDto.GetPostUserRes;
 import com.seniors.domain.users.entity.Users;
@@ -49,7 +50,7 @@ public class PostDto {
 		private String content;
 
 		@Schema(description = "게시글 좋아요 상태")
-		private Boolean likeStatus;
+		private List<GetPostLikeRes> postLikes;
 
 		@Schema(description = "생성 일자")
 		private LocalDateTime createdAt;
@@ -66,13 +67,16 @@ public class PostDto {
 		@Schema(description = "게시글 이미지 및 동영상")
 		private List<GetPostMediaRes> postMedias;
 
-		public GetPostRes(Long postId, String title, String content, Boolean likeStatus,
+		public GetPostRes(Long postId, String title, String content, List<PostLike> postLikes,
 		                  LocalDateTime createdAt, LocalDateTime lastModifiedDate, Users users,
 		                  List<Comment> comments, List<PostMedia> postMedias) {
 			this.postId = postId;
 			this.title = title;
 			this.content = content;
-			this.likeStatus = likeStatus;
+			this.postLikes = postLikes.stream()
+					.map(postLike -> new GetPostLikeRes(
+							postLike.getStatus()
+					)).collect(Collectors.toList());
 			this.createdAt = createdAt;
 			this.lastModifiedDate = lastModifiedDate;
 			this.users = new GetPostUserRes(
@@ -119,6 +123,16 @@ public class PostDto {
 			this.mediaUrl = mediaUrl;
 			this.createdAt = createdAt;
 			this.lastModifiedDate = lastModifiedDate;
+		}
+	}
+
+	@Data
+	public static class GetPostLikeRes {
+		@Schema(description = "좋아요 상태")
+		private Boolean status;
+
+		public GetPostLikeRes(Boolean status) {
+			this.status = status;
 		}
 	}
 
