@@ -48,6 +48,9 @@ public class PostDto {
 		@Schema(description = "게시글 내용", defaultValue = "내용 1", example = "내용 1이요")
 		private String content;
 
+		@Schema(description = "게시글 좋아요 상태")
+		private Boolean likeStatus;
+
 		@Schema(description = "생성 일자")
 		private LocalDateTime createdAt;
 
@@ -63,12 +66,13 @@ public class PostDto {
 		@Schema(description = "게시글 이미지 및 동영상")
 		private List<GetPostMediaRes> postMedias;
 
-		public GetPostRes(Long postId, String title, String content,
+		public GetPostRes(Long postId, String title, String content, Boolean likeStatus,
 		                  LocalDateTime createdAt, LocalDateTime lastModifiedDate, Users users,
 		                  List<Comment> comments, List<PostMedia> postMedias) {
 			this.postId = postId;
 			this.title = title;
 			this.content = content;
+			this.likeStatus = likeStatus;
 			this.createdAt = createdAt;
 			this.lastModifiedDate = lastModifiedDate;
 			this.users = new GetPostUserRes(

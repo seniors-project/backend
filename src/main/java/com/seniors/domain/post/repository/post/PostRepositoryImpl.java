@@ -7,9 +7,7 @@ import com.seniors.common.repository.BasicRepoSupport;
 import com.seniors.domain.comment.entity.QComment;
 import com.seniors.domain.post.dto.PostDto.GetPostRes;
 import com.seniors.domain.post.dto.PostDto.ModifyPostReq;
-import com.seniors.domain.post.entity.Post;
-import com.seniors.domain.post.entity.QPost;
-import com.seniors.domain.post.entity.QPostMedia;
+import com.seniors.domain.post.entity.*;
 import com.seniors.domain.users.entity.QUsers;
 import jakarta.persistence.EntityManager;
 import lombok.extern.slf4j.Slf4j;
@@ -29,6 +27,8 @@ public class PostRepositoryImpl extends BasicRepoSupport implements PostReposito
 	private final static QPostMedia postMedia = QPostMedia.postMedia;
 	private final static QComment comment = QComment.comment;
 	private final static QUsers users = QUsers.users;
+	private final static QPostLike postLike = QPostLike.postLike;
+	private final static QPostLikeEmbedded postLikeEmbedded = QPostLikeEmbedded.postLikeEmbedded;
 
 	protected PostRepositoryImpl(JPAQueryFactory jpaQueryFactory, EntityManager em) {
 		super(jpaQueryFactory, em);
@@ -36,30 +36,55 @@ public class PostRepositoryImpl extends BasicRepoSupport implements PostReposito
 
 	@Override
 	public GetPostRes findOnePost(Long postId) {
-		List<Post> postResList = jpaQueryFactory
+
+		Post posts = jpaQueryFactory
 				.selectFrom(post)
+				.innerJoin(post.users, users).fetchJoin()
 				.leftJoin(post.comments, comment).fetchJoin()
 				.leftJoin(post.postMedias, postMedia)
-				.innerJoin(post.users, users).fetchJoin()
-				.where(post.id.eq(postId))
-				.fetch();
+				.innerJoin(post.postLikes, postLike) // LAZY로 변경한 후에는 fetchJoin으로 가져올 필요 없음
+				.where(QPost.post.id.eq(postId))
+				.fetchOne();
 
-		if (postResList.isEmpty()) {
+		if (posts == null) {
 			throw new NotFoundException("Post Not Found");
 		}
 
-		List<GetPostRes> content = postResList.stream()
-				.map(p -> new GetPostRes(
-						p.getId(),
-						p.getTitle(),
-						p.getContent(),
-						p.getCreatedAt(),
-						p.getLastModifiedDate(),
-						p.getUsers(),
-						p.getComments(),
-						p.getPostMedias())).toList();
+		//		List<Post> postResList = jpaQueryFactory
+//				.selectFrom(post)
+//				.innerJoin(post.postLikes, postLike)
+//				.leftJoin(post.comments, comment).fetchJoin()
+//				.leftJoin(post.postMedias, postMedia)
+//				.innerJoin(post.users, users).fetchJoin()
+//				.where(post.id.eq(postId))
+//				.fetch();
+//		if (postResList.isEmpty()) {
+//			throw new NotFoundException("Post Not Found");
+//		}
+//
+//		List<GetPostRes> content = postResList.stream()
+//				.map(p -> new GetPostRes(
+//						p.getId(),
+//						p.getTitle(),
+//						p.getContent(),
+//						p.getPostLikes().get(0).getStatus(),
+//						p.getCreatedAt(),
+//						p.getLastModifiedDate(),
+//						p.getUsers(),
+//						p.getComments(),
+//						p.getPostMedias())).toList();
 
-		return content.get(0);
+		return new GetPostRes(
+				posts.getId(),
+				posts.getTitle(),
+				posts.getContent(),
+				posts.getPostLikes().get(0).getStatus(), // 여러 개의 좋아요 정보가 존재할 수 있으므로, 첫 번째 요소만 사용 (조건에 맞게 변경 가능)
+				posts.getCreatedAt(),
+				posts.getLastModifiedDate(),
+				posts.getUsers(),
+				posts.getComments(),
+				posts.getPostMedias()
+		);
 	}
 
 	public void modifyPost(String title, String content, Long postId, Long userId) {
@@ -75,15 +100,17 @@ public class PostRepositoryImpl extends BasicRepoSupport implements PostReposito
 	public Page<GetPostRes> findAllPost(Pageable pageable) {
 		JPAQuery<Post> query = jpaQueryFactory
 				.selectFrom(post)
+				.innerJoin(post.postLikes, postLike)
 				.leftJoin(post.comments, comment).fetchJoin()
 				.leftJoin(post.postMedias, postMedia)
-				.join(post.users, users).fetchJoin();
+				.innerJoin(post.users, users).fetchJoin();
 		super.setPageQuery(query, pageable, post);
 		List<GetPostRes> content = query.fetch().stream()
 				.map(p -> new GetPostRes(
 						p.getId(),
 						p.getTitle(),
 						p.getContent(),
+						p.getPostLikes().get(0).getStatus(),
 						p.getCreatedAt(),
 						p.getLastModifiedDate(),
 						p.getUsers(),

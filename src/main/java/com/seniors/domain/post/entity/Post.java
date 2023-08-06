@@ -13,7 +13,9 @@ import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Where;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Entity
 @Getter
@@ -39,16 +41,20 @@ public class Post extends BaseEntity {
 
 
 	@BatchSize(size = 100)
-	@OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
+	@OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
 	private List<Comment> comments = new ArrayList<>();
 
 	@BatchSize(size = 100)
-	@OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
+	@OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
 	private List<PostMedia> postMedias = new ArrayList<>();
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "userId")
 	private Users users;
+
+	@BatchSize(size = 100)
+	@OneToMany(mappedBy = "post", fetch = FetchType.LAZY)
+	private List<PostLike> postLikes = new ArrayList<>();
 
 	public static Post of(String title, String content, Users users) {
 		return Post.builder()
