@@ -24,7 +24,7 @@ public class NotificationController {
 	public SseEmitter subscribeNotification(
 			@LoginUsers CustomUserDetails customUserDetails,
 			@RequestHeader(value = "Last-Event-ID", required = false, defaultValue = "") String lastEventId) {
-		return notificationService.subscribe(110L, lastEventId);
+		return notificationService.notificationSubscribe(110L, lastEventId);
 	}
 
 	/**

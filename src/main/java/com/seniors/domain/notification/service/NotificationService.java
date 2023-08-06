@@ -39,7 +39,7 @@ public class NotificationService {
 	private final UsersRepository usersRepository;
 	private final ObjectMapper objectMapper;
 
-	public SseEmitter subscribe(Long userId, String lastEventId) {
+	public SseEmitter notificationSubscribe(Long userId, String lastEventId) {
 		String id = userId.toString();
 
 		SseEmitter emitter = emitterRepository.save(id, new SseEmitter(DEFAULT_TIMEOUT));

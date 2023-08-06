@@ -1,6 +1,5 @@
 package com.seniors.domain.resume.service;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.seniors.common.dto.DataResponseDto;
 import com.seniors.common.exception.type.BadRequestException;
 import com.seniors.common.exception.type.NotAuthorizedException;
@@ -11,6 +10,7 @@ import com.seniors.domain.resume.dto.CareerDto;
 import com.seniors.domain.resume.dto.CertificateDto;
 import com.seniors.domain.resume.dto.EducationDto;
 import com.seniors.domain.resume.dto.ResumeDto;
+import com.seniors.domain.resume.dto.ResumeDto.SaveResumeReq;
 import com.seniors.domain.resume.entity.Career;
 import com.seniors.domain.resume.entity.Certificate;
 import com.seniors.domain.resume.entity.Education;
@@ -25,14 +25,11 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import com.seniors.domain.resume.dto.ResumeDto.SaveResumeReq;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.validation.ObjectError;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.nio.file.AccessDeniedException;
 import java.util.ArrayList;
 import java.util.List;
 

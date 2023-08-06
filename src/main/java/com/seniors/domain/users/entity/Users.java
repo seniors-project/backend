@@ -3,7 +3,6 @@ package com.seniors.domain.users.entity;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.seniors.common.constant.OAuthProvider;
 import com.seniors.domain.chat.entity.ChatMessage;
-import com.seniors.domain.chat.entity.ChatRoom;
 import com.seniors.domain.chat.entity.ChatRoomMembers;
 import com.seniors.domain.comment.entity.Comment;
 import com.seniors.domain.common.BaseEntity;
@@ -13,9 +12,7 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 @Entity
 @Getter
