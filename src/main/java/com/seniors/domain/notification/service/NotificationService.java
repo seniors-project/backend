@@ -119,6 +119,8 @@ public class NotificationService {
 			emitterRepository.deleteById(id);
 			emitter.complete(); // 리소스 정리를 위해 emitter를 완료합니다
 			throw new RuntimeException("연결 오류!");
+		} finally {
+			emitter.complete(); // 리소스 정리를 위해 emitter를 완료합니다
 		}
 	}
 
