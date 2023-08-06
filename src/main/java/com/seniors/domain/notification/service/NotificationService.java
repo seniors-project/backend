@@ -26,13 +26,17 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
 import java.io.IOException;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 @Service
 @Slf4j
 @RequiredArgsConstructor
 public class NotificationService {
 	private static final long DEFAULT_TIMEOUT = 1000 * 60 * 60 * 24; // 1일
+	// 중복 요청 막기를 위한 변수
+	private final Set<SseEmitter> processingRequests = new HashSet<>();
 
 	private final EmitterRepository emitterRepository;
 	private final NotificationRepository notificationRepository;
@@ -109,17 +113,21 @@ public class NotificationService {
 
 	public void sendToClient(SseEmitter emitter, String id, Object data) {
 		try {
-			emitter.send(SseEmitter.event()
-					.id(id)
-					.name("sse")
-					.data(data));
-			emitter.complete(); // 리소스 정리를 위해 emitter를 완료합니다
+			// 중복 요청 처리
+			if (!processingRequests.contains(emitter)) {
+				processingRequests.add(emitter);
+
+				emitter.send(SseEmitter.event()
+						.id(id)
+						.name("sse")
+						.data(data));
+				emitter.complete();
+			}
 		} catch (IOException exception) {
-			log.error("Error sending SSE event:", exception);
 			emitterRepository.deleteById(id);
 			emitter.complete(); // 리소스 정리를 위해 emitter를 완료합니다
-			throw new RuntimeException("연결 오류!");
 		} finally {
+			processingRequests.remove(emitter);
 			emitter.complete(); // 리소스 정리를 위해 emitter를 완료합니다
 		}
 	}
