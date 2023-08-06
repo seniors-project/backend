@@ -111,7 +111,12 @@ public class PostRepositoryImpl extends BasicRepoSupport implements PostReposito
 							p.getPostMedias()
 					);
 				}).toList();
-		return new PageImpl<>(content);
+		JPAQuery<Long> countQuery = jpaQueryFactory
+				.select(post.id.count())
+				.from(post);
+		Long count = countQuery.fetchOne();
+		count = count == null ? 0 : count;
+		return new PageImpl<>(content, super.getValidPageable(pageable), count);
 	}
 
 
