@@ -4,7 +4,6 @@ import com.seniors.common.annotation.LoginUsers;
 import com.seniors.common.dto.DataResponseDto;
 import com.seniors.common.dto.ErrorResponse;
 import com.seniors.config.security.CustomUserDetails;
-import com.seniors.domain.post.dto.PostDto;
 import com.seniors.domain.resume.dto.ResumeDto;
 import com.seniors.domain.resume.service.ResumeService;
 import io.swagger.v3.oas.annotations.Operation;

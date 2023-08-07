@@ -6,6 +6,7 @@ import com.seniors.domain.comment.entity.Comment;
 import com.seniors.domain.post.dto.PostDto;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotEmpty;
 import lombok.*;
 
 import java.time.LocalDateTime;
@@ -17,21 +18,11 @@ import java.time.LocalDateTime;
 public class CommentDto {
 
 	@Data
-	@Builder
 	public static class CommentCreateDto {
 
+		@NotEmpty(message = "댓글은 비워둘 수 없습니다.")
 		@Schema(description = "댓글 내용", defaultValue = "내용 1", example = "내용 1이요")
-		@NotBlank(message = "Input content!")
 		private String content;
-
-		@Schema(description = "작성자 ID")
-		@NotBlank(message = "Required userId")
-		@JsonIgnore
-		private Long userId;
-
-		public static CommentDto.CommentCreateDto of(String content, Long userId) {
-			return CommentDto.CommentCreateDto.builder().content(content).userId(userId).build();
-		}
 	}
 
 	@Data

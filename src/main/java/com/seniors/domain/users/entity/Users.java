@@ -3,10 +3,10 @@ package com.seniors.domain.users.entity;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.seniors.common.constant.OAuthProvider;
 import com.seniors.domain.chat.entity.ChatMessage;
-import com.seniors.domain.chat.entity.ChatRoom;
 import com.seniors.domain.chat.entity.ChatRoomMembers;
 import com.seniors.domain.comment.entity.Comment;
 import com.seniors.domain.common.BaseEntity;
+import com.seniors.domain.notification.entity.Notification;
 import com.seniors.domain.post.entity.Post;
 import jakarta.persistence.*;
 import lombok.*;
@@ -65,7 +65,8 @@ public class Users extends BaseEntity {
 	@OneToMany(mappedBy = "users", cascade = CascadeType.PERSIST)
 	private List<ChatRoomMembers> chatRoomMembers = new ArrayList<>();
 
-
+	@OneToMany(mappedBy = "users", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
+	private List<Notification> notifications = new ArrayList<>();
 
 	public static Users of(
 			String snsId, String email, String nickname, OAuthProvider oAuthProvider,
