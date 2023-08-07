@@ -116,12 +116,18 @@ public class PostService {
 
 	@Transactional
 	public void likePost(Long postId, Long userId, Boolean status) {
-		int updatedRows = postLikeRepository.likePost(postId, userId, !status);
-		if (updatedRows >= 1) {
-			postRepository.increaseLikeCount(postId, status);
+		Boolean likeStatus = postLikeRepository.findStatusByPostIdAndUserId(postId, userId);
+		if (status == likeStatus) {
+			int updatedRows = postLikeRepository.likePost(postId, userId, !status);
+			if (updatedRows >= 1) {
+				postRepository.increaseLikeCount(postId, status);
+			} else {
+				throw new BadRequestException();
+			}
 		} else {
-			throw new BadRequestException();
+			throw new BadRequestException("잘못된 좋아요 요청입니다.");
 		}
+
 	}
 
 	@Transactional
