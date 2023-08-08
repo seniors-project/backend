@@ -4,10 +4,7 @@ import com.seniors.common.annotation.LoginUsers;
 import com.seniors.common.dto.DataResponseDto;
 import com.seniors.common.dto.ErrorResponse;
 import com.seniors.config.security.CustomUserDetails;
-import com.seniors.domain.comment.dto.CommentDto;
-import com.seniors.domain.comment.entity.Comment;
 import com.seniors.domain.comment.service.CommentService;
-import com.seniors.domain.post.dto.PostDto;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -19,7 +16,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 
-import static com.seniors.domain.comment.dto.CommentDto.*;
+import static com.seniors.domain.comment.dto.CommentDto.CommentCreateDto;
 
 @Tag(name = "댓글", description = "댓글 API 명세서")
 @Slf4j
@@ -39,7 +36,7 @@ public class CommentController {
             content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class)))
     @PostMapping("")
     public DataResponseDto<String> commentAdd(
-            @RequestBody @Valid SaveCommentDto commentDto,
+            @RequestBody @Valid CommentCreateDto commentDto,
             @RequestParam(value = "postId") Long postId,
             @LoginUsers CustomUserDetails userDetails) {
         commentService.addComment(commentDto, postId, userDetails.getUserId());
@@ -56,7 +53,7 @@ public class CommentController {
     @PatchMapping("/{commentId}")
     public DataResponseDto<String> commentModify(
             @Parameter(description = "댓글 ID") @PathVariable(value = "commentId") Long commentId,
-            @RequestBody @Valid ModifyCommentDto commentDto,
+            @RequestBody @Valid CommentCreateDto commentDto,
             @LoginUsers CustomUserDetails userDetails) {
         commentService.modifyComment(commentId, commentDto, userDetails.getUserId());
         return DataResponseDto.of("SUCCESS");

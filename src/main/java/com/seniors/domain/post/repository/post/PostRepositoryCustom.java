@@ -1,7 +1,6 @@
 package com.seniors.domain.post.repository.post;
 
 import com.seniors.domain.post.dto.PostDto.GetPostRes;
-import com.seniors.domain.post.dto.PostDto.ModifyPostReq;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 

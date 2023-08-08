@@ -2,11 +2,10 @@ package com.seniors.domain.comment.repository;
 
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.seniors.common.repository.BasicRepoSupport;
+import com.seniors.domain.comment.dto.CommentDto.CommentCreateDto;
 import com.seniors.domain.comment.entity.QComment;
 import jakarta.persistence.EntityManager;
 import org.springframework.stereotype.Repository;
-
-import static com.seniors.domain.comment.dto.CommentDto.ModifyCommentDto;
 
 @Repository
 public class CommentRepositoryImpl extends BasicRepoSupport implements CommentRepositoryCustom {
@@ -17,7 +16,7 @@ public class CommentRepositoryImpl extends BasicRepoSupport implements CommentRe
     }
 
     @Override
-    public void modifyComment(Long commentId, ModifyCommentDto modifyCommentDto, Long userId) {
+    public void modifyComment(Long commentId, CommentCreateDto modifyCommentDto, Long userId) {
         jpaQueryFactory.update(comment)
                 .set(comment.content, modifyCommentDto.getContent())
                 .where(comment.id.eq(commentId)
