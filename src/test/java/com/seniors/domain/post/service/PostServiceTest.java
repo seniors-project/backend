@@ -9,6 +9,7 @@ import com.seniors.domain.post.entity.Post;
 import com.seniors.domain.post.repository.post.PostRepository;
 import com.seniors.domain.users.entity.Users;
 import com.seniors.domain.users.repository.UsersRepository;
+import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -18,6 +19,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.test.context.ActiveProfiles;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -29,8 +31,10 @@ import java.util.Random;
 import static org.hibernate.validator.internal.util.Contracts.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+@Slf4j
 @SpringBootTest
 @ActiveProfiles("dev")
+@Transactional
 class PostServiceTest {
 
 	@Autowired
@@ -40,6 +44,7 @@ class PostServiceTest {
 	@Autowired
 	private UsersRepository usersRepository;
 	public BindingResult bindingResult;
+	private Authentication authentication;
 	private Users users;
 
 	@BeforeEach
@@ -74,6 +79,8 @@ class PostServiceTest {
 				users.getProfileImageUrl());
 		userDetails.setUserId(users.getId());
 
+		authentication = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
+		SecurityContextHolder.getContext().setAuthentication(authentication);
 	}
 
 	@Test
@@ -126,24 +133,24 @@ class PostServiceTest {
 		assertEquals("bar", post.getContent());
 	}
 
-//	@Test
-//	@DisplayName("글 단건 삭제")
-//	void deletePostTest1() {
-//		// given
-//		Post post = Post.builder()
-//				.title("test title 1")
-//				.content("test content 1")
-//				.isDeleted(false)
-//				.viewCount(0)
-//				.likeCount(0)
-//				.build();
-//		postRepository.save(post);
-//
-//		// when
-//		postService.removePost(post.getId());
-//
-//		// then
-//		assertEquals(0, postRepository.count());
-//	}
+	@Test
+	@DisplayName("글 단건 삭제")
+	void deletePostTest1() {
+		// given
+		Post post = Post.builder()
+				.title("foo")
+				.content("bar")
+				.isDeleted(false)
+				.likeCount(0)
+				.users(users)
+				.build();
+		Post savePost = postRepository.save(post);
+
+		// when
+		postService.removePost(savePost.getId(), users.getId());
+
+		// then
+		assertEquals(0, postRepository.count());
+	}
 
 }
