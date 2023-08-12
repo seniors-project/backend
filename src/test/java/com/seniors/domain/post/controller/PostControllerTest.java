@@ -146,7 +146,7 @@ class PostControllerTest {
 
 	@Test
 	@DisplayName("사용자 글 리스트 조회")
-	void getListTest2() throws Exception {
+	void getListTest() throws Exception {
 		// given
 		List<Post> requestPosts = IntStream.range(0, 5)
 				.mapToObj(i -> Post.builder()
@@ -210,6 +210,27 @@ class PostControllerTest {
 						.principal(authentication)
 				)
 				.andExpect(status().isOk())
+				.andDo(print());
+	}
+
+	@Test
+	@DisplayName("게시글 좋아요 실패")
+	void failedLikePost() throws Exception {
+		// given
+		Post post = postRepository.save(Post.of("글 제목1", "글 내용1", users));
+
+		PostLike postLike = PostLike.of(true, post, users);
+
+		String json = objectMapper.writeValueAsString(postLike);
+		// expected
+		mockMvc.perform(post("/api/posts/like?postId={postId}", post.getId())
+						.contentType(APPLICATION_JSON)
+						.content(json)
+						.principal(authentication)
+				)
+				.andExpect(status().isBadRequest())
+				.andExpect(jsonPath("$.success").value(false))
+				.andExpect(jsonPath("$.code").value(ResultCode.BAD_REQUEST.getCode()))
 				.andDo(print());
 	}
 

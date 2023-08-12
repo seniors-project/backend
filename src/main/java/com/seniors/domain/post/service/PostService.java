@@ -83,9 +83,9 @@ public class PostService {
 	}
 
 	@Transactional
-	public void modifyPost(PostCreateDto postCreateDto, BindingResult bindingResult, Long postId, Long userId) throws IOException {
+	public Long modifyPost(PostCreateDto postCreateDto, BindingResult bindingResult, Long postId, Long userId) throws IOException {
 
-		if (bindingResult.hasErrors()) {
+		if (bindingResult != null && bindingResult.hasErrors()) {
 			List<ObjectError> errors = bindingResult.getAllErrors();
 			List<String> errorMessages = new ArrayList<>();
 
@@ -110,6 +110,7 @@ public class PostService {
 				postMediaRepository.save(PostMedia.of(uploadImagePath, post));
 			}
 		}
+		return post.getId();
 	}
 
 	@Transactional
@@ -120,6 +121,9 @@ public class PostService {
 	@Transactional
 	public void likePost(Long postId, Long userId, Boolean status) {
 		Boolean likeStatus = postLikeRepository.findStatusByPostIdAndUserId(postId, userId);
+		if (status && likeStatus == null)
+			throw new BadRequestException("잘못된 좋아요 요청입니다.");
+
 		if (status == likeStatus || likeStatus == null) {
 			int updatedRows = postLikeRepository.likePost(postId, userId, !status);
 			if (updatedRows >= 1) {
