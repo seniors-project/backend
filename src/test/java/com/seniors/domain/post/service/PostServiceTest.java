@@ -3,7 +3,6 @@ package com.seniors.domain.post.service;
 import com.seniors.common.constant.OAuthProvider;
 import com.seniors.common.dto.CustomPage;
 import com.seniors.config.security.CustomUserDetails;
-import com.seniors.domain.post.dto.PostDto;
 import com.seniors.domain.post.dto.PostDto.GetPostRes;
 import com.seniors.domain.post.dto.PostDto.PostCreateDto;
 import com.seniors.domain.post.entity.Post;

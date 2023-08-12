@@ -3,7 +3,6 @@ package com.seniors.domain.post.dto;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.seniors.domain.comment.entity.Comment;
 import com.seniors.domain.post.entity.Post;
-import com.seniors.domain.post.entity.PostLike;
 import com.seniors.domain.post.entity.PostMedia;
 import com.seniors.domain.users.dto.UsersDto.GetPostUserRes;
 import com.seniors.domain.users.entity.Users;
