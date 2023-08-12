@@ -27,16 +27,24 @@ public class PostDto {
 	@Data
 	@Builder
 	public static class PostCreateDto {
-		@NotEmpty(message = "제목은 비워둘 수 없습니다.")
+		@NotEmpty(message = "게시글 제목은 비워둘 수 없습니다.")
 		@Schema(description = "게시글 제목", defaultValue = "제목 1", example = "제목 1이요")
 		private String title;
 
-		@NotEmpty(message = "내용은 비워둘 수 없습니다.")
+		@NotEmpty(message = "게시글 내용은 비워둘 수 없습니다.")
 		@Schema(description = "게시글 내용", defaultValue = "내용 1", example = "내용 1이요")
 		private String content;
 
 		@Schema(description = "사진 및 동영상")
 		private List<MultipartFile> files;
+
+		public static PostCreateDto of(String title, String content, List<MultipartFile> files) {
+			return PostCreateDto.builder()
+					.title(title)
+					.content(content)
+					.files(files)
+					.build();
+		}
 	}
 
 	@Data

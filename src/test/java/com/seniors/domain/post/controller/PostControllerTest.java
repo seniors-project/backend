@@ -94,16 +94,14 @@ class PostControllerTest {
 	@DisplayName("게시글 생성")
 	void postAdd() throws Exception {
 		// given
-		PostCreateDto postCreateDto = PostCreateDto.builder()
-				.title("글 제목입니다.")
-				.content("글 내용입니다.")
-				.build();
-		String json = objectMapper.writeValueAsString(postCreateDto);     // Javascript의 JSON.stringfy(object)
+		String title = "글 제목입니다.";
+		String content = "글 내용입니다.";
 
 		// expected
 		mockMvc.perform(post("/api/posts")
 						.contentType(APPLICATION_JSON)
-						.content(json)
+								.param("title", title)
+								.param("content", content)
 						.principal(authentication)
 				)
 				.andExpect(status().isOk())
@@ -181,16 +179,14 @@ class PostControllerTest {
 		// given
 		Post post = postRepository.save(Post.of("글 제목1", "글 내용1", users));
 
-		PostCreateDto modifyPostReq = PostCreateDto.builder()
-				.title("변경 제목1")
-				.content("변경 내용1")
-				.build();
-		String json = objectMapper.writeValueAsString(modifyPostReq);     // Javascript의 JSON.stringfy(object)
-
+		// given
+		String title = "글 수정 제목1입니다.";
+		String content = "글 수정 내용1입니다.";
 		// expected
 		mockMvc.perform(patch("/api/posts/{postId}", post.getId())
 						.contentType(APPLICATION_JSON)
-						.content(json)
+						.param("title", title)
+						.param("content", content)
 						.principal(authentication)
 				)
 				.andExpect(status().isOk())
@@ -204,7 +200,7 @@ class PostControllerTest {
 		// given
 		Post post = postRepository.save(Post.of("글 제목1", "글 내용1", users));
 
-		PostLike postLike = PostLike.of(post.getId(), users.getId(), false);
+		PostLike postLike = PostLike.of(false, post, users);
 
 		String json = objectMapper.writeValueAsString(postLike);
 		// expected

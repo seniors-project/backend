@@ -45,8 +45,8 @@ public class PostService {
 	private final NotificationService notificationService;
 
 	@Transactional
-	public void addPost(PostCreateDto postCreateDto, BindingResult bindingResult, Long userId) throws IOException {
-		if (bindingResult.hasErrors()) {
+	public Long addPost(PostCreateDto postCreateDto, BindingResult bindingResult, Long userId) throws IOException {
+		if (bindingResult != null && bindingResult.hasErrors()) {
 			List<ObjectError> errors = bindingResult.getAllErrors();
 			List<String> errorMessages = new ArrayList<>();
 
@@ -68,6 +68,7 @@ public class PostService {
 				postMediaRepository.save(PostMedia.of(uploadImagePath, post));
 			}
 		}
+		return post.getId();
 	}
 
 	public GetPostRes findOnePost(Long postId, Long userId) {
@@ -119,8 +120,8 @@ public class PostService {
 	@Transactional
 	public void likePost(Long postId, Long userId, Boolean status) {
 		Boolean likeStatus = postLikeRepository.findStatusByPostIdAndUserId(postId, userId);
-		if (status == likeStatus) {
-		int updatedRows = postLikeRepository.likePost(postId, userId, !status);
+		if (status == likeStatus || likeStatus == null) {
+			int updatedRows = postLikeRepository.likePost(postId, userId, !status);
 			if (updatedRows >= 1) {
 				postRepository.increaseLikeCount(postId, status);
 				Post post = postRepository.findById(postId).orElseThrow(
