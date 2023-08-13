@@ -1,15 +1,10 @@
 package com.seniors.domain.users.dto;
 
-import com.querydsl.core.annotations.QueryProjection;
 import com.seniors.domain.chat.dto.ChatRoomMembersDto.GetChatRoomMembersRes;
-import com.seniors.domain.chat.entity.ChatRoomMembers;
-import com.seniors.domain.comment.dto.CommentDto;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.*;
 
-import java.time.LocalDateTime;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @ToString
@@ -39,29 +34,27 @@ public class UsersDto {
 		}
 	}
 	@Data
+	public static class GetChatUserOneRes {
+		@Schema(description = "사용자 ID")
+		private Long userId;
+
+		public GetChatUserOneRes(Long userId) {
+			this.userId = userId;
+		}
+	}
+
+	@Data
 	public static class GetChatUserRes {
 		@Schema(description = "사용자 ID")
 		private Long userId;
 
-		@Schema(description = "닉네임")
-		private String nickname;
-
-		@Schema(description = "프로필 이미지 url")
-		private String profileImageUrl;
-
 		@Schema(description = "채팅방 리스트")
 		private List<GetChatRoomMembersRes> chatRoomMembers;
 
-		public GetChatUserRes(Long userId, String nickname, String profileImageUrl, List<ChatRoomMembers> chatRoomMembers) {
+		public GetChatUserRes(Long userId, List<GetChatRoomMembersRes> chatRoomMembers) {
 			this.userId = userId;
-			this.nickname = nickname;
-			this.profileImageUrl = profileImageUrl;
-			this.chatRoomMembers = chatRoomMembers.stream()
-					.map(chatRoomMember -> new GetChatRoomMembersRes(
+			this.chatRoomMembers = chatRoomMembers;
 
-							chatRoomMember.getRoomName()
-					))
-					.collect(Collectors.toList());
 		}
 	}
 

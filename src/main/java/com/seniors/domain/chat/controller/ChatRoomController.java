@@ -42,14 +42,9 @@ public class ChatRoomController {
     @ApiResponse(responseCode = "200", description = "조회 성공",
             content = @Content(mediaType = "application/json", schema = @Schema(implementation = DataResponseDto.class)))
     @GetMapping("")
-    public DataResponseDto<CustomPage<GetChatUserRes>> chatRoomList (
-            @LoginUsers CustomUserDetails userDetails,
-            @RequestParam(required = false, defaultValue = "1") int page,
-            @RequestParam(required = false) int size) {
-
-        CustomPage<GetChatUserRes> chatRoomResList = chatRoomService.findChatRoom(userDetails.getUserId(), page > 0 ? page - 1 : 0, size);
-
-        return DataResponseDto.of(chatRoomResList);
+    public DataResponseDto<GetChatUserRes> chatRoomList (
+            @LoginUsers CustomUserDetails userDetails) {
+        return chatRoomService.findChatRoom(userDetails.getUserId());
     }
 
     @Operation(summary = "채팅방 입장")
