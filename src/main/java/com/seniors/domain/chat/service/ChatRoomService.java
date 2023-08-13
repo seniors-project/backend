@@ -52,4 +52,12 @@ public class ChatRoomService {
         return chatRoomRepository.findOneChatRoom(roomId);
     }
 
+    @Transactional
+    public void removeChatRoom(Long chatRoomId, Long userId) {
+        ChatRoomMembers chatRoomMembers = chatRoomMembersRepository.findByChatRoomIdAndUsersId(chatRoomId, userId).orElseThrow(
+                () -> new NotFoundException("채팅방이 존재하지 않거나 유효하지 않은 회원입니다")
+        );
+        chatRoomMembersRepository.delete(chatRoomMembers);
+    }
+
 }

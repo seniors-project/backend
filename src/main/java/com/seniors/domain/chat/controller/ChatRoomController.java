@@ -58,5 +58,20 @@ public class ChatRoomController {
 
         return DataResponseDto.of(getChatRoomRes);
     }
+    @Operation(summary = "채팅방 나가기")
+    @ApiResponse(responseCode = "200", description = "나가기 성공",
+            content = @Content(mediaType = "application/json", schema = @Schema(implementation = DataResponseDto.class)))
+    @ApiResponse(responseCode = "404", description = "채팅방이 존재하지 않거나 유효하지 않은 회원입니다",
+            content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class)))
+    @DeleteMapping("/{roomId}")
+    public DataResponseDto<Long> chatRoomExit (
+            @PathVariable Long roomId,
+            @LoginUsers CustomUserDetails userDetails
+    ) {
+
+        chatRoomService.removeChatRoom(roomId, userDetails.getUserId());
+
+        return DataResponseDto.of(null);
+    }
 
 }
