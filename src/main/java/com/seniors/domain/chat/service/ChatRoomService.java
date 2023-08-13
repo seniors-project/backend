@@ -2,6 +2,7 @@ package com.seniors.domain.chat.service;
 
 import com.seniors.common.dto.CustomPage;
 import com.seniors.common.exception.type.BadRequestException;
+import com.seniors.common.exception.type.NotAuthorizedException;
 import com.seniors.domain.chat.dto.ChatRoomDto;
 import com.seniors.domain.chat.entity.ChatRoom;
 import com.seniors.domain.chat.entity.ChatRoomMembers;
@@ -37,10 +38,14 @@ public class ChatRoomService {
         ChatRoom chatRoom = ChatRoom.builder().build();
         chatRoomRepository.save(chatRoom);
 
-        Users users = usersRepository.findById(senderId).orElseThrow();
+        Users users = usersRepository.findById(senderId).orElseThrow(
+                () -> new NotAuthorizedException("유효하지 않은 회원입니다.")
+        );
         chatRoomMembersRepository.save(ChatRoomMembers.of(chatRoomName, chatRoom, users));
 
-        users = usersRepository.findById(recipientId).orElseThrow();
+        users = usersRepository.findById(recipientId).orElseThrow(
+                () -> new NotAuthorizedException("유효하지 않은 회원입니다.")
+        );
         chatRoomMembersRepository.save(ChatRoomMembers.of(chatRoomName, chatRoom, users));
 
 

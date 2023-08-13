@@ -1,6 +1,7 @@
 package com.seniors.domain.comment.service;
 
 import com.seniors.common.exception.type.BadRequestException;
+import com.seniors.common.exception.type.NotAuthorizedException;
 import com.seniors.common.exception.type.NotFoundException;
 import com.seniors.domain.comment.dto.CommentDto.CommentCreateDto;
 import com.seniors.domain.comment.entity.Comment;
@@ -34,7 +35,7 @@ public class CommentService {
                 () -> new NotFoundException("유효하지 않은 게시글입니다.")
         );
         Users users = usersRepository.findById(userId).orElseThrow(
-                () -> new NotFoundException("유효하지 않은 회원입니다.")
+                () -> new NotAuthorizedException("유효하지 않은 회원입니다.")
         );
         Comment savedComment = commentRepository.save(Comment.of(commentReq.getContent(), post, users));
         if (!savedComment.getPost().getUsers().getId().equals(users.getId())) {

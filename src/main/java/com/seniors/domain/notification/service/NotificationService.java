@@ -137,7 +137,7 @@ public class NotificationService {
 		Sort.Direction direction = Sort.Direction.DESC;
 		Pageable pageable = PageRequest.of(0, size, Sort.by(direction, "id"));
 		Users users =  usersRepository.findById(userDetails.getUserId()).orElseThrow(
-				() -> new NotFoundException("유효하지 않은 회원입니다.")
+				() -> new NotAuthorizedException("유효하지 않은 회원입니다.")
 		);
 		Slice<NotificationDto> results = notificationRepository.findNotificationList(users.getId(), pageable, lastId);
 		return CustomPage.of(results);
@@ -146,7 +146,7 @@ public class NotificationService {
 	@Transactional
 	public void readNotification(CustomUserDetails userDetails, Long id) {
 		Users users = usersRepository.findById(userDetails.getUserId()).orElseThrow(
-				() -> new NotFoundException("유효하지 않은 회원입니다.")
+				() -> new NotAuthorizedException("유효하지 않은 회원입니다.")
 		);
 		Notification notification = notificationRepository.findById(id)
 				.orElseThrow(() -> new NotFoundException("존재하지 않는 알림입니다."));
