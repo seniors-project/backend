@@ -1,12 +1,14 @@
 package com.seniors.domain.comment.service;
 
 import com.seniors.common.exception.type.BadRequestException;
-import com.seniors.domain.comment.dto.CommentDto.ModifyCommentDto;
-import com.seniors.domain.comment.dto.CommentDto.SaveCommentDto;
+import com.seniors.common.exception.type.NotFoundException;
+import com.seniors.domain.comment.dto.CommentDto.CommentCreateDto;
 import com.seniors.domain.comment.entity.Comment;
 import com.seniors.domain.comment.repository.CommentRepository;
+import com.seniors.domain.notification.service.NotificationService;
 import com.seniors.domain.post.entity.Post;
 import com.seniors.domain.post.repository.post.PostRepository;
+import com.seniors.domain.users.entity.Users;
 import com.seniors.domain.users.repository.UsersRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -21,20 +23,27 @@ public class CommentService {
     private final CommentRepository commentRepository;
     private final PostRepository postRepository;
     private final UsersRepository usersRepository;
+    private final NotificationService notificationService;
 
     @Transactional
-    public void addComment(SaveCommentDto commentReq, Long postId, Long userId) {
+    public void addComment(CommentCreateDto commentReq, Long postId, Long userId) {
         if (commentReq.getContent() == null || commentReq.getContent().isEmpty()) {
             throw new BadRequestException("Content is required");
         }
-        Post post = postRepository.findById(postId).orElse(null);
-        usersRepository.findById(userId).ifPresent(users ->
-                commentRepository.save(Comment.of(commentReq.getContent(), post, users))
+        Post post = postRepository.findById(postId).orElseThrow(
+                () -> new NotFoundException("유효하지 않은 게시글입니다.")
         );
+        Users users = usersRepository.findById(userId).orElseThrow(
+                () -> new NotFoundException("유효하지 않은 회원입니다.")
+        );
+        Comment savedComment = commentRepository.save(Comment.of(commentReq.getContent(), post, users));
+        if (!savedComment.getPost().getUsers().getId().equals(users.getId())) {
+            notificationService.send(savedComment.getPost().getUsers(), savedComment, "내 피드에 새로운 댓글이 작성되었습니다!");
+        }
     }
 
     @Transactional
-    public void modifyComment(Long commentId, ModifyCommentDto modifyCommentDto, Long userId) {
+    public void modifyComment(Long commentId, CommentCreateDto modifyCommentDto, Long userId) {
         commentRepository.modifyComment(commentId, modifyCommentDto, userId);
     }
 

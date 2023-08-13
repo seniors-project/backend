@@ -6,10 +6,12 @@ import com.seniors.common.exception.type.BadRequestException;
 import com.seniors.common.exception.type.NotAuthorizedException;
 import com.seniors.common.exception.type.NotFoundException;
 import com.seniors.config.S3Uploader;
+import com.seniors.domain.notification.service.NotificationService;
 import com.seniors.domain.resume.dto.CareerDto;
 import com.seniors.domain.resume.dto.CertificateDto;
 import com.seniors.domain.resume.dto.EducationDto;
 import com.seniors.domain.resume.dto.ResumeDto;
+import com.seniors.domain.resume.dto.ResumeDto.SaveResumeReq;
 import com.seniors.domain.resume.entity.Career;
 import com.seniors.domain.resume.entity.Certificate;
 import com.seniors.domain.resume.entity.Education;
@@ -24,14 +26,11 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import com.seniors.domain.resume.dto.ResumeDto.SaveResumeReq;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.validation.ObjectError;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.nio.file.AccessDeniedException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -42,6 +41,7 @@ public class ResumeService {
 
     private final ResumeRepository resumeRepository;
     private final UsersRepository usersRepository;
+    private final NotificationService notificationService;
 
     @Value("${photo.url}")
     private String photoUrl;
@@ -93,14 +93,16 @@ public class ResumeService {
     }
 
     @Transactional
-    public ResumeDto.GetResumeRes findResume(Long resumeId, Long userId){
+    public ResumeDto.GetResumeRes findResume(Long resumeId, Long userId) {
         Users user =  usersRepository.findById(userId).orElseThrow(
                 () -> new NotFoundException("유효하지 않은 회원입니다.")
         );
         Resume resume =  resumeRepository.findById(resumeId).orElseThrow(
                 () -> new NotFoundException("이력서가 존재하지 않습니다.")
         );
-
+        if (!resume.getUsers().getId().equals(user.getId())) {
+            notificationService.send(resume.getUsers(), resume, "누군가가 내 이력서를 조회했습니다!");
+        }
         return ResumeDto.GetResumeRes.from(resume);
     }
 
@@ -138,7 +140,7 @@ public class ResumeService {
         );
 
         if(resume.getUsers().getId()!=user.getId()){
-            throw  new NotAuthorizedException("수정 권한이 없습니다.");
+            throw new NotAuthorizedException("수정 권한이 없습니다.");
         }
 
         if(!resumeReq.getImage().isEmpty()) {
