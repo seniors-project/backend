@@ -31,10 +31,10 @@ public class Certificate extends BaseTimeEntity {
     private String rating;
 
     @Column(columnDefinition = "int not null COMMENT '발행 연도'")
-    private int issuedYear;
+    private Integer issuedYear;
 
     @Column(columnDefinition = "int not null COMMENT '발행 월'")
-    private int issuedMonth;
+    private Integer issuedMonth;
 
     @Column
     private Boolean isIssued;

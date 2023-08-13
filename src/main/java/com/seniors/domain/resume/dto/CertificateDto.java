@@ -33,11 +33,11 @@ public class CertificateDto {
 
         @Schema(description = "발행 연도")
         @NotNull(message = "발행 연도는 비워둘 수 없습니다.")
-        private int issuedYear;
+        private Integer issuedYear;
 
         @Schema(description = "발행 월")
         @NotNull(message = "발행 월은 비워둘 수 없습니다.")
-        private int issuedMonth;
+        private Integer issuedMonth;
 
         @Schema(description = "발행 여부")
         private Boolean isIssued;
@@ -60,11 +60,11 @@ public class CertificateDto {
 
         @Schema(description = "발행 연도")
         @NotNull(message = "발행 연도는 비워둘 수 없습니다.")
-        private int issuedYear;
+        private Integer issuedYear;
 
         @Schema(description = "발행 월")
         @NotNull(message = "발행 월은 비워둘 수 없습니다.")
-        private int issuedMonth;
+        private Integer issuedMonth;
 
         @Schema(description = "발행 여부")
         private Boolean isIssued;
@@ -84,10 +84,10 @@ public class CertificateDto {
         private String rating;
 
         @Schema(description = "발행 연도")
-        private int issuedYear;
+        private Integer issuedYear;
 
         @Schema(description = "발행 월")
-        private int issuedMonth;
+        private Integer issuedMonth;
 
         @Schema(description = "발행 여부")
         private Boolean isIssued;
@@ -125,10 +125,10 @@ public class CertificateDto {
         private String rating;
 
         @Schema(description = "발행 연도")
-        private int issuedYear;
+        private Integer issuedYear;
 
         @Schema(description = "발행 월")
-        private int issuedMonth;
+        private Integer issuedMonth;
 
         @Schema(description = "발행 여부")
         private Boolean isIssued;

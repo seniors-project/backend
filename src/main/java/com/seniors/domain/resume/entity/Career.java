@@ -26,10 +26,10 @@ public class Career extends BaseTimeEntity {
     private Long id;
 
     @Column(columnDefinition = "int not null COMMENT '입사 연도'")
-    private int startedAt;
+    private Integer startedAt;
 
-    @Column(columnDefinition = "int not null COMMENT '퇴사 연도'")
-    private int endedAt;
+    @Column(columnDefinition = "int COMMENT '퇴사 연도'")
+    private Integer endedAt;
 
     @Column(columnDefinition = "varchar(30) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci not null COMMENT '회사'")
     private String company;
@@ -51,7 +51,7 @@ public class Career extends BaseTimeEntity {
     private Resume resume;
 
     @Builder
-    public Career(int startedAt, int endedAt, String company, String title, Boolean isAttendanced, String content, Resume resume) {
+    public Career(Integer startedAt, Integer endedAt, String company, String title, Boolean isAttendanced, String content, Resume resume) {
         this.startedAt = startedAt;
         this.endedAt = endedAt;
         this.company = company;
