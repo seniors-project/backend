@@ -62,12 +62,12 @@ public class ResumeController {
             content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class)))
     @ApiResponse(responseCode = "404", description = "이력서가 존재하지 않습니다.",
             content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class)))
-    @GetMapping("/{resumeId}/{userId}")
+    @GetMapping("/{resumeId}")
     public DataResponseDto<ResumeDto.GetResumeRes> resumeDetails(
-            @PathVariable Long resumeId, @PathVariable Long userId
-//            @LoginUsers CustomUserDetails userDetails
+            @PathVariable Long resumeId,
+            @LoginUsers CustomUserDetails userDetails
     ) {
-        ResumeDto.GetResumeRes getResumeRes = resumeService.findResume(resumeId, userId);
+        ResumeDto.GetResumeRes getResumeRes = resumeService.findResume(resumeId, userDetails.getUserId());
         return DataResponseDto.of(getResumeRes);
     }
 
