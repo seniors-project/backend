@@ -54,8 +54,9 @@ public class PostController {
 			content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class)))
 	@GetMapping("/{postId}")
 	public DataResponseDto<GetPostRes> postDetails(
-			@Parameter(description = "게시글 ID") @PathVariable(value = "postId") Long postId) {
-		GetPostRes post = postService.findOnePost(postId);
+			@Parameter(description = "게시글 ID") @PathVariable(value = "postId") Long postId,
+			@LoginUsers CustomUserDetails customUserDetails) {
+		GetPostRes post = postService.findOnePost(postId, customUserDetails.getUserId());
 		return DataResponseDto.of(post);
 	}
 
@@ -68,9 +69,10 @@ public class PostController {
 	@GetMapping("")
 	public DataResponseDto<CustomPage<GetPostRes>> postList(
 			@RequestParam(required = false, defaultValue = "1") int page,
-			@RequestParam(required = false) int size
+			@RequestParam(required = false) int size,
+			@LoginUsers CustomUserDetails customUserDetails
 	) {
-		CustomPage<GetPostRes> postResList = postService.findPost(page > 0 ? page - 1 : 0, size);
+		CustomPage<GetPostRes> postResList = postService.findPost(page > 0 ? page - 1 : 0, size, customUserDetails.getUserId());
 		return DataResponseDto.of(postResList);
 	}
 
