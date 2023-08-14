@@ -36,11 +36,10 @@ public class EducationDto {
 
         @NotNull(message = "시작 연도는 비워둘 수 없습니다.")
         @Schema(description = "시작 연도")
-        private int startedAt;
+        private Integer  startedAt;
 
-        @NotNull(message = "종료 연도는 비워둘 수 없습니다.")
         @Schema(description = "종료 연도")
-        private int endedAt;
+        private Integer endedAt;
 
         @Schema(description = "내용")
         private String content;
@@ -66,11 +65,11 @@ public class EducationDto {
 
         @NotNull(message = "시작 연도는 비워둘 수 없습니다.")
         @Schema(description = "시작 연도")
-        private int startedAt;
+        private Integer startedAt;
 
         @NotNull(message = "종료 연도는 비워둘 수 없습니다.")
         @Schema(description = "종료 연도")
-        private int endedAt;
+        private Integer endedAt;
 
         @Schema(description = "내용")
         private String content;
@@ -93,10 +92,10 @@ public class EducationDto {
         private String process;
 
         @Schema(description = "시작 연도")
-        private int startedAt;
+        private Integer startedAt;
 
         @Schema(description = "종료 연도")
-        private int endedAt;
+        private Integer endedAt;
 
         @Schema(description = "내용")
         private String content;
@@ -138,10 +137,10 @@ public class EducationDto {
         private String process;
 
         @Schema(description = "시작 연도")
-        private int startedAt;
+        private Integer startedAt;
 
         @Schema(description = "종료 연도")
-        private int endedAt;
+        private Integer endedAt;
 
         @Schema(description = "내용")
         private String content;

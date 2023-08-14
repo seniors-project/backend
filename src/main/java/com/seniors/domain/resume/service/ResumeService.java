@@ -1,5 +1,6 @@
 package com.seniors.domain.resume.service;
 
+import com.seniors.common.dto.CustomSlice;
 import com.seniors.common.dto.DataResponseDto;
 import com.seniors.common.exception.type.BadRequestException;
 import com.seniors.common.exception.type.NotAuthorizedException;
@@ -47,30 +48,34 @@ public class ResumeService {
 
     private final S3Uploader s3Uploader;
     @Transactional
-    public Long addResume(SaveResumeReq resumeReq, BindingResult bindingResult, Long userId) throws IOException {
+    public Long addResume(SaveResumeReq resumeReq, Long userId) throws IOException {
         if (resumeRepository.findByUsersId(userId).isPresent()) {
-            throw new IllegalStateException("이미 해당 유저의 이력서가 존재합니다.");
+            throw new BadRequestException("이미 해당 유저의 이력서가 존재합니다.");
         }
-        if(bindingResult.hasErrors()) {
-            List<ObjectError> errors = bindingResult.getAllErrors();
-            List<String> errorMessages = new ArrayList<>();
 
-            for (ObjectError error : errors) {
-                FieldError fieldError = (FieldError) error;
-                String message = fieldError.getDefaultMessage();
-                errorMessages.add(message);
+        for(CareerDto.saveCareerReq saveCareerReq : resumeReq.getCareerList()){
+            if(saveCareerReq.getEndedAt()!= null && saveCareerReq.getIsAttendanced()==true){
+                throw new BadRequestException("퇴사연도를 입력하심면 재직중 여부를 체크하실 수 없습니다.");
             }
-            throw new BadRequestException(String.join(", ", errorMessages));
         }
+
+        for(EducationDto.saveEducationReq saveEducationReq : resumeReq.getEducationList()) {
+            if(saveEducationReq.getEndedAt()!= null && saveEducationReq.getIsProcessed()==true){
+                throw new BadRequestException("종료연도를 입력하시면 진행중 여부를 체크하실 수 없습니다.");
+            }
+        }
+
         Users user =  usersRepository.findById(userId).orElseThrow(
                 () -> new NotAuthorizedException("유효하지 않은 회원입니다.")
         );
 
         if(!resumeReq.getImage().isEmpty()) {
-            photoUrl = s3Uploader.upload(resumeReq.getImage(), "images");
+            photoUrl = s3Uploader.upload(resumeReq.getImage(), "resumes");
         }
+
         Resume resume = Resume.of(resumeReq, user);
         resume.uploadPhotoUrl(photoUrl);
+
         for(CareerDto.saveCareerReq saveCareerReq  : resumeReq.getCareerList()){
             Career career = Career.from(saveCareerReq);
             resume.addCareer(career);
@@ -102,21 +107,33 @@ public class ResumeService {
     }
 
     @Transactional
-    public DataResponseDto<Slice<ResumeDto.GetResumeByQueryDslRes>> findResumeList(Pageable pageable, Long lastId, Long userId){
+    public DataResponseDto<CustomSlice<ResumeDto.GetResumeByQueryDslRes>> findResumeList(Pageable pageable, Long lastId, Long userId){
         Users user =  usersRepository.findById(userId).orElseThrow(
                 () -> new NotAuthorizedException("유효하지 않은 회원입니다.")
         );
         Slice<ResumeDto.GetResumeByQueryDslRes> result = resumeRepository.findResumeList(pageable, lastId, user.getId());
 
 
-        return DataResponseDto.of(result);
+        return DataResponseDto.of(CustomSlice.from(result));
     }
 
     @Transactional
-    public void modifyResume(Long resumeId, ResumeDto.ModifyResumeReq resumeReq, BindingResult bindingResult, Long userId) throws IOException {
+    public void modifyResume(Long resumeId, ResumeDto.ModifyResumeReq resumeReq, Long userId) throws IOException {
         Resume resume = resumeRepository.findById(resumeId).orElseThrow(
                 () ->new NotFoundException("이력서가 존재하지 않습니다.")
         );
+
+        for(CareerDto.modifyCareerReq modifyCareerReq : resumeReq.getCareerList()){
+            if(modifyCareerReq.getEndedAt()!= null && modifyCareerReq.getIsAttendanced()==true){
+                throw new BadRequestException("퇴사연도를 입력하심면 재직중 여부를 체크하실 수 없습니다.");
+            }
+        }
+
+        for(EducationDto.modifyEducationReq modifyEducationReq : resumeReq.getEducationList()) {
+            if(modifyEducationReq.getEndedAt()!= null && modifyEducationReq.getIsProcessed()==true){
+                throw new BadRequestException("종료연도를 입력하시면 진행중 여부를 체크하실 수 없습니다.");
+            }
+        }
 
         Users user =  usersRepository.findById(userId).orElseThrow(
                 () -> new NotAuthorizedException("유효하지 않은 회원입니다.")
@@ -126,23 +143,10 @@ public class ResumeService {
             throw new NotAuthorizedException("수정 권한이 없습니다.");
         }
 
-        if(bindingResult.hasErrors()) {
-            List<ObjectError> errors = bindingResult.getAllErrors();
-            List<String> errorMessages = new ArrayList<>();
-
-            for (ObjectError error : errors) {
-                FieldError fieldError = (FieldError) error;
-                String message = fieldError.getDefaultMessage();
-                errorMessages.add(message);
-            }
-            throw new BadRequestException(String.join(", ", errorMessages));
-        }
-
-
         if(!resumeReq.getImage().isEmpty()) {
-            photoUrl = s3Uploader.upload(resumeReq.getImage(), "images");
+            photoUrl = s3Uploader.upload(resumeReq.getImage(), "resumes");
         }
-        resume.uploadPhotoUrl(photoUrl);
+
         resume.update(resumeReq, photoUrl);
 
         resume.getCareers().clear();
