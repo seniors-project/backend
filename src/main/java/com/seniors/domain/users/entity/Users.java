@@ -8,11 +8,15 @@ import com.seniors.domain.comment.entity.Comment;
 import com.seniors.domain.common.BaseEntity;
 import com.seniors.domain.notification.entity.Notification;
 import com.seniors.domain.post.entity.Post;
+import com.seniors.domain.post.entity.PostLike;
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.BatchSize;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Entity
 @Getter
@@ -55,15 +59,21 @@ public class Users extends BaseEntity {
 	@OneToMany(mappedBy = "users", orphanRemoval = true, cascade = CascadeType.ALL)
 	private List<Post> posts = new ArrayList<>();
 
+	@BatchSize(size = 100)
 	@OneToMany(mappedBy = "users", orphanRemoval = true, cascade = CascadeType.ALL)
 	private List<Comment> comments = new ArrayList<>();
 
+	@BatchSize(size = 100)
 	@OneToMany(mappedBy = "users", cascade = CascadeType.PERSIST)
 	private List<ChatMessage> chatMessages = new ArrayList<>();
 
 	@JsonManagedReference
 	@OneToMany(mappedBy = "users", cascade = CascadeType.PERSIST)
 	private List<ChatRoomMembers> chatRoomMembers = new ArrayList<>();
+
+	@BatchSize(size = 100)
+	@OneToMany(mappedBy = "users", cascade = CascadeType.PERSIST)
+	private List<PostLike> postLikes = new ArrayList<>();
 
 	@OneToMany(mappedBy = "users", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
 	private List<Notification> notifications = new ArrayList<>();

@@ -46,8 +46,8 @@ public class PostService {
 	private final NotificationService notificationService;
 
 	@Transactional
-	public void addPost(PostCreateDto postCreateDto, BindingResult bindingResult, Long userId) throws IOException {
-		if (bindingResult.hasErrors()) {
+	public Long addPost(PostCreateDto postCreateDto, BindingResult bindingResult, Long userId) throws IOException {
+		if (bindingResult != null && bindingResult.hasErrors()) {
 			List<ObjectError> errors = bindingResult.getAllErrors();
 			List<String> errorMessages = new ArrayList<>();
 
@@ -69,23 +69,24 @@ public class PostService {
 				postMediaRepository.save(PostMedia.of(uploadImagePath, post));
 			}
 		}
+		return post.getId();
 	}
 
-	public GetPostRes findOnePost(Long postId) {
-		return postRepository.findOnePost(postId);
+	public GetPostRes findOnePost(Long postId, Long userId) {
+		return postRepository.findOnePost(postId, userId);
 	}
 
-	public CustomPage<GetPostRes> findPost(int page, int size) {
+	public CustomPage<GetPostRes> findPost(int page, int size, Long userId) {
 		Direction direction = Direction.DESC;
 		Pageable pageable = PageRequest.of(page, size, Sort.by(direction, "id"));
-		Page<GetPostRes> posts = postRepository.findAllPost(pageable);
+		Page<GetPostRes> posts = postRepository.findAllPost(pageable, userId);
 		return CustomPage.of(posts);
 	}
 
 	@Transactional
-	public void modifyPost(PostCreateDto postCreateDto, BindingResult bindingResult, Long postId, Long userId) throws IOException {
+	public Long modifyPost(PostCreateDto postCreateDto, BindingResult bindingResult, Long postId, Long userId) throws IOException {
 
-		if (bindingResult.hasErrors()) {
+		if (bindingResult != null && bindingResult.hasErrors()) {
 			List<ObjectError> errors = bindingResult.getAllErrors();
 			List<String> errorMessages = new ArrayList<>();
 
@@ -110,6 +111,7 @@ public class PostService {
 				postMediaRepository.save(PostMedia.of(uploadImagePath, post));
 			}
 		}
+		return post.getId();
 	}
 
 	@Transactional
@@ -119,21 +121,30 @@ public class PostService {
 
 	@Transactional
 	public void likePost(Long postId, Long userId, Boolean status) {
-		int updatedRows = postLikeRepository.likePost(postId, userId, !status);
-		if (updatedRows >= 1) {
-			postRepository.increaseLikeCount(postId, status);
-			Post post = postRepository.findById(postId).orElseThrow(
-					() -> new NotFoundException("존재하지 않은 게시글입니다.")
-			);
-			Users users = usersRepository.findById(userId).orElseThrow(
-					() -> new NotAuthorizedException("유효하지 않은 회원입니다.")
-			);
-			if (!post.getUsers().getId().equals(users.getId()) && !status) {
-				notificationService.send(post.getUsers(), post, "누군가가 내 피드에 좋아요를 눌렀습니다.");
+		Boolean likeStatus = postLikeRepository.findStatusByPostIdAndUserId(postId, userId);
+		if (status && likeStatus == null)
+			throw new BadRequestException("잘못된 좋아요 요청입니다.");
+
+		if (status == likeStatus || likeStatus == null) {
+			int updatedRows = postLikeRepository.likePost(postId, userId, !status);
+			if (updatedRows >= 1) {
+				postRepository.increaseLikeCount(postId, status);
+				Post post = postRepository.findById(postId).orElseThrow(
+						() -> new NotFoundException("존재하지 않은 게시글입니다.")
+				);
+				Users users = usersRepository.findById(userId).orElseThrow(
+						() -> new NotAuthorizedException("유효하지 않은 회원입니다.")
+				);
+				if (!post.getUsers().getId().equals(users.getId()) && !status) {
+					notificationService.send(post.getUsers(), post, "누군가가 내 피드에 좋아요를 눌렀습니다.");
+				}
+			} else {
+				throw new BadRequestException("좋아요 반영이 실패되었습니다.");
 			}
 		} else {
-			throw new BadRequestException();
+			throw new BadRequestException("잘못된 좋아요 요청입니다.");
 		}
+
 	}
 
 	@Transactional

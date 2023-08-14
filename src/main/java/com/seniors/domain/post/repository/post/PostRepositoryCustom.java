@@ -6,10 +6,10 @@ import org.springframework.data.domain.Pageable;
 
 public interface PostRepositoryCustom {
 
-	GetPostRes findOnePost(Long postId);
+	GetPostRes findOnePost(Long postId, Long userId);
 	void modifyPost(String title, String content, Long postId, Long userId);
 
-	Page<GetPostRes> findAllPost(Pageable pageable);
+	Page<GetPostRes> findAllPost(Pageable pageable, Long userId);
 
 	void removePost(Long postId, Long userId);
 
