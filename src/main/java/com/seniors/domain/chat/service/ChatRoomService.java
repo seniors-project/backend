@@ -1,6 +1,7 @@
 package com.seniors.domain.chat.service;
 
 import com.seniors.common.dto.DataResponseDto;
+import com.seniors.common.exception.type.NotAuthorizedException;
 import com.seniors.common.exception.type.NotFoundException;
 import com.seniors.domain.chat.dto.ChatRoomDto;
 import com.seniors.domain.chat.entity.ChatRoom;
@@ -32,7 +33,7 @@ public class ChatRoomService {
 
         Users user = usersRepository.findById(userId).orElseThrow();
         Users opponentUser = usersRepository.findById(opponentId).orElseThrow(
-                () -> new NotFoundException("유효하지 않은 회원입니다")
+                () -> new NotAuthorizedException("유효하지 않은 회원입니다")
         );
 
         chatRoomMembersRepository.save(ChatRoomMembers.of(user.getNickname(), chatRoom, user));
@@ -55,7 +56,7 @@ public class ChatRoomService {
     @Transactional
     public void removeChatRoom(Long chatRoomId, Long userId) {
         ChatRoomMembers chatRoomMembers = chatRoomMembersRepository.findByChatRoomIdAndUsersId(chatRoomId, userId).orElseThrow(
-                () -> new NotFoundException("채팅방이 존재하지 않거나 유효하지 않은 회원입니다")
+                () -> new NotAuthorizedException("채팅방이 존재하지 않거나 유효하지 않은 회원입니다")
         );
         chatRoomMembersRepository.delete(chatRoomMembers);
     }
