@@ -13,6 +13,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import static com.seniors.domain.comment.dto.CommentDto.GetCommentRes;
@@ -25,16 +26,24 @@ public class PostDto {
 	@Data
 	@Builder
 	public static class PostCreateDto {
-		@NotEmpty(message = "제목은 비워둘 수 없습니다.")
+		@NotEmpty(message = "게시글 제목은 비워둘 수 없습니다.")
 		@Schema(description = "게시글 제목", defaultValue = "제목 1", example = "제목 1이요")
 		private String title;
 
-		@NotEmpty(message = "내용은 비워둘 수 없습니다.")
+		@NotEmpty(message = "게시글 내용은 비워둘 수 없습니다.")
 		@Schema(description = "게시글 내용", defaultValue = "내용 1", example = "내용 1이요")
 		private String content;
 
 		@Schema(description = "사진 및 동영상")
 		private List<MultipartFile> files;
+
+		public static PostCreateDto of(String title, String content, List<MultipartFile> files) {
+			return PostCreateDto.builder()
+					.title(title)
+					.content(content)
+					.files(files)
+					.build();
+		}
 	}
 
 	@Data
@@ -47,6 +56,9 @@ public class PostDto {
 
 		@Schema(description = "게시글 내용", defaultValue = "내용 1", example = "내용 1이요")
 		private String content;
+
+		@Schema(description = "게시글 좋아요 상태")
+		private Boolean likeStatus;
 
 		@Schema(description = "생성 일자")
 		private LocalDateTime createdAt;
@@ -61,14 +73,15 @@ public class PostDto {
 		private List<GetCommentRes> comments; // Update the field type to List<GetCommentRes>
 
 		@Schema(description = "게시글 이미지 및 동영상")
-		private List<GetPostMediaRes> postMedias;
+		private Set<GetPostMediaRes> postMedias;
 
-		public GetPostRes(Long postId, String title, String content,
+		public GetPostRes(Long postId, String title, String content, Boolean likeStatus,
 		                  LocalDateTime createdAt, LocalDateTime lastModifiedDate, Users users,
-		                  List<Comment> comments, List<PostMedia> postMedias) {
+		                  List<Comment> comments, Set<PostMedia> postMedias) {
 			this.postId = postId;
 			this.title = title;
 			this.content = content;
+			this.likeStatus = likeStatus;
 			this.createdAt = createdAt;
 			this.lastModifiedDate = lastModifiedDate;
 			this.users = new GetPostUserRes(
@@ -92,7 +105,7 @@ public class PostDto {
 							postMedia.getCreatedAt(),
 							postMedia.getLastModifiedDate()
 					))
-					.collect(Collectors.toList());
+					.collect(Collectors.toSet());
 		}
 	}
 
@@ -115,6 +128,16 @@ public class PostDto {
 			this.mediaUrl = mediaUrl;
 			this.createdAt = createdAt;
 			this.lastModifiedDate = lastModifiedDate;
+		}
+	}
+
+	@Data
+	public static class GetPostLikeRes {
+		@Schema(description = "좋아요 상태")
+		private Boolean status;
+
+		public GetPostLikeRes(Boolean status) {
+			this.status = status;
 		}
 	}
 

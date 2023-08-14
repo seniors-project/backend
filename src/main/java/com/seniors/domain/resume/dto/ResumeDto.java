@@ -1,33 +1,16 @@
 package com.seniors.domain.resume.dto;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.querydsl.core.annotations.QueryProjection;
-import com.seniors.domain.comment.entity.Comment;
-import com.seniors.domain.post.entity.Post;
-import com.seniors.domain.resume.entity.Career;
-import com.seniors.domain.resume.entity.Certificate;
-import com.seniors.domain.resume.entity.Education;
 import com.seniors.domain.resume.entity.Resume;
-import com.seniors.domain.users.dto.UsersDto.GetPostUserRes;
-import com.seniors.domain.users.entity.Users;
 import io.swagger.v3.oas.annotations.media.Schema;
-import jakarta.persistence.*;
 import jakarta.validation.Valid;
-import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;
-import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.*;
-import org.hibernate.annotations.BatchSize;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
-
-import static com.seniors.domain.comment.dto.CommentDto.GetCommentRes;
-import static java.lang.Boolean.FALSE;
 
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @ToString
