@@ -63,7 +63,7 @@ public class ResumeService {
             throw new BadRequestException(String.join(", ", errorMessages));
         }
         Users user =  usersRepository.findById(userId).orElseThrow(
-                () -> new NotFoundException("유효하지 않은 회원입니다.")
+                () -> new NotAuthorizedException("유효하지 않은 회원입니다.")
         );
 
         if(!resumeReq.getImage().isEmpty()) {
@@ -90,7 +90,7 @@ public class ResumeService {
     @Transactional
     public ResumeDto.GetResumeRes findResume(Long resumeId, Long userId) {
         Users user =  usersRepository.findById(userId).orElseThrow(
-                () -> new NotFoundException("유효하지 않은 회원입니다.")
+                () -> new NotAuthorizedException("유효하지 않은 회원입니다.")
         );
         Resume resume =  resumeRepository.findById(resumeId).orElseThrow(
                 () -> new NotFoundException("이력서가 존재하지 않습니다.")
@@ -104,7 +104,7 @@ public class ResumeService {
     @Transactional
     public DataResponseDto<Slice<ResumeDto.GetResumeByQueryDslRes>> findResumeList(Pageable pageable, Long lastId, Long userId){
         Users user =  usersRepository.findById(userId).orElseThrow(
-                () -> new NotFoundException("유효하지 않은 회원입니다.")
+                () -> new NotAuthorizedException("유효하지 않은 회원입니다.")
         );
         Slice<ResumeDto.GetResumeByQueryDslRes> result = resumeRepository.findResumeList(pageable, lastId, user.getId());
 
@@ -119,7 +119,7 @@ public class ResumeService {
         );
 
         Users user =  usersRepository.findById(userId).orElseThrow(
-                () -> new NotFoundException("유효하지 않은 회원입니다.")
+                () -> new NotAuthorizedException("유효하지 않은 회원입니다.")
         );
 
         if(resume.getUsers().getId()!=user.getId()){
@@ -171,7 +171,7 @@ public class ResumeService {
                 () -> new NotFoundException("이력서가 존재하지 않습니다.")
         );
         Users user =  usersRepository.findById(userId).orElseThrow(
-                () -> new NotFoundException("유효하지 않은 회원입니다.")
+                () -> new NotAuthorizedException("유효하지 않은 회원입니다.")
         );
         if(resume.getUsers().getId()!=user.getId()){
             throw  new NotAuthorizedException("삭제 권한이 없습니다.");

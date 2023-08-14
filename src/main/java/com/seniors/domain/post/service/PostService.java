@@ -2,6 +2,7 @@ package com.seniors.domain.post.service;
 
 import com.seniors.common.dto.CustomPage;
 import com.seniors.common.exception.type.BadRequestException;
+import com.seniors.common.exception.type.NotAuthorizedException;
 import com.seniors.common.exception.type.NotFoundException;
 import com.seniors.config.S3Uploader;
 import com.seniors.domain.notification.service.NotificationService;
@@ -59,7 +60,7 @@ public class PostService {
 		}
 
 		Users users = usersRepository.findById(userId).orElseThrow(
-				() -> new NotFoundException("유효하지 않은 회원입니다.")
+				() -> new NotAuthorizedException("유효하지 않은 회원입니다.")
 		);
 		Post post = postRepository.save(Post.of(postCreateDto.getTitle(), postCreateDto.getContent(), users));
 		if (postCreateDto.getFiles() != null && !postCreateDto.getFiles().isEmpty()) {
@@ -132,7 +133,7 @@ public class PostService {
 						() -> new NotFoundException("존재하지 않은 게시글입니다.")
 				);
 				Users users = usersRepository.findById(userId).orElseThrow(
-						() -> new NotFoundException("유효하지 않은 회원입니다.")
+						() -> new NotAuthorizedException("유효하지 않은 회원입니다.")
 				);
 				if (!post.getUsers().getId().equals(users.getId()) && !status) {
 					notificationService.send(post.getUsers(), post, "누군가가 내 피드에 좋아요를 눌렀습니다.");
