@@ -8,6 +8,7 @@ import com.seniors.common.exception.type.BadRequestException;
 import com.seniors.common.exception.type.NotAuthorizedException;
 import com.seniors.config.security.CustomUserDetails;
 import com.seniors.domain.notification.dto.NotificationDto;
+import com.seniors.domain.notification.entity.Notification;
 import com.seniors.domain.notification.service.NotificationService;
 import com.seniors.domain.post.dto.PostDto;
 import io.swagger.v3.oas.annotations.Operation;
@@ -71,11 +72,10 @@ public class NotificationController {
 	@ApiResponse(responseCode = "500", description = "단건 조회 실패",
 			content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class)))
 	@PatchMapping("/{id}")
-	public DataResponseDto<String> notificationRead(
+	public DataResponseDto<Notification> notificationRead(
 			@PathVariable Long id,
 			@LoginUsers CustomUserDetails userDetails
 	) {
-		notificationService.readNotification(userDetails, id);
-		return DataResponseDto.of("Read Success");
+		return DataResponseDto.of(notificationService.readNotification(userDetails, id));
 	}
 }
