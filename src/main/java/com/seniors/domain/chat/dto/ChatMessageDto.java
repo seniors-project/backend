@@ -17,7 +17,7 @@ public class ChatMessageDto {
     @Builder
     public static class ChatMessageCreateDto {
         @Schema(description = "채팅 메세지", defaultValue = "내용 1", example = "내용 1입니다")
-        @NotBlank(message = "Input message!")
+        @NotBlank(message = "Input content!")
         private String chatMessage;
 
         public static ChatMessageCreateDto from(String chatMessage) {
@@ -52,7 +52,7 @@ public class ChatMessageDto {
     }
 
     @Data
-    public static class GetChatMessageRes {
+    public static class GetChatMessageListRes {
         @Schema(description = "메세지 ID")
         private Long chatMessageId;
 
@@ -66,9 +66,9 @@ public class ChatMessageDto {
         private LocalDateTime lastModifiedDate;
 
         @Schema(description = "작성자")
-        private UsersDto.GetPostUserRes users;
+        private UsersDto.GetChatUserOneRes users;
 
-        public GetChatMessageRes(
+        public GetChatMessageListRes(
                 Long chatMessageId, String content,
                 LocalDateTime createdAt, LocalDateTime lastModifiedDate,
                 Users users
@@ -77,16 +77,31 @@ public class ChatMessageDto {
             this.content = content;
             this.createdAt = createdAt;
             this.lastModifiedDate = lastModifiedDate;
-            this.users = new UsersDto.GetPostUserRes(
-                    users.getId(),
-                    users.getGender(),
-                    users.getNickname(),
-                    users.getProfileImageUrl()
+            this.users = new UsersDto.GetChatUserOneRes(
+                    users.getId()
             );
         }
     }
 
+    @Data
+    public static class GetChatMessageRes {
 
+        @Schema(description = "메시지 내용")
+        private String content;
 
+        @Schema(description = "생성 일자")
+        private LocalDateTime createdAt;
+
+        @Schema(description = "최근 수정 일자")
+        private LocalDateTime lastModifiedDate;
+
+        public GetChatMessageRes(
+                String content, LocalDateTime createdAt, LocalDateTime lastModifiedDate
+        ) {
+            this.content = content;
+            this.createdAt = createdAt;
+            this.lastModifiedDate = lastModifiedDate;
+        }
+    }
 
 }
