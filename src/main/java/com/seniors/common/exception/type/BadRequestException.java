@@ -2,7 +2,7 @@ package com.seniors.common.exception.type;
 
 import com.seniors.common.constant.ResultCode;
 
-public class BadRequestException extends RuntimeException{
+public class BadRequestException extends RuntimeException {
 
 	private final ResultCode resultCode;
 

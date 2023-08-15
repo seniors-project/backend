@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Notification Page</title>
+</head>
+<body>
+</body>
+</html>
+<script type="text/javaScript">
+    let notification;
+    const NOTIFICATION_TIMEOUT = 10000;
+    const showNotification = (data) => {
+        notification = new Notification('Seniors', {
+            body: data.content
+        });
+        notification.onclick = () => {
+            window.open(data.url, '_blank');
+        };
+        setTimeout(() => {
+            notification.close();
+        }, NOTIFICATION_TIMEOUT);
+    }
+
+    const checkNotificationPermission = () => {
+        let notificationPermission = Notification.permission;
+        if (notificationPermission === 'granted') {
+            return true;
+        } else {
+            alert("알람 허용이 거부되었습니다.");
+            return false;
+        }
+    }
+
+    const eventSource = new EventSource(`/api/notifications/subscribe`);
+    eventSource.addEventListener("sse", function (event) {
+        const data = JSON.parse(event.data);
+        if (checkNotificationPermission()) {
+            showNotification(data);
+        }
+    })
+</script>

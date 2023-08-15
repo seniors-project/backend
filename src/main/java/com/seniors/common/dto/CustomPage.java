@@ -6,6 +6,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
 import org.springframework.data.domain.Sort;
 
 import java.util.Collections;
@@ -37,6 +38,22 @@ public class CustomPage<T> {
         response.setLast(page.isLast());
         response.setTotalPages(page.getTotalPages());
         response.setTotalElements(page.getTotalElements());
+        response.setFirst(page.isFirst());
+        response.setSize(page.getSize());
+        response.setNumber(page.getNumber());
+        response.setSort(page.getSort());
+        response.setNumberOfElements(page.getNumberOfElements());
+        response.setEmpty(page.isEmpty());
+        return response;
+    }
+
+    public static <T> CustomPage<T> of(Slice<T> page) {
+        if (page == null) return null;
+        List<T> list = page.getContent();
+        CustomPage<T> response = new CustomPage<>();
+        response.setList(list);
+        response.setPageable(page.getPageable());
+        response.setLast(page.isLast());
         response.setFirst(page.isFirst());
         response.setSize(page.getSize());
         response.setNumber(page.getNumber());

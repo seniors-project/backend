@@ -1,5 +1,6 @@
 package com.seniors.domain.post.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.seniors.domain.comment.entity.Comment;
 import com.seniors.domain.users.entity.Users;
 import jakarta.persistence.*;
@@ -13,7 +14,9 @@ import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Where;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Entity
 @Getter
@@ -39,16 +42,20 @@ public class Post extends BaseEntity {
 
 
 	@BatchSize(size = 100)
-	@OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
+	@OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
 	private List<Comment> comments = new ArrayList<>();
 
 	@BatchSize(size = 100)
-	@OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
-	private List<PostMedia> postMedias = new ArrayList<>();
+	@OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+	private Set<PostMedia> postMedias = new HashSet<>();
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "userId")
 	private Users users;
+
+	@BatchSize(size = 100)
+	@OneToMany(mappedBy = "post", fetch = FetchType.LAZY)
+	private Set<PostLike> postLikes = new HashSet<>();
 
 	public static Post of(String title, String content, Users users) {
 		return Post.builder()

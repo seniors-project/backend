@@ -31,13 +31,16 @@ public class ChatRoomService {
         ChatRoom chatRoom = ChatRoom.builder().build();
         chatRoomRepository.save(chatRoom);
 
-        Users user = usersRepository.findById(userId).orElseThrow();
+        Users user = usersRepository.findById(userId).orElseThrow(
+                () -> new NotAuthorizedException("유효하지 않은 회원입니다")
+        );
         Users opponentUser = usersRepository.findById(opponentId).orElseThrow(
                 () -> new NotAuthorizedException("유효하지 않은 회원입니다")
         );
 
         chatRoomMembersRepository.save(ChatRoomMembers.of(user.getNickname(), chatRoom, user));
         chatRoomMembersRepository.save(ChatRoomMembers.of(opponentUser.getNickname(), chatRoom, opponentUser));
+
 
 
     }

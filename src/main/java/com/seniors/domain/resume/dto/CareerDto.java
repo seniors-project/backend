@@ -28,11 +28,10 @@ public class CareerDto {
 
         @NotNull(message = "입사연도는 비워둘 수 없습니다.")
         @Schema(description = "입사 연도")
-        private int startedAt;
+        private Integer startedAt;
 
         @Schema(description = "퇴사 연도")
-        @NotNull(message = "퇴사연도는 비워둘 수 없습니다.")
-        private int endedAt;
+        private Integer endedAt;
 
         @Schema(description = "회사")
         @NotEmpty(message = "회사명은 비워둘 수 없습니다.")
@@ -63,11 +62,11 @@ public class CareerDto {
 
         @Schema(description = "입사 연도")
         @NotNull(message = "입사연도는 비워둘 수 없습니다.")
-        private int startedAt;
+        private Integer startedAt;
 
         @Schema(description = "퇴사 연도")
         @NotNull(message = "퇴사연도는 비워둘 수 없습니다.")
-        private int endedAt;
+        private Integer endedAt;
 
         @Schema(description = "회사")
         @NotEmpty(message = "회사명은 비워둘 수 없습니다.")
@@ -96,10 +95,10 @@ public class CareerDto {
         private Long id;
 
         @Schema(description = "입사 연도")
-        private int startedAt;
+        private Integer startedAt;
 
         @Schema(description = "퇴사 연도")
-        private int endedAt;
+        private Integer endedAt;
 
         @Schema(description = "회사")
         private String company;
@@ -141,10 +140,10 @@ public class CareerDto {
         private Long id;
 
         @Schema(description = "입사 연도")
-        private int startedAt;
+        private Integer startedAt;
 
         @Schema(description = "퇴사 연도")
-        private int endedAt;
+        private Integer endedAt;
 
         @Schema(description = "회사")
         private String company;

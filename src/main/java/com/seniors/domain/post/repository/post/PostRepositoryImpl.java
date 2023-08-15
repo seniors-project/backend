@@ -6,10 +6,11 @@ import com.seniors.common.exception.type.NotFoundException;
 import com.seniors.common.repository.BasicRepoSupport;
 import com.seniors.domain.comment.entity.QComment;
 import com.seniors.domain.post.dto.PostDto.GetPostRes;
-import com.seniors.domain.post.dto.PostDto.ModifyPostReq;
 import com.seniors.domain.post.entity.Post;
 import com.seniors.domain.post.entity.QPost;
 import com.seniors.domain.post.entity.QPostMedia;
+import com.seniors.domain.post.dto.PostDto.ModifyPostReq;
+import com.seniors.domain.post.entity.*;
 import com.seniors.domain.users.entity.QUsers;
 import jakarta.persistence.EntityManager;
 import lombok.extern.slf4j.Slf4j;
@@ -19,6 +20,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 
 @Slf4j
@@ -29,37 +31,46 @@ public class PostRepositoryImpl extends BasicRepoSupport implements PostReposito
 	private final static QPostMedia postMedia = QPostMedia.postMedia;
 	private final static QComment comment = QComment.comment;
 	private final static QUsers users = QUsers.users;
+	private final static QPostLike postLike = QPostLike.postLike;
+	private final static QPostLikeEmbedded postLikeEmbedded = QPostLikeEmbedded.postLikeEmbedded;
 
 	protected PostRepositoryImpl(JPAQueryFactory jpaQueryFactory, EntityManager em) {
 		super(jpaQueryFactory, em);
 	}
 
 	@Override
-	public GetPostRes findOnePost(Long postId) {
-		List<Post> postResList = jpaQueryFactory
+	public GetPostRes findOnePost(Long postId, Long userId) {
+
+		Post posts = jpaQueryFactory
 				.selectFrom(post)
 				.leftJoin(post.comments, comment).fetchJoin()
-				.leftJoin(post.postMedias, postMedia)
 				.innerJoin(post.users, users).fetchJoin()
+				.leftJoin(post.postMedias, postMedia).fetchJoin()
+				.leftJoin(post.postLikes, postLike).fetchJoin()
 				.where(post.id.eq(postId))
-				.fetch();
+				.fetchOne();
 
-		if (postResList.isEmpty()) {
+		if (posts == null) {
 			throw new NotFoundException("Post Not Found");
 		}
 
-		List<GetPostRes> content = postResList.stream()
-				.map(p -> new GetPostRes(
-						p.getId(),
-						p.getTitle(),
-						p.getContent(),
-						p.getCreatedAt(),
-						p.getLastModifiedDate(),
-						p.getUsers(),
-						p.getComments(),
-						p.getPostMedias())).toList();
+		Boolean filteredPostLikes = posts.getPostLikes().stream()
+				.filter(postLike -> postLike.getUsers().getId().equals(userId))
+				.map(PostLike::getStatus)
+				.findFirst() // 첫 번째 요소 가져오거나 없으면 Optional.empty 반환
+				.orElse(false); // 리스트가 비어있을 경우 기본값으로 false 설정
 
-		return content.get(0);
+		return new GetPostRes(
+				posts.getId(),
+				posts.getTitle(),
+				posts.getContent(),
+				filteredPostLikes,
+				posts.getCreatedAt(),
+				posts.getLastModifiedDate(),
+				posts.getUsers(),
+				posts.getComments(),
+				posts.getPostMedias()
+		);
 	}
 
 	public void modifyPost(String title, String content, Long postId, Long userId) {
@@ -72,32 +83,45 @@ public class PostRepositoryImpl extends BasicRepoSupport implements PostReposito
 	}
 
 	@Override
-	public Page<GetPostRes> findAllPost(Pageable pageable) {
+	public Page<GetPostRes> findAllPost(Pageable pageable, Long userId) {
 		JPAQuery<Post> query = jpaQueryFactory
 				.selectFrom(post)
+				.innerJoin(post.users, users).fetchJoin()
 				.leftJoin(post.comments, comment).fetchJoin()
-				.leftJoin(post.postMedias, postMedia)
-				.join(post.users, users).fetchJoin();
-		super.setPageQuery(query, pageable, post);
-		List<GetPostRes> content = query.fetch().stream()
-				.map(p -> new GetPostRes(
-						p.getId(),
-						p.getTitle(),
-						p.getContent(),
-						p.getCreatedAt(),
-						p.getLastModifiedDate(),
-						p.getUsers(),
-						p.getComments(),
-						p.getPostMedias())).toList();
+				.leftJoin(post.postMedias, postMedia).fetchJoin()
+				.leftJoin(post.postLikes, postLike).fetchJoin(); // LAZY로 변경한 후에는 fetchJoin으로 가져올 필요 없음
 
+		super.setPageQuery(query, pageable, post);
+		List<Post> results = query.fetch();
+
+		List<GetPostRes> content = results.stream()
+				.map(p -> {
+					Boolean filteredPostLikes = p.getPostLikes().stream()
+							.filter(postLike -> postLike.getUsers().getId().equals(userId))
+							.map(PostLike::getStatus)
+							.findFirst() // 첫 번째 요소 가져오거나 없으면 Optional.empty 반환
+							.orElse(false); // 리스트가 비어있을 경우 기본값으로 false 설정
+
+					return new GetPostRes(
+							p.getId(),
+							p.getTitle(),
+							p.getContent(),
+							filteredPostLikes,
+							p.getCreatedAt(),
+							p.getLastModifiedDate(),
+							p.getUsers(),
+							p.getComments(),
+							p.getPostMedias()
+					);
+				}).toList();
 		JPAQuery<Long> countQuery = jpaQueryFactory
 				.select(post.id.count())
 				.from(post);
 		Long count = countQuery.fetchOne();
 		count = count == null ? 0 : count;
-
 		return new PageImpl<>(content, super.getValidPageable(pageable), count);
 	}
+
 
 	@Override
 	public void removePost(Long postId, Long userId) {
