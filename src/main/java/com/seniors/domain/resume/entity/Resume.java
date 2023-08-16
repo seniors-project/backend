@@ -53,6 +53,9 @@ public class Resume extends BaseTimeEntity {
     @JoinColumn(name = "userId")
     private Users users;
 
+    @Column
+    private Integer viewCount = 0;
+
     @BatchSize(size = 100)
     @OneToMany(mappedBy = "resume", orphanRemoval = true, cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<Certificate> certificates = new ArrayList<>();
@@ -111,5 +114,9 @@ public class Resume extends BaseTimeEntity {
         this.occupation = modifyResumeReq.getOccupation();
         this.isOpened = modifyResumeReq.getIsOpened();
         this.name = modifyResumeReq.getName();
+    }
+
+    public void increaseViewCount() {
+        this.viewCount += 1;
     }
 }

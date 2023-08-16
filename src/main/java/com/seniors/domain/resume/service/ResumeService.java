@@ -12,11 +12,9 @@ import com.seniors.domain.resume.dto.CertificateDto;
 import com.seniors.domain.resume.dto.EducationDto;
 import com.seniors.domain.resume.dto.ResumeDto;
 import com.seniors.domain.resume.dto.ResumeDto.SaveResumeReq;
-import com.seniors.domain.resume.entity.Career;
-import com.seniors.domain.resume.entity.Certificate;
-import com.seniors.domain.resume.entity.Education;
-import com.seniors.domain.resume.entity.Resume;
+import com.seniors.domain.resume.entity.*;
 import com.seniors.domain.resume.repository.ResumeRepository;
+import com.seniors.domain.resume.repository.ResumeViewRepository;
 import com.seniors.domain.users.entity.Users;
 import com.seniors.domain.users.repository.UsersRepository;
 import lombok.RequiredArgsConstructor;
@@ -33,6 +31,8 @@ import org.springframework.validation.ObjectError;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
+import java.util.OptionalInt;
 
 @Slf4j
 @Service
@@ -42,6 +42,8 @@ public class ResumeService {
     private final ResumeRepository resumeRepository;
     private final UsersRepository usersRepository;
     private final NotificationService notificationService;
+
+    private final ResumeViewRepository resumeViewRepository;
 
     @Value("${photo.url}")
     private String photoUrl;
@@ -100,6 +102,14 @@ public class ResumeService {
         Resume resume =  resumeRepository.findById(resumeId).orElseThrow(
                 () -> new NotFoundException("이력서가 존재하지 않습니다.")
         );
+
+        Optional<ResumeView> findResumeView = resumeViewRepository.findByUsersAndResume(user, resume);
+        if (!findResumeView.isPresent()) {
+            ResumeView resumeView = ResumeView.of(resume,user);
+            resumeViewRepository.save(resumeView);
+            resume.increaseViewCount();
+        }
+
         if (!resume.getUsers().getId().equals(user.getId())) {
             notificationService.send(resume.getUsers(), resume, "누군가가 내 이력서를 조회했습니다!");
         }
