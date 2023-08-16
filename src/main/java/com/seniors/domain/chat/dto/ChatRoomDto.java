@@ -19,9 +19,6 @@ public class ChatRoomDto {
         @Schema(description = "상대방 ID")
         private Long chatUserId;
 
-        @Schema(description = "채팅방 이름")
-        private String roomName;
-
     }
 
 
@@ -37,7 +34,7 @@ public class ChatRoomDto {
         private LocalDateTime lastModifiedDate;
 
         @Schema(description = "채팅 메세지")
-        private List<GetChatMessageRes> chatMessages;
+        private List<ChatMessageDto.GetChatMessageListRes> chatMessages;
 
         public GetChatRoomRes(Long roomId, LocalDateTime createdAt,
                               LocalDateTime lastModifiedDate, List<ChatMessage> chatMessages) {
@@ -45,13 +42,12 @@ public class ChatRoomDto {
             this.createdAt = createdAt;
             this.lastModifiedDate = lastModifiedDate;
             this.chatMessages = chatMessages.stream()
-                    .map(chatMessage -> new GetChatMessageRes(
+                    .map(chatMessage -> new ChatMessageDto.GetChatMessageListRes(
                             chatMessage.getId(),
                             chatMessage.getContent(),
                             chatMessage.getCreatedAt(),
                             chatMessage.getLastModifiedDate(),
                             chatMessage.getUsers()
-
                     )).collect(Collectors.toList());
 
         }
