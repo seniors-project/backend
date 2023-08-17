@@ -109,6 +109,9 @@ public class ResumeDto {
 		@Schema(description = "이름")
 		private String name;
 
+		@Schema(description = "조회수")
+		private Integer viewCount;
+
 		private List<CertificateDto.getCertificateRes> certificates;
 
 		private List<CareerDto.getCareerRes> careers;
@@ -124,6 +127,7 @@ public class ResumeDto {
 			this.occupation = resume.getOccupation();
 			this.isOpened = resume.getIsOpened();
 			this.name = resume.getName();
+			this.viewCount = resume.getViewCount();
 			this.certificates = resume.getCertificates().stream().map(CertificateDto.getCertificateRes::from)
 					.collect(Collectors.toList());
 			this.careers = resume.getCareers().stream().map(CareerDto.getCareerRes::from)
@@ -163,6 +167,9 @@ public class ResumeDto {
 		@Schema(description = "이름")
 		private String name;
 
+		@Schema(description = "조회수")
+		private Integer viewCount;
+
 		private List<CertificateDto.getCertificateQueryDslRes> certificates;
 
 		private List<CareerDto.getCareerQueryDslRes> careers;
@@ -177,6 +184,7 @@ public class ResumeDto {
 			this.occupation = resume.getOccupation();
 			this.isOpened = resume.getIsOpened();
 			this.name = resume.getName();
+			this.viewCount = resume.getViewCount();
 			this.certificates = resume.getCertificates().stream().map(CertificateDto.getCertificateQueryDslRes::new).collect(Collectors.toList());
 			this.careers = resume.getCareers().stream().map(CareerDto.getCareerQueryDslRes::new).collect(Collectors.toList());
 			this.educations = resume.getEducations().stream().map(EducationDto.getEducationByQueryDslRes::new).collect(Collectors.toList());
