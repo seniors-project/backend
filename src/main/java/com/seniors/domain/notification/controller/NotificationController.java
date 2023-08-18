@@ -6,6 +6,7 @@ import com.seniors.common.dto.DataResponseDto;
 import com.seniors.common.dto.ErrorResponse;
 import com.seniors.common.exception.type.BadRequestException;
 import com.seniors.common.exception.type.NotAuthorizedException;
+import com.seniors.common.exception.type.NotFoundException;
 import com.seniors.config.security.CustomUserDetails;
 import com.seniors.domain.notification.dto.NotificationDto;
 import com.seniors.domain.notification.entity.Notification;
@@ -15,10 +16,14 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
+@Tag(name = "알림", description = "알림API 명세서")
+@Slf4j
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/notifications")
@@ -47,6 +52,8 @@ public class NotificationController {
 			content = @Content(mediaType = "application/json", schema = @Schema(implementation = BadRequestException.class)))
 	@ApiResponse(responseCode = "401", description = "유효하지 않은 회원입니다.",
 			content = @Content(mediaType = "application/json", schema = @Schema(implementation = NotAuthorizedException.class)))
+	@ApiResponse(responseCode = "404", description = "객체 유효성 검증 실패",
+			content = @Content(mediaType = "application/json", schema = @Schema(implementation = NotFoundException.class)))
 	@ApiResponse(responseCode = "500", description = "리스트 조회 실패",
 			content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class)))
 	@GetMapping("")
@@ -69,6 +76,8 @@ public class NotificationController {
 			content = @Content(mediaType = "application/json", schema = @Schema(implementation = BadRequestException.class)))
 	@ApiResponse(responseCode = "401", description = "유효하지 않은 회원입니다.",
 			content = @Content(mediaType = "application/json", schema = @Schema(implementation = NotAuthorizedException.class)))
+	@ApiResponse(responseCode = "404", description = "객체 유효성 검증 실패",
+			content = @Content(mediaType = "application/json", schema = @Schema(implementation = NotFoundException.class)))
 	@ApiResponse(responseCode = "500", description = "단건 조회 실패",
 			content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class)))
 	@PatchMapping("/{id}")

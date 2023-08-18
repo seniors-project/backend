@@ -6,6 +6,7 @@ import com.seniors.common.dto.DataResponseDto;
 import com.seniors.common.dto.ErrorResponse;
 import com.seniors.common.exception.type.BadRequestException;
 import com.seniors.common.exception.type.NotAuthorizedException;
+import com.seniors.common.exception.type.NotFoundException;
 import com.seniors.config.security.CustomUserDetails;
 import com.seniors.domain.post.dto.PostDto.GetPostRes;
 import com.seniors.domain.post.dto.PostDto.PostCreateDto;
@@ -43,6 +44,8 @@ public class PostController {
 			content = @Content(mediaType = "application/json", schema = @Schema(implementation = BadRequestException.class)))
 	@ApiResponse(responseCode = "401", description = "유효하지 않은 회원입니다.",
 			content = @Content(mediaType = "application/json", schema = @Schema(implementation = NotAuthorizedException.class)))
+	@ApiResponse(responseCode = "404", description = "객체 유효성 검증 실패",
+			content = @Content(mediaType = "application/json", schema = @Schema(implementation = NotFoundException.class)))
 	@ApiResponse(responseCode = "500", description = "생성 실패",
 			content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class)))
 	@PostMapping("")
@@ -60,6 +63,8 @@ public class PostController {
 			content = @Content(mediaType = "application/json", schema = @Schema(implementation = BadRequestException.class)))
 	@ApiResponse(responseCode = "401", description = "유효하지 않은 회원입니다.",
 			content = @Content(mediaType = "application/json", schema = @Schema(implementation = NotAuthorizedException.class)))
+	@ApiResponse(responseCode = "404", description = "객체 유효성 검증 실패",
+			content = @Content(mediaType = "application/json", schema = @Schema(implementation = NotFoundException.class)))
 	@ApiResponse(responseCode = "500", description = "단건 조회 실패",
 			content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class)))
 	@GetMapping("/{postId}")
@@ -78,6 +83,8 @@ public class PostController {
 			content = @Content(mediaType = "application/json", schema = @Schema(implementation = BadRequestException.class)))
 	@ApiResponse(responseCode = "401", description = "유효하지 않은 회원입니다.",
 			content = @Content(mediaType = "application/json", schema = @Schema(implementation = NotAuthorizedException.class)))
+	@ApiResponse(responseCode = "404", description = "객체 유효성 검증 실패",
+			content = @Content(mediaType = "application/json", schema = @Schema(implementation = NotFoundException.class)))
 	@ApiResponse(responseCode = "500", description = "리스트 조회 실패",
 			content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class)))
 	@GetMapping("")
@@ -99,6 +106,8 @@ public class PostController {
 			content = @Content(mediaType = "application/json", schema = @Schema(implementation = BadRequestException.class)))
 	@ApiResponse(responseCode = "401", description = "유효하지 않은 회원입니다.",
 			content = @Content(mediaType = "application/json", schema = @Schema(implementation = NotAuthorizedException.class)))
+	@ApiResponse(responseCode = "404", description = "객체 유효성 검증 실패",
+			content = @Content(mediaType = "application/json", schema = @Schema(implementation = NotFoundException.class)))
 	@ApiResponse(responseCode = "500", description = "단건 수정 실패",
 			content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class)))
 	@PatchMapping("/{postId}")
@@ -117,6 +126,8 @@ public class PostController {
 			content = @Content(mediaType = "application/json", schema = @Schema(implementation = BadRequestException.class)))
 	@ApiResponse(responseCode = "401", description = "유효하지 않은 회원입니다.",
 			content = @Content(mediaType = "application/json", schema = @Schema(implementation = NotAuthorizedException.class)))
+	@ApiResponse(responseCode = "404", description = "객체 유효성 검증 실패",
+			content = @Content(mediaType = "application/json", schema = @Schema(implementation = NotFoundException.class)))
 	@ApiResponse(responseCode = "500", description = "단건 삭제 실패",
 			content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class)))
 	@DeleteMapping("/{postId}")
@@ -137,6 +148,8 @@ public class PostController {
 			content = @Content(mediaType = "application/json", schema = @Schema(implementation = BadRequestException.class)))
 	@ApiResponse(responseCode = "401", description = "유효하지 않은 회원입니다.",
 			content = @Content(mediaType = "application/json", schema = @Schema(implementation = NotAuthorizedException.class)))
+	@ApiResponse(responseCode = "404", description = "객체 유효성 검증 실패",
+			content = @Content(mediaType = "application/json", schema = @Schema(implementation = NotFoundException.class)))
 	@ApiResponse(responseCode = "500", description = "좋아요 실패",
 			content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class)))
 	@PostMapping("/like")
