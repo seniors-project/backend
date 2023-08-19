@@ -70,7 +70,7 @@ public class PostController {
 	@GetMapping("/{postId}")
 	public DataResponseDto<GetPostRes> postDetails(
 			@Parameter(description = "게시글 ID") @PathVariable(value = "postId") Long postId,
-			@LoginUsers CustomUserDetails customUserDetails) {
+			@Parameter(hidden = true) @LoginUsers CustomUserDetails customUserDetails) {
 		GetPostRes post = postService.findOnePost(postId, customUserDetails.getUserId());
 		return DataResponseDto.of(post);
 	}
@@ -91,7 +91,7 @@ public class PostController {
 	public DataResponseDto<CustomPage<GetPostRes>> postList(
 			@RequestParam(required = false, defaultValue = "1") int page,
 			@RequestParam(required = false) int size,
-			@LoginUsers CustomUserDetails customUserDetails
+			@Parameter(hidden = true) @LoginUsers CustomUserDetails customUserDetails
 	) {
 		CustomPage<GetPostRes> postResList = postService.findPost(page > 0 ? page - 1 : 0, size, customUserDetails.getUserId());
 		return DataResponseDto.of(postResList);

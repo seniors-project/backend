@@ -12,7 +12,9 @@ import com.seniors.domain.notification.dto.NotificationDto;
 import com.seniors.domain.notification.entity.Notification;
 import com.seniors.domain.notification.service.NotificationService;
 import com.seniors.domain.post.dto.PostDto;
+import io.swagger.v3.oas.annotations.Hidden;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -58,7 +60,7 @@ public class NotificationController {
 			content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class)))
 	@GetMapping("")
 	public DataResponseDto<CustomPage<NotificationDto>> notificationList(
-			@LoginUsers CustomUserDetails userDetails,
+			@Parameter(hidden = true) @LoginUsers CustomUserDetails userDetails,
 			@RequestParam int size,
 			@RequestParam(required = false) Long lastId
 	) {

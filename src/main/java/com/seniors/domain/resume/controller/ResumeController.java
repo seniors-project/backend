@@ -11,6 +11,7 @@ import com.seniors.config.security.CustomUserDetails;
 import com.seniors.domain.resume.dto.ResumeDto;
 import com.seniors.domain.resume.service.ResumeService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -73,7 +74,7 @@ public class ResumeController {
     @GetMapping("/{resumeId}")
     public DataResponseDto<ResumeDto.GetResumeRes> resumeDetails(
             @PathVariable Long resumeId,
-            @LoginUsers CustomUserDetails userDetails
+            @Parameter(hidden = true) @LoginUsers CustomUserDetails userDetails
     ) {
         ResumeDto.GetResumeRes getResumeRes = resumeService.findResume(resumeId, userDetails.getUserId());
         return DataResponseDto.of(getResumeRes);
@@ -95,7 +96,7 @@ public class ResumeController {
     public DataResponseDto<CustomSlice<ResumeDto.GetResumeByQueryDslRes>> resumeList(
             @RequestParam int size,
             @RequestParam(required = false) Long lastId,
-            @LoginUsers CustomUserDetails userDetails
+            @Parameter(hidden = true) @LoginUsers CustomUserDetails userDetails
     ) {
         Pageable pageable = PageRequest.of(0, size);
         return resumeService.findResumeList(pageable, lastId, userDetails.getUserId());

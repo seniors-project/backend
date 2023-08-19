@@ -8,6 +8,7 @@ import com.seniors.domain.chat.dto.ChatRoomDto;
 import com.seniors.domain.chat.service.ChatRoomService;
 import com.seniors.domain.users.dto.UsersDto.GetChatUserRes;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -45,7 +46,7 @@ public class ChatRoomController {
             content = @Content(mediaType = "application/json", schema = @Schema(implementation = GetChatUserRes.class)))
     @GetMapping("")
     public DataResponseDto<GetChatUserRes> chatRoomList (
-            @LoginUsers CustomUserDetails userDetails) {
+            @Parameter(hidden = true) @LoginUsers CustomUserDetails userDetails) {
         return chatRoomService.findChatRoom(userDetails.getUserId());
     }
 
