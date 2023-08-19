@@ -52,7 +52,7 @@ public class NotificationController {
 			content = @Content(mediaType = "application/json", schema = @Schema(implementation = BadRequestException.class)))
 	@ApiResponse(responseCode = "401", description = "유효하지 않은 회원입니다.",
 			content = @Content(mediaType = "application/json", schema = @Schema(implementation = NotAuthorizedException.class)))
-	@ApiResponse(responseCode = "404", description = "객체 유효성 검증 실패",
+	@ApiResponse(responseCode = "404", description = "알림이 존재하지 않습니다",
 			content = @Content(mediaType = "application/json", schema = @Schema(implementation = NotFoundException.class)))
 	@ApiResponse(responseCode = "500", description = "리스트 조회 실패",
 			content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class)))
@@ -76,7 +76,7 @@ public class NotificationController {
 			content = @Content(mediaType = "application/json", schema = @Schema(implementation = BadRequestException.class)))
 	@ApiResponse(responseCode = "401", description = "유효하지 않은 회원입니다.",
 			content = @Content(mediaType = "application/json", schema = @Schema(implementation = NotAuthorizedException.class)))
-	@ApiResponse(responseCode = "404", description = "객체 유효성 검증 실패",
+	@ApiResponse(responseCode = "404", description = "알림이 존재하지 않습니다",
 			content = @Content(mediaType = "application/json", schema = @Schema(implementation = NotFoundException.class)))
 	@ApiResponse(responseCode = "500", description = "단건 조회 실패",
 			content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class)))

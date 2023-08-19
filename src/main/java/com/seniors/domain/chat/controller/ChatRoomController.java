@@ -28,7 +28,7 @@ public class ChatRoomController {
     @Operation(summary = "채팅방 생성")
     @ApiResponse(responseCode = "200", description = "생성 성공",
             content = @Content(mediaType = "application/json", schema = @Schema(implementation = DataResponseDto.class)))
-    @ApiResponse(responseCode = "404", description = "유효하지 않은 회원입니다",
+    @ApiResponse(responseCode = "401", description = "유효하지 않은 회원입니다.",
             content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class)))
     @PostMapping("")
     public DataResponseDto chatRoomAdd(
