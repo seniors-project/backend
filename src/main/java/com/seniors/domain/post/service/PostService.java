@@ -25,13 +25,9 @@ import org.springframework.data.domain.Sort.Direction;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.BindingResult;
-import org.springframework.validation.FieldError;
-import org.springframework.validation.ObjectError;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 
 @Slf4j
 @Service
@@ -47,18 +43,6 @@ public class PostService {
 
 	@Transactional
 	public Long addPost(PostCreateDto postCreateDto, BindingResult bindingResult, Long userId) throws IOException {
-		if (bindingResult != null && bindingResult.hasErrors()) {
-			List<ObjectError> errors = bindingResult.getAllErrors();
-			List<String> errorMessages = new ArrayList<>();
-
-			for (ObjectError error : errors) {
-				FieldError fieldError = (FieldError) error;
-				String message = fieldError.getDefaultMessage();
-				errorMessages.add(message);
-			}
-			throw new BadRequestException(String.join(", ", errorMessages));
-		}
-
 		Users users = usersRepository.findById(userId).orElseThrow(
 				() -> new NotAuthorizedException("유효하지 않은 회원입니다.")
 		);
@@ -86,17 +70,6 @@ public class PostService {
 	@Transactional
 	public Long modifyPost(PostCreateDto postCreateDto, BindingResult bindingResult, Long postId, Long userId) throws IOException {
 
-		if (bindingResult != null && bindingResult.hasErrors()) {
-			List<ObjectError> errors = bindingResult.getAllErrors();
-			List<String> errorMessages = new ArrayList<>();
-
-			for (ObjectError error : errors) {
-				FieldError fieldError = (FieldError) error;
-				String message = fieldError.getDefaultMessage();
-				errorMessages.add(message);
-			}
-			throw new BadRequestException(String.join(", ", errorMessages));
-		}
 		Post post = postRepository.findById(postId).orElseThrow(() -> new NotFoundException("유효하지 않은 게시글입니다."));
 		postRepository.modifyPost(postCreateDto.getTitle(), postCreateDto.getContent(), postId, userId);
 

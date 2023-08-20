@@ -46,7 +46,7 @@ public class PostController {
 			content = @Content(mediaType = "application/json", schema = @Schema(implementation = NotAuthorizedException.class)))
 	@ApiResponse(responseCode = "404", description = "게시글이 존재하지 않습니다.",
 			content = @Content(mediaType = "application/json", schema = @Schema(implementation = NotFoundException.class)))
-	@ApiResponse(responseCode = "500", description = "생성 실패",
+	@ApiResponse(responseCode = "500", description = "서버 에러.",
 			content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class)))
 	@PostMapping("")
 	public DataResponseDto<String> postAdd(
@@ -59,13 +59,11 @@ public class PostController {
 	@Operation(summary = "게시글 단건 조회")
 	@ApiResponse(responseCode = "200", description = "단건 조회 성공",
 			content = @Content(mediaType = "application/json", schema = @Schema(implementation = GetPostRes.class)))
-	@ApiResponse(responseCode = "400", description = "유효성 검증 실패",
-			content = @Content(mediaType = "application/json", schema = @Schema(implementation = BadRequestException.class)))
 	@ApiResponse(responseCode = "401", description = "유효하지 않은 회원입니다.",
 			content = @Content(mediaType = "application/json", schema = @Schema(implementation = NotAuthorizedException.class)))
 	@ApiResponse(responseCode = "404", description = "게시글이 존재하지 않습니다.",
 			content = @Content(mediaType = "application/json", schema = @Schema(implementation = NotFoundException.class)))
-	@ApiResponse(responseCode = "500", description = "단건 조회 실패",
+	@ApiResponse(responseCode = "500", description = "서버 에러.",
 			content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class)))
 	@GetMapping("/{postId}")
 	public DataResponseDto<GetPostRes> postDetails(
@@ -79,13 +77,11 @@ public class PostController {
 	@ApiResponse(responseCode = "200", description = "리스트 조회 성공",
 			content = @Content(mediaType = "application/json", schema =
 			@Schema(implementation = CustomPage.class)))
-	@ApiResponse(responseCode = "400", description = "유효성 검증 실패",
-			content = @Content(mediaType = "application/json", schema = @Schema(implementation = BadRequestException.class)))
 	@ApiResponse(responseCode = "401", description = "유효하지 않은 회원입니다.",
 			content = @Content(mediaType = "application/json", schema = @Schema(implementation = NotAuthorizedException.class)))
 	@ApiResponse(responseCode = "404", description = "게시글이 존재하지 않습니다.",
 			content = @Content(mediaType = "application/json", schema = @Schema(implementation = NotFoundException.class)))
-	@ApiResponse(responseCode = "500", description = "리스트 조회 실패",
+	@ApiResponse(responseCode = "500", description = "서버 에러.",
 			content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class)))
 	@GetMapping("")
 	public DataResponseDto<CustomPage<GetPostRes>> postList(
@@ -108,7 +104,7 @@ public class PostController {
 			content = @Content(mediaType = "application/json", schema = @Schema(implementation = NotAuthorizedException.class)))
 	@ApiResponse(responseCode = "404", description = "게시글이 존재하지 않습니다.",
 			content = @Content(mediaType = "application/json", schema = @Schema(implementation = NotFoundException.class)))
-	@ApiResponse(responseCode = "500", description = "단건 수정 실패",
+	@ApiResponse(responseCode = "500", description = "서버 에러.",
 			content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class)))
 	@PatchMapping("/{postId}")
 	public DataResponseDto<String> postModify(
@@ -122,13 +118,11 @@ public class PostController {
 	@Operation(summary = "게시글 단건 삭제")
 	@ApiResponse(responseCode = "200", description = "단건 삭제 성공",
 			content = @Content(mediaType = "application/json", schema = @Schema(implementation = DataResponseDto.class)))
-	@ApiResponse(responseCode = "400", description = "유효성 검증 실패",
-			content = @Content(mediaType = "application/json", schema = @Schema(implementation = BadRequestException.class)))
 	@ApiResponse(responseCode = "401", description = "유효하지 않은 회원입니다.",
 			content = @Content(mediaType = "application/json", schema = @Schema(implementation = NotAuthorizedException.class)))
 	@ApiResponse(responseCode = "404", description = "게시글이 존재하지 않습니다.",
 			content = @Content(mediaType = "application/json", schema = @Schema(implementation = NotFoundException.class)))
-	@ApiResponse(responseCode = "500", description = "단건 삭제 실패",
+	@ApiResponse(responseCode = "500", description = "서버 에러.",
 			content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class)))
 	@DeleteMapping("/{postId}")
 	public DataResponseDto<String> postRemove(
@@ -150,7 +144,7 @@ public class PostController {
 			content = @Content(mediaType = "application/json", schema = @Schema(implementation = NotAuthorizedException.class)))
 	@ApiResponse(responseCode = "404", description = "게시글이 존재하지 않습니다.",
 			content = @Content(mediaType = "application/json", schema = @Schema(implementation = NotFoundException.class)))
-	@ApiResponse(responseCode = "500", description = "좋아요 실패",
+	@ApiResponse(responseCode = "500", description = "서버 에러.",
 			content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class)))
 	@PostMapping("/like")
 	public DataResponseDto<String> postLike(

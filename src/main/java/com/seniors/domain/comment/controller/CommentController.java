@@ -41,7 +41,7 @@ public class CommentController {
             content = @Content(mediaType = "application/json", schema = @Schema(implementation = NotAuthorizedException.class)))
     @ApiResponse(responseCode = "404", description = "댓글이 존재하지 않습니다.",
             content = @Content(mediaType = "application/json", schema = @Schema(implementation = NotFoundException.class)))
-    @ApiResponse(responseCode = "500", description = "생성 실패",
+    @ApiResponse(responseCode = "500", description = "서버 에러.",
             content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class)))
     @PostMapping("")
     public DataResponseDto<String> commentAdd(
@@ -63,7 +63,7 @@ public class CommentController {
             content = @Content(mediaType = "application/json", schema = @Schema(implementation = NotAuthorizedException.class)))
     @ApiResponse(responseCode = "404", description = "댓글이 존재하지 않습니다.",
             content = @Content(mediaType = "application/json", schema = @Schema(implementation = NotFoundException.class)))
-    @ApiResponse(responseCode = "500", description = "수정 실패",
+    @ApiResponse(responseCode = "500", description = "서버 에러.",
             content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class)))
     @PatchMapping("/{commentId}")
     public DataResponseDto<String> commentModify(
@@ -83,7 +83,7 @@ public class CommentController {
             content = @Content(mediaType = "application/json", schema = @Schema(implementation = NotAuthorizedException.class)))
     @ApiResponse(responseCode = "404", description = "댓글이 존재하지 않습니다.",
             content = @Content(mediaType = "application/json", schema = @Schema(implementation = NotFoundException.class)))
-    @ApiResponse(responseCode = "500", description = "삭제 실패",
+    @ApiResponse(responseCode = "500", description = "서버 에러.",
             content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class)))
     @DeleteMapping("/{commentId}")
     public DataResponseDto<String> commentRemove(

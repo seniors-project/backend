@@ -50,13 +50,11 @@ public class NotificationController {
 	@ApiResponse(responseCode = "200", description = "리스트 조회 성공",
 			content = @Content(mediaType = "application/json", schema =
 			@Schema(implementation = CustomPage.class)))
-	@ApiResponse(responseCode = "400", description = "유효성 검증 실패",
-			content = @Content(mediaType = "application/json", schema = @Schema(implementation = BadRequestException.class)))
 	@ApiResponse(responseCode = "401", description = "유효하지 않은 회원입니다.",
 			content = @Content(mediaType = "application/json", schema = @Schema(implementation = NotAuthorizedException.class)))
 	@ApiResponse(responseCode = "404", description = "알림이 존재하지 않습니다",
 			content = @Content(mediaType = "application/json", schema = @Schema(implementation = NotFoundException.class)))
-	@ApiResponse(responseCode = "500", description = "리스트 조회 실패",
+	@ApiResponse(responseCode = "500", description = "서버 에러.",
 			content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class)))
 	@GetMapping("")
 	public DataResponseDto<CustomPage<NotificationDto>> notificationList(
@@ -74,13 +72,11 @@ public class NotificationController {
 	@Operation(summary = "알림 단건 조회")
 	@ApiResponse(responseCode = "200", description = "단건 조회 성공",
 			content = @Content(mediaType = "application/json", schema = @Schema(implementation = PostDto.GetPostRes.class)))
-	@ApiResponse(responseCode = "400", description = "유효성 검증 실패",
-			content = @Content(mediaType = "application/json", schema = @Schema(implementation = BadRequestException.class)))
 	@ApiResponse(responseCode = "401", description = "유효하지 않은 회원입니다.",
 			content = @Content(mediaType = "application/json", schema = @Schema(implementation = NotAuthorizedException.class)))
 	@ApiResponse(responseCode = "404", description = "알림이 존재하지 않습니다",
 			content = @Content(mediaType = "application/json", schema = @Schema(implementation = NotFoundException.class)))
-	@ApiResponse(responseCode = "500", description = "단건 조회 실패",
+	@ApiResponse(responseCode = "500", description = "서버 에러.",
 			content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class)))
 	@PatchMapping("/{id}")
 	public DataResponseDto<Notification> notificationRead(

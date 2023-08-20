@@ -27,7 +27,7 @@ public class ChatMessageController {
     @Operation(summary = "채팅하기")
     @ApiResponse(responseCode = "200", description = "송/수신 성공",
             content = @Content(mediaType = "application/json"))
-    @ApiResponse(responseCode = "500", description = "채팅 실패.",
+    @ApiResponse(responseCode = "500", description = "서버 에러.",
             content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class)))
     @MessageMapping("/chat/sendMessage")
     public void chatMessageSend(@Payload ChatMessageTransDto chat) {
