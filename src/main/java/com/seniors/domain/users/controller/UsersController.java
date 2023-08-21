@@ -7,6 +7,7 @@ import com.seniors.common.dto.ResponseDto;
 import com.seniors.config.security.CustomUserDetails;
 import com.seniors.domain.users.service.UsersService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -41,7 +42,7 @@ public class UsersController {
 			content = @Content(mediaType = "application/json", schema = @Schema(implementation = ResponseEntity.class)))
 	@GetMapping("/validate")
 	public ResponseEntity<?> userValidate(
-			@LoginUsers CustomUserDetails userDetails
+			@Parameter(hidden = true) @LoginUsers CustomUserDetails userDetails
 	) {
 		return userDetails == null
 				? new ResponseEntity<>(null, HttpStatus.UNAUTHORIZED)

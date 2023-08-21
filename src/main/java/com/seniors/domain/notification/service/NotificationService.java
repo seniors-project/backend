@@ -144,7 +144,7 @@ public class NotificationService {
 	}
 
 	@Transactional
-	public void readNotification(CustomUserDetails userDetails, Long id) {
+	public Notification readNotification(CustomUserDetails userDetails, Long id) {
 		Users users = usersRepository.findById(userDetails.getUserId()).orElseThrow(
 				() -> new NotAuthorizedException("유효하지 않은 회원입니다.")
 		);
@@ -155,5 +155,6 @@ public class NotificationService {
 			throw new NotAuthorizedException("읽기 권한이 없습니다.");
 		}
 		notification.read();
+		return notification;
 	}
 }

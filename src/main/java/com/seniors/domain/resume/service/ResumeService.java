@@ -3,6 +3,7 @@ package com.seniors.domain.resume.service;
 import com.seniors.common.dto.CustomSlice;
 import com.seniors.common.dto.DataResponseDto;
 import com.seniors.common.exception.type.BadRequestException;
+import com.seniors.common.exception.type.ForbiddenException;
 import com.seniors.common.exception.type.NotAuthorizedException;
 import com.seniors.common.exception.type.NotFoundException;
 import com.seniors.config.S3Uploader;
@@ -24,15 +25,9 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.validation.BindingResult;
-import org.springframework.validation.FieldError;
-import org.springframework.validation.ObjectError;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Optional;
-import java.util.OptionalInt;
 
 @Slf4j
 @Service
@@ -149,8 +144,8 @@ public class ResumeService {
                 () -> new NotAuthorizedException("유효하지 않은 회원입니다.")
         );
 
-        if(resume.getUsers().getId()!=user.getId()){
-            throw new NotAuthorizedException("수정 권한이 없습니다.");
+        if(!resume.getUsers().getId().equals(user.getId())){
+            throw new ForbiddenException("수정 권한이 없습니다.");
         }
 
         if(!resumeReq.getImage().isEmpty()) {
@@ -187,8 +182,8 @@ public class ResumeService {
         Users user =  usersRepository.findById(userId).orElseThrow(
                 () -> new NotAuthorizedException("유효하지 않은 회원입니다.")
         );
-        if(resume.getUsers().getId()!=user.getId()){
-            throw  new NotAuthorizedException("삭제 권한이 없습니다.");
+        if (!resume.getUsers().getId().equals(user.getId())){
+            throw new ForbiddenException("삭제 권한이 없습니다.");
         }
         resumeRepository.delete(resume);
     }

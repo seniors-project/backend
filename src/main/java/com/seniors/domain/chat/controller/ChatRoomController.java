@@ -8,6 +8,7 @@ import com.seniors.domain.chat.dto.ChatRoomDto;
 import com.seniors.domain.chat.service.ChatRoomService;
 import com.seniors.domain.users.dto.UsersDto.GetChatUserRes;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -28,7 +29,7 @@ public class ChatRoomController {
     @Operation(summary = "채팅방 생성")
     @ApiResponse(responseCode = "200", description = "생성 성공",
             content = @Content(mediaType = "application/json", schema = @Schema(implementation = DataResponseDto.class)))
-    @ApiResponse(responseCode = "404", description = "유효하지 않은 회원입니다",
+    @ApiResponse(responseCode = "401", description = "유효하지 않은 회원입니다.",
             content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class)))
     @PostMapping("")
     public DataResponseDto chatRoomAdd(
@@ -45,7 +46,7 @@ public class ChatRoomController {
             content = @Content(mediaType = "application/json", schema = @Schema(implementation = GetChatUserRes.class)))
     @GetMapping("")
     public DataResponseDto<GetChatUserRes> chatRoomList (
-            @LoginUsers CustomUserDetails userDetails) {
+            @Parameter(hidden = true) @LoginUsers CustomUserDetails userDetails) {
         return chatRoomService.findChatRoom(userDetails.getUserId());
     }
 
