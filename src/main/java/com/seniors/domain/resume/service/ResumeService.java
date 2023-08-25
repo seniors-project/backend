@@ -3,6 +3,7 @@ package com.seniors.domain.resume.service;
 import com.seniors.common.dto.CustomSlice;
 import com.seniors.common.dto.DataResponseDto;
 import com.seniors.common.exception.type.BadRequestException;
+import com.seniors.common.exception.type.ForbiddenException;
 import com.seniors.common.exception.type.NotAuthorizedException;
 import com.seniors.common.exception.type.NotFoundException;
 import com.seniors.config.S3Uploader;
@@ -157,8 +158,8 @@ public class ResumeService {
                 () -> new NotAuthorizedException("유효하지 않은 회원입니다.")
         );
 
-        if(resume.getUsers().getId()!=user.getId()){
-            throw new NotAuthorizedException("수정 권한이 없습니다.");
+        if(!resume.getUsers().getId().equals(user.getId())){
+            throw new ForbiddenException("수정 권한이 없습니다.");
         }
 
         if(!resumeReq.getImage().isEmpty()) {
@@ -195,8 +196,8 @@ public class ResumeService {
         Users user =  usersRepository.findById(userId).orElseThrow(
                 () -> new NotAuthorizedException("유효하지 않은 회원입니다.")
         );
-        if(resume.getUsers().getId()!=user.getId()){
-            throw  new NotAuthorizedException("삭제 권한이 없습니다.");
+        if (!resume.getUsers().getId().equals(user.getId())){
+            throw new ForbiddenException("삭제 권한이 없습니다.");
         }
         resumeRepository.delete(resume);
     }

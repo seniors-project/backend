@@ -8,12 +8,14 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.Where;
 
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-//@SQLDelete(sql = "UPDATE ChatRoomMembers SET isDeleted = true WHERE id = ?")
-//@Where(clause = "isDeleted = false")
+@SQLDelete(sql = "UPDATE ChatRoomMembers SET isDeleted = true WHERE id = ?")
+@Where(clause = "isDeleted = false")
 public class ChatRoomMembers extends BaseEntity {
 
     @Id
@@ -23,7 +25,7 @@ public class ChatRoomMembers extends BaseEntity {
     @Column(columnDefinition = "varchar(30) COMMENT '채팅방 이름'")
     private String roomName;
 
-//    private boolean isDeleted = Boolean.FALSE;
+    private boolean isDeleted = Boolean.FALSE;
 
     @JsonBackReference
     @ManyToOne(fetch = FetchType.LAZY)

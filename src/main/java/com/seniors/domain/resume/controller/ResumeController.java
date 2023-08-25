@@ -5,10 +5,14 @@ import com.seniors.common.dto.CustomSlice;
 import com.seniors.common.dto.DataResponseDto;
 import com.seniors.common.dto.ErrorResponse;
 import com.seniors.common.exception.type.BadRequestException;
+import com.seniors.common.exception.type.ForbiddenException;
+import com.seniors.common.exception.type.NotAuthorizedException;
+import com.seniors.common.exception.type.NotFoundException;
 import com.seniors.config.security.CustomUserDetails;
 import com.seniors.domain.resume.dto.ResumeDto;
 import com.seniors.domain.resume.service.ResumeService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -41,10 +45,11 @@ public class ResumeController {
     @ApiResponse(responseCode = "400", description = "유효성 검증 실패",
             content = @Content(mediaType = "application/json", schema = @Schema(implementation = BadRequestException.class)))
     @ApiResponse(responseCode = "401", description = "유효하지 않은 회원입니다.",
-            content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class)))
+            content = @Content(mediaType = "application/json", schema = @Schema(implementation = NotAuthorizedException.class)))
     @ApiResponse(responseCode = "400", description = "이미 해당 유저의 이력서가 존재합니다.",
             content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class)))
-
+    @ApiResponse(responseCode = "500", description = "서버 에러.",
+            content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class)))
     @PostMapping("")
     public DataResponseDto<List<String>> resumeAdd(
             @ModelAttribute @Valid ResumeDto.SaveResumeReq resumeDto,
@@ -55,16 +60,18 @@ public class ResumeController {
     }
 
     @Operation(summary = "이력서 조회")
-    @ApiResponse(responseCode = "200", description = "조회 성공",
+    @ApiResponse(responseCode = "200", description = "이력서 조회 성공",
             content = @Content(mediaType = "application/json", schema = @Schema(implementation = ResumeDto.GetResumeRes.class)))
     @ApiResponse(responseCode = "401", description = "유효하지 않은 회원입니다.",
-            content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class)))
+            content = @Content(mediaType = "application/json", schema = @Schema(implementation = NotAuthorizedException.class)))
     @ApiResponse(responseCode = "404", description = "이력서가 존재하지 않습니다.",
+            content = @Content(mediaType = "application/json", schema = @Schema(implementation = NotFoundException.class)))
+    @ApiResponse(responseCode = "500", description = "서버 에러.",
             content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class)))
     @GetMapping("/{resumeId}")
     public DataResponseDto<ResumeDto.GetResumeRes> resumeDetails(
             @PathVariable Long resumeId,
-            @LoginUsers CustomUserDetails userDetails
+            @Parameter(hidden = true) @LoginUsers CustomUserDetails userDetails
     ) {
         ResumeDto.GetResumeRes getResumeRes = resumeService.findResume(resumeId, userDetails.getUserId());
         return DataResponseDto.of(getResumeRes);
@@ -72,11 +79,11 @@ public class ResumeController {
 
 
     @Operation(summary = "나의 이력서 조회")
-    @ApiResponse(responseCode = "200", description = "조회 성공",
+    @ApiResponse(responseCode = "200", description = "나의 이력서 조회 성공",
             content = @Content(mediaType = "application/json", schema = @Schema(implementation = ResumeDto.GetResumeRes.class)))
     @ApiResponse(responseCode = "401", description = "유효하지 않은 회원입니다.",
-            content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class)))
-    @ApiResponse(responseCode = "404", description = "이력서가 존재하지 않습니다.",
+            content = @Content(mediaType = "application/json", schema = @Schema(implementation = NotAuthorizedException.class)))
+    @ApiResponse(responseCode = "500", description = "서버 에러",
             content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class)))
     @GetMapping("/mine")
     public DataResponseDto<ResumeDto.GetResumeRes> myResumeDetails (
@@ -94,12 +101,16 @@ public class ResumeController {
     @ApiResponse(responseCode = "200", description = "리스트 조회 성공",
             content = @Content(mediaType = "application/json", schema = @Schema(implementation = ResumeDto.GetResumeByQueryDslRes.class)))
     @ApiResponse(responseCode = "401", description = "유효하지 않은 회원입니다.",
+            content = @Content(mediaType = "application/json", schema = @Schema(implementation = NotAuthorizedException.class)))
+    @ApiResponse(responseCode = "404", description = "이력서 존재하지 않습니다.",
+            content = @Content(mediaType = "application/json", schema = @Schema(implementation = NotFoundException.class)))
+    @ApiResponse(responseCode = "500", description = "서버 에러.",
             content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class)))
     @GetMapping("")
     public DataResponseDto<CustomSlice<ResumeDto.GetResumeByQueryDslRes>> resumeList(
             @RequestParam int size,
             @RequestParam(required = false) Long lastId,
-            @LoginUsers CustomUserDetails userDetails
+            @Parameter(hidden = true) @LoginUsers CustomUserDetails userDetails
     ) {
         Pageable pageable = PageRequest.of(0, size);
         return resumeService.findResumeList(pageable, lastId, userDetails.getUserId());
@@ -111,12 +122,14 @@ public class ResumeController {
     @ApiResponse(responseCode = "200", description = "수정 성공",
             content = @Content(mediaType = "application/json", schema = @Schema(implementation = DataResponseDto.class)))
     @ApiResponse(responseCode = "400", description = "유효성 검증 실패",
-            content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class)))
+            content = @Content(mediaType = "application/json", schema = @Schema(implementation = BadRequestException.class)))
     @ApiResponse(responseCode = "404", description = "이력서가 존재하지 않습니다.",
-            content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class)))
+            content = @Content(mediaType = "application/json", schema = @Schema(implementation = NotFoundException.class)))
     @ApiResponse(responseCode = "401", description = "유효하지 않은 회원입니다.",
-            content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class)))
-    @ApiResponse(responseCode = "500", description = "수정 권한이 없습니다.",
+            content = @Content(mediaType = "application/json", schema = @Schema(implementation = NotAuthorizedException.class)))
+    @ApiResponse(responseCode = "403", description = "수정 권한이 없습니다.",
+            content = @Content(mediaType = "application/json", schema = @Schema(implementation = ForbiddenException.class)))
+    @ApiResponse(responseCode = "500", description = "서버 에러.",
             content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class)))
     @PatchMapping("/{resumeId}")
     public DataResponseDto<List<String>> resumeModify(
@@ -132,10 +145,12 @@ public class ResumeController {
     @ApiResponse(responseCode = "200", description = "삭제 성공",
             content = @Content(mediaType = "application/json", schema = @Schema(implementation = DataResponseDto.class)))
     @ApiResponse(responseCode = "404", description = "이력서가 존재하지 않습니다.",
-            content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class)))
+            content = @Content(mediaType = "application/json", schema = @Schema(implementation = NotFoundException.class)))
     @ApiResponse(responseCode = "401", description = "유효하지 않은 회원입니다.",
-            content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class)))
-    @ApiResponse(responseCode = "500", description = "삭제 권한이 없습니다.",
+            content = @Content(mediaType = "application/json", schema = @Schema(implementation = NotAuthorizedException.class)))
+    @ApiResponse(responseCode = "403", description = "삭제 권한이 없습니다.",
+            content = @Content(mediaType = "application/json", schema = @Schema(implementation = ForbiddenException.class)))
+    @ApiResponse(responseCode = "500", description = "서버 에러.",
             content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class)))
     @DeleteMapping("/{resumeId}")
     public DataResponseDto<Long> resumeRemove(
