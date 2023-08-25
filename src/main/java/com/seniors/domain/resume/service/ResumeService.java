@@ -111,6 +111,18 @@ public class ResumeService {
         return ResumeDto.GetResumeRes.from(changedResume);
     }
 
+    @Transactional(readOnly = true)
+    public ResumeDto.GetResumeRes findMyResume(Long userId) {
+        Users user =  usersRepository.findById(userId).orElseThrow(
+                () -> new NotAuthorizedException("유효하지 않은 회원입니다.")
+        );
+
+        Optional<Resume> resume =  resumeRepository.findByUsersId(user.getId());
+        if(resume.isEmpty()){
+            return null;
+        }
+        return ResumeDto.GetResumeRes.from(resume.get());
+    }
 
     @Transactional
     public DataResponseDto<CustomSlice<ResumeDto.GetResumeByQueryDslRes>> findResumeList(Pageable pageable, Long lastId, Long userId){
