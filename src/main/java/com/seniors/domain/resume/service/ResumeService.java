@@ -125,7 +125,7 @@ public class ResumeService {
         return ResumeDto.GetResumeRes.from(resume.get());
     }
 
-    @Transactional
+    @Transactional(readOnly = true)
     public DataResponseDto<CustomSlice<ResumeDto.GetResumeByQueryDslRes>> findResumeList(Pageable pageable, Long lastId, Long userId){
         Users user =  usersRepository.findById(userId).orElseThrow(
                 () -> new NotAuthorizedException("유효하지 않은 회원입니다.")
