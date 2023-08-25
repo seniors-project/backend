@@ -24,15 +24,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.validation.BindingResult;
-import org.springframework.validation.FieldError;
-import org.springframework.validation.ObjectError;
-
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Optional;
-import java.util.OptionalInt;
 
 @Slf4j
 @Service
@@ -102,19 +95,22 @@ public class ResumeService {
         Resume resume =  resumeRepository.findById(resumeId).orElseThrow(
                 () -> new NotFoundException("이력서가 존재하지 않습니다.")
         );
-
         Optional<ResumeView> findResumeView = resumeViewRepository.findByUsersAndResume(user, resume);
         if (!findResumeView.isPresent()) {
+            resumeRepository.increaseViewCount(resume.getId());
             ResumeView resumeView = ResumeView.of(resume,user);
             resumeViewRepository.save(resumeView);
-            resume.increaseViewCount();
         }
+        Resume changedResume =  resumeRepository.findById(resumeId).orElseThrow(
+                () -> new NotFoundException("이력서가 존재하지 않습니다.")
+        );
 
         if (!resume.getUsers().getId().equals(user.getId())) {
             notificationService.send(resume.getUsers(), resume, "누군가가 내 이력서를 조회했습니다!");
         }
-        return ResumeDto.GetResumeRes.from(resume);
+        return ResumeDto.GetResumeRes.from(changedResume);
     }
+
 
     @Transactional
     public DataResponseDto<CustomSlice<ResumeDto.GetResumeByQueryDslRes>> findResumeList(Pageable pageable, Long lastId, Long userId){
