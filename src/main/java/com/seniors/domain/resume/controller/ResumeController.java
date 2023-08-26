@@ -10,6 +10,7 @@ import com.seniors.common.exception.type.NotAuthorizedException;
 import com.seniors.common.exception.type.NotFoundException;
 import com.seniors.config.security.CustomUserDetails;
 import com.seniors.domain.resume.dto.ResumeDto;
+import com.seniors.domain.resume.dto.ViewerInfoDto;
 import com.seniors.domain.resume.service.ResumeService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -142,4 +143,20 @@ public class ResumeController {
         return DataResponseDto.of(null);
     }
 
+
+
+    @Operation(summary = "내 이력서 열람한 유저들 조회")
+    @ApiResponse(responseCode = "200", description = "조회 성공",
+            content = @Content(mediaType = "application/json", schema = @Schema(implementation = DataResponseDto.class)))
+    @ApiResponse(responseCode = "404", description = "이력서가 존재하지 않습니다.",
+            content = @Content(mediaType = "application/json", schema = @Schema(implementation = NotFoundException.class)))
+    @ApiResponse(responseCode = "500", description = "서버 에러.",
+            content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class)))
+    @GetMapping("/mine/viewers")
+    public DataResponseDto<List<ViewerInfoDto.GetViewerInfoRes>> resumeViewerList(
+            @LoginUsers CustomUserDetails userDetails
+    ) {
+        List<ViewerInfoDto.GetViewerInfoRes> viewerInfoResList = resumeService.findResumeViewerList(userDetails.getUserId());
+        return DataResponseDto.of(viewerInfoResList);
+    }
 }

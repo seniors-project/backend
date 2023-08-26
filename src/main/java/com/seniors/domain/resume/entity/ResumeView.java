@@ -1,5 +1,6 @@
 package com.seniors.domain.resume.entity;
 
+import com.seniors.domain.common.BaseTimeEntity;
 import com.seniors.domain.resume.dto.ResumeDto;
 import com.seniors.domain.users.entity.Users;
 import jakarta.persistence.*;
@@ -11,7 +12,7 @@ import lombok.NoArgsConstructor;
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class ResumeView {
+public class ResumeView extends BaseTimeEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
