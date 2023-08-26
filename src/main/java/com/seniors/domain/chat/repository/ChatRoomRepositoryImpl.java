@@ -53,22 +53,24 @@ public class ChatRoomRepositoryImpl extends BasicRepoSupport implements ChatRoom
 	@Override
 	public UsersDto.GetChatUserRes findAllChatRoom (Long userId) {
 
+		List<Long> latestMessageIds = jpaQueryFactory
+				.select(chatMessage.id.max())
+				.from(chatMessage)
+				.where(chatMessage.chatRoom.id.in(
+						JPAExpressions
+								.select(chatRoomMembers.chatRoom.id)
+								.from(chatRoomMembers)
+								.where(chatRoomMembers.users.id.eq(userId))
+								.groupBy(chatRoomMembers.chatRoom.id)
+				))
+				.groupBy(chatMessage.chatRoom.id)
+				.fetch();
+
 		List<ChatMessage> latestMessages = jpaQueryFactory
 				.selectFrom(chatMessage)
-				.where(chatMessage.id.in(
-						JPAExpressions
-								.select(chatMessage.id.max())
-								.from(chatMessage)
-								.where(chatMessage.chatRoom.id.in(
-										JPAExpressions
-												.select(chatRoomMembers.chatRoom.id)
-												.from(chatRoomMembers)
-												.where(chatRoomMembers.users.id.eq(userId))
-												.groupBy(chatRoomMembers.chatRoom.id)
-								))
-								.groupBy(chatMessage.chatRoom.id)
-				))
+				.where(chatMessage.id.in(latestMessageIds))
 				.fetch();
+
 
 		List<Long> chatRoomId = latestMessages.stream()
 				.map(roomId -> roomId.getChatRoom().getId())
@@ -83,24 +85,23 @@ public class ChatRoomRepositoryImpl extends BasicRepoSupport implements ChatRoom
 				.fetch();
 
 		List<ChatRoomMembersDto.GetChatRoomMembersRes> getChatRoomMembersResList = new ArrayList<>();
-
 		for (ChatRoomMembers roomMembers : chatRoomMembersList) {
-
 			ChatRoomMembersDto.GetChatRoomMembersRes getChatRoomMembersRes =
 					new ChatRoomMembersDto.GetChatRoomMembersRes(
 							roomMembers.getChatRoom().getId(),
 							roomMembers.getUsers().getId(),
 							roomMembers.getRoomName(),
-							latestMessages.get(getChatRoomMembersResList.size())
-							);
+							roomMembers.getChatRoom().getChatMessages().get(
+									roomMembers.getChatRoom().getChatMessages().size()-1
+							)
+					);
 			getChatRoomMembersResList.add(getChatRoomMembersRes);
-
 		}
 
 		UsersDto.GetChatUserRes getChatUserRes = new UsersDto.GetChatUserRes(userId, getChatRoomMembersResList);
 
 		return getChatUserRes;
-
 	}
+
 
 }
