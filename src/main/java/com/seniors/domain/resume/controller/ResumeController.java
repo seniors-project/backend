@@ -60,7 +60,7 @@ public class ResumeController {
     }
 
     @Operation(summary = "이력서 조회")
-    @ApiResponse(responseCode = "200", description = "조회 성공",
+    @ApiResponse(responseCode = "200", description = "이력서 조회 성공",
             content = @Content(mediaType = "application/json", schema = @Schema(implementation = ResumeDto.GetResumeRes.class)))
     @ApiResponse(responseCode = "401", description = "유효하지 않은 회원입니다.",
             content = @Content(mediaType = "application/json", schema = @Schema(implementation = NotAuthorizedException.class)))
@@ -76,6 +76,25 @@ public class ResumeController {
         ResumeDto.GetResumeRes getResumeRes = resumeService.findResume(resumeId, userDetails.getUserId());
         return DataResponseDto.of(getResumeRes);
     }
+
+
+    @Operation(summary = "나의 이력서 조회")
+    @ApiResponse(responseCode = "200", description = "나의 이력서 조회 성공",
+            content = @Content(mediaType = "application/json", schema = @Schema(implementation = ResumeDto.GetResumeRes.class)))
+    @ApiResponse(responseCode = "401", description = "유효하지 않은 회원입니다.",
+            content = @Content(mediaType = "application/json", schema = @Schema(implementation = NotAuthorizedException.class)))
+    @ApiResponse(responseCode = "500", description = "서버 에러",
+            content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class)))
+    @GetMapping("/mine")
+    public DataResponseDto<ResumeDto.GetResumeRes> myResumeDetails (
+            @LoginUsers CustomUserDetails userDetails
+    ) {
+        ResumeDto.GetResumeRes getResumeRes = resumeService.findMyResume(userDetails.getUserId());
+        return DataResponseDto.of(getResumeRes);
+    }
+
+
+
 
 
     @Operation(summary = "이력서 리스트 조회")
