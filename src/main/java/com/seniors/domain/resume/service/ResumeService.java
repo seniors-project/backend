@@ -22,7 +22,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -96,21 +95,36 @@ public class ResumeService {
         Resume resume =  resumeRepository.findById(resumeId).orElseThrow(
                 () -> new NotFoundException("이력서가 존재하지 않습니다.")
         );
-
         Optional<ResumeView> findResumeView = resumeViewRepository.findByUsersAndResume(user, resume);
         if (!findResumeView.isPresent()) {
+            resumeRepository.increaseViewCount(resume.getId());
             ResumeView resumeView = ResumeView.of(resume,user);
             resumeViewRepository.save(resumeView);
-            resume.increaseViewCount();
         }
+        Resume changedResume =  resumeRepository.findById(resumeId).orElseThrow(
+                () -> new NotFoundException("이력서가 존재하지 않습니다.")
+        );
 
         if (!resume.getUsers().getId().equals(user.getId())) {
             notificationService.send(resume.getUsers(), resume, "누군가가 내 이력서를 조회했습니다!");
         }
-        return ResumeDto.GetResumeRes.from(resume);
+        return ResumeDto.GetResumeRes.from(changedResume);
     }
 
-    @Transactional
+    @Transactional(readOnly = true)
+    public ResumeDto.GetResumeRes findMyResume(Long userId) {
+        Users user =  usersRepository.findById(userId).orElseThrow(
+                () -> new NotAuthorizedException("유효하지 않은 회원입니다.")
+        );
+
+        Optional<Resume> resume =  resumeRepository.findByUsersId(user.getId());
+        if(resume.isEmpty()){
+            return null;
+        }
+        return ResumeDto.GetResumeRes.from(resume.get());
+    }
+
+    @Transactional(readOnly = true)
     public DataResponseDto<CustomSlice<ResumeDto.GetResumeByQueryDslRes>> findResumeList(Pageable pageable, Long lastId, Long userId){
         Users user =  usersRepository.findById(userId).orElseThrow(
                 () -> new NotAuthorizedException("유효하지 않은 회원입니다.")
