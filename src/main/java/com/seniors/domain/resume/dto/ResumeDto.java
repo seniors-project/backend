@@ -170,6 +170,10 @@ public class ResumeDto {
 		@Schema(description = "조회수")
 		private Integer viewCount;
 
+		@Schema(description = "유저 기본키")
+		private Long userId;
+
+
 		private List<CertificateDto.getCertificateQueryDslRes> certificates;
 
 		private List<CareerDto.getCareerQueryDslRes> careers;
@@ -188,6 +192,7 @@ public class ResumeDto {
 			this.certificates = resume.getCertificates().stream().map(CertificateDto.getCertificateQueryDslRes::new).collect(Collectors.toList());
 			this.careers = resume.getCareers().stream().map(CareerDto.getCareerQueryDslRes::new).collect(Collectors.toList());
 			this.educations = resume.getEducations().stream().map(EducationDto.getEducationByQueryDslRes::new).collect(Collectors.toList());
+			this.userId = resume.getUsers().getId();
 		}
 
 	}

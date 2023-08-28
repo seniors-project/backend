@@ -8,10 +8,7 @@ import com.seniors.common.exception.type.NotAuthorizedException;
 import com.seniors.common.exception.type.NotFoundException;
 import com.seniors.config.S3Uploader;
 import com.seniors.domain.notification.service.NotificationService;
-import com.seniors.domain.resume.dto.CareerDto;
-import com.seniors.domain.resume.dto.CertificateDto;
-import com.seniors.domain.resume.dto.EducationDto;
-import com.seniors.domain.resume.dto.ResumeDto;
+import com.seniors.domain.resume.dto.*;
 import com.seniors.domain.resume.dto.ResumeDto.SaveResumeReq;
 import com.seniors.domain.resume.entity.*;
 import com.seniors.domain.resume.repository.ResumeRepository;
@@ -26,6 +23,8 @@ import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 @Slf4j
@@ -201,4 +200,25 @@ public class ResumeService {
         }
         resumeRepository.delete(resume);
     }
+
+
+    @Transactional(readOnly = true)
+    public List<ViewerInfoDto.GetViewerInfoRes> findResumeViewerList(Long userId) {
+
+        Resume resume = resumeRepository.findByUsersId(userId).orElseThrow(
+                () -> new NotFoundException("이력서가 존재하지 않습니다.")
+        );
+
+        Optional<List<ResumeView>> resumeViewList = resumeViewRepository.findByResumeId(resume.getId());
+        if (resumeViewList.isEmpty()){
+            return null;
+        }
+        List<ViewerInfoDto.GetViewerInfoRes> viewerInfoList = new ArrayList<>();
+
+        for(ResumeView resumeView : resumeViewList.get()){
+            viewerInfoList.add(ViewerInfoDto.GetViewerInfoRes.from(resumeView));
+        }
+        return viewerInfoList;
+    }
+
 }
