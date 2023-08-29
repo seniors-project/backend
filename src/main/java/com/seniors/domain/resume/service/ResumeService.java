@@ -38,9 +38,6 @@ public class ResumeService {
 
     private final ResumeViewRepository resumeViewRepository;
 
-    @Value("${photo.url}")
-    private String photoUrl;
-
     private final S3Uploader s3Uploader;
     @Transactional
     public Long addResume(SaveResumeReq resumeReq, Long userId) throws IOException {
@@ -63,13 +60,14 @@ public class ResumeService {
         Users user =  usersRepository.findById(userId).orElseThrow(
                 () -> new NotAuthorizedException("유효하지 않은 회원입니다.")
         );
-
-        if(!resumeReq.getImage().isEmpty()) {
-            photoUrl = s3Uploader.upload(resumeReq.getImage(), "resumes");
-        }
-
         Resume resume = Resume.of(resumeReq, user);
-        resume.uploadPhotoUrl(photoUrl);
+        if(!resumeReq.getImage().isEmpty()) {
+            String photoUrl = s3Uploader.upload(resumeReq.getImage(), "resumes");
+            resume.uploadPhotoUrl(photoUrl);
+        }
+        else{
+            resume.uploadPhotoUrl(null);
+        }
 
         for(CareerDto.saveCareerReq saveCareerReq  : resumeReq.getCareerList()){
             Career career = Career.from(saveCareerReq);
@@ -162,10 +160,13 @@ public class ResumeService {
         }
 
         if(!resumeReq.getImage().isEmpty()) {
-            photoUrl = s3Uploader.upload(resumeReq.getImage(), "resumes");
+            String photoUrl = s3Uploader.upload(resumeReq.getImage(), "resumes");
+            resume.update(resumeReq, photoUrl);
         }
-
-        resume.update(resumeReq, photoUrl);
+        else{
+            String photoUrl = null;
+            resume.update(resumeReq, photoUrl);
+        }
 
         resume.getCareers().clear();
         resume.getCertificates().clear();

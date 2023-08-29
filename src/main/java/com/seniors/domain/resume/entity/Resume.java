@@ -34,7 +34,7 @@ public class Resume extends BaseTimeEntity {
     @Column(columnDefinition = "text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci  null COMMENT '소개글'")
     private String introduce;
 
-    @Column(columnDefinition = "text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci not null COMMENT '사진 URL'")
+    @Column(columnDefinition = "text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci COMMENT '사진 URL'")
     private String photoUrl;
 
     @Column(columnDefinition = "varchar(30) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci not null COMMENT '직종'")
