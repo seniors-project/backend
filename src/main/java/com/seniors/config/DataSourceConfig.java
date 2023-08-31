@@ -17,7 +17,7 @@ import static com.seniors.common.constant.DataSourceConstants.MASTER_DATASOURCE;
 import static com.seniors.common.constant.DataSourceConstants.SLAVE_DATASOURCE;
 
 
-@Configuration
+//@Configuration
 public class DataSourceConfig {
 
     @Bean(MASTER_DATASOURCE)
