@@ -26,20 +26,6 @@ public class ChatRoomController {
 
     private final ChatRoomService chatRoomService;
 
-    @Operation(summary = "채팅방 생성")
-    @ApiResponse(responseCode = "200", description = "생성 성공",
-            content = @Content(mediaType = "application/json", schema = @Schema(implementation = DataResponseDto.class)))
-    @ApiResponse(responseCode = "401", description = "유효하지 않은 회원입니다.",
-            content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class)))
-    @PostMapping("")
-    public DataResponseDto chatRoomAdd(
-            @RequestBody ChatRoomDto.ChatRoomCreateDto chatRoomCreateDto,
-            @LoginUsers CustomUserDetails userDetails) {
-
-        chatRoomService.addChatRoom(chatRoomCreateDto.getChatUserId(), userDetails.getUserId());
-
-        return DataResponseDto.of("SUCCESS");
-    }
 
     @Operation(summary = "채팅방 전체 조회")
     @ApiResponse(responseCode = "200", description = "조회 성공",
@@ -50,6 +36,20 @@ public class ChatRoomController {
         return chatRoomService.findChatRoom(userDetails.getUserId());
     }
 
+    @Operation(summary = "채팅방 생성")
+    @ApiResponse(responseCode = "200", description = "생성 성공",
+            content = @Content(mediaType = "application/json", schema = @Schema(implementation = DataResponseDto.class)))
+    @ApiResponse(responseCode = "401", description = "유효하지 않은 회원입니다.",
+            content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class)))
+    @PostMapping("")
+    public DataResponseDto<ChatRoomDto.GetChatRoomRes> chatRoomAdd(
+            @RequestBody ChatRoomDto.ChatRoomCreateDto chatRoomCreateDto,
+            @LoginUsers CustomUserDetails userDetails) {
+
+        ChatRoomDto.GetChatRoomRes getChatRoomRes = chatRoomService.addChatRoom(userDetails.getUserId(), chatRoomCreateDto.getChatUserId());
+
+        return DataResponseDto.of(getChatRoomRes);
+    }
     @Operation(summary = "채팅방 입장")
     @ApiResponse(responseCode = "200", description = "입장 성공",
             content = @Content(mediaType = "application/json", schema = @Schema(implementation = ChatRoomDto.GetChatRoomRes.class)))
