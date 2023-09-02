@@ -33,7 +33,9 @@ public class ChatRoomController {
     @GetMapping("")
     public DataResponseDto<GetChatUserRes> chatRoomList (
             @Parameter(hidden = true) @LoginUsers CustomUserDetails userDetails) {
-        return chatRoomService.findChatRoom(userDetails.getUserId());
+        GetChatUserRes getChatUserRes = chatRoomService.findChatRoom(userDetails.getUserId());
+
+        return DataResponseDto.of(getChatUserRes);
     }
 
     @Operation(summary = "채팅방 생성")

@@ -54,9 +54,9 @@ public class ChatRoomService {
     }
 
     @Transactional(readOnly = true)
-    public DataResponseDto<UsersDto.GetChatUserRes> findChatRoom(Long userId) {
+    public UsersDto.GetChatUserRes findChatRoom(Long userId) {
         UsersDto.GetChatUserRes getChatUserRes = chatRoomRepository.findAllChatRoom(userId);
-        return DataResponseDto.of(getChatUserRes);
+        return getChatUserRes;
     }
 
     @Transactional
