@@ -1,5 +1,6 @@
 package com.seniors.domain.chat.service;
 
+import com.seniors.common.exception.type.NotAuthorizedException;
 import com.seniors.domain.chat.dto.ChatMessageDto;
 import com.seniors.domain.chat.entity.ChatMessage;
 import com.seniors.domain.chat.entity.ChatRoom;
@@ -24,7 +25,9 @@ public class ChatMessageService {
 
     @Transactional
     public void saveChatMessage (ChatMessageDto.ChatMessageTransDto chat) {
-        Users users = usersRepository.findById(chat.getUserId()).orElseThrow();
+        Users users = usersRepository.findById(chat.getUserId()).orElseThrow(
+                () -> new NotAuthorizedException("유효하지 않은 회원입니다.")
+        );
         ChatRoom chatRoom = chatRoomRepository.findById(chat.getChatRoomId()).orElseThrow();
         ChatMessage chatMessage = ChatMessage.of(chatRoom, users, chat.getContent());
         chatMessageRepository.save(chatMessage);

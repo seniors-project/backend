@@ -2,6 +2,7 @@ package com.seniors.domain.post.service;
 
 import com.seniors.common.dto.CustomPage;
 import com.seniors.common.exception.type.BadRequestException;
+import com.seniors.common.exception.type.NotAuthorizedException;
 import com.seniors.common.exception.type.NotFoundException;
 import com.seniors.config.S3Uploader;
 import com.seniors.domain.notification.service.NotificationService;
@@ -24,13 +25,9 @@ import org.springframework.data.domain.Sort.Direction;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.BindingResult;
-import org.springframework.validation.FieldError;
-import org.springframework.validation.ObjectError;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 
 @Slf4j
 @Service
@@ -45,21 +42,9 @@ public class PostService {
 	private final NotificationService notificationService;
 
 	@Transactional
-	public void addPost(PostCreateDto postCreateDto, BindingResult bindingResult, Long userId) throws IOException {
-		if (bindingResult.hasErrors()) {
-			List<ObjectError> errors = bindingResult.getAllErrors();
-			List<String> errorMessages = new ArrayList<>();
-
-			for (ObjectError error : errors) {
-				FieldError fieldError = (FieldError) error;
-				String message = fieldError.getDefaultMessage();
-				errorMessages.add(message);
-			}
-			throw new BadRequestException(String.join(", ", errorMessages));
-		}
-
+	public Long addPost(PostCreateDto postCreateDto, BindingResult bindingResult, Long userId) throws IOException {
 		Users users = usersRepository.findById(userId).orElseThrow(
-				() -> new NotFoundException("유효하지 않은 회원입니다.")
+				() -> new NotAuthorizedException("유효하지 않은 회원입니다.")
 		);
 		Post post = postRepository.save(Post.of(postCreateDto.getTitle(), postCreateDto.getContent(), users));
 		if (postCreateDto.getFiles() != null && !postCreateDto.getFiles().isEmpty()) {
@@ -68,33 +53,23 @@ public class PostService {
 				postMediaRepository.save(PostMedia.of(uploadImagePath, post));
 			}
 		}
+		return post.getId();
 	}
 
-	public GetPostRes findOnePost(Long postId) {
-		return postRepository.findOnePost(postId);
+	public GetPostRes findOnePost(Long postId, Long userId) {
+		return postRepository.findOnePost(postId, userId);
 	}
 
-	public CustomPage<GetPostRes> findPost(int page, int size) {
+	public CustomPage<GetPostRes> findPost(int page, int size, Long userId) {
 		Direction direction = Direction.DESC;
 		Pageable pageable = PageRequest.of(page, size, Sort.by(direction, "id"));
-		Page<GetPostRes> posts = postRepository.findAllPost(pageable);
+		Page<GetPostRes> posts = postRepository.findAllPost(pageable, userId);
 		return CustomPage.of(posts);
 	}
 
 	@Transactional
-	public void modifyPost(PostCreateDto postCreateDto, BindingResult bindingResult, Long postId, Long userId) throws IOException {
+	public Long modifyPost(PostCreateDto postCreateDto, BindingResult bindingResult, Long postId, Long userId) throws IOException {
 
-		if (bindingResult.hasErrors()) {
-			List<ObjectError> errors = bindingResult.getAllErrors();
-			List<String> errorMessages = new ArrayList<>();
-
-			for (ObjectError error : errors) {
-				FieldError fieldError = (FieldError) error;
-				String message = fieldError.getDefaultMessage();
-				errorMessages.add(message);
-			}
-			throw new BadRequestException(String.join(", ", errorMessages));
-		}
 		Post post = postRepository.findById(postId).orElseThrow(() -> new NotFoundException("유효하지 않은 게시글입니다."));
 		postRepository.modifyPost(postCreateDto.getTitle(), postCreateDto.getContent(), postId, userId);
 
@@ -109,6 +84,7 @@ public class PostService {
 				postMediaRepository.save(PostMedia.of(uploadImagePath, post));
 			}
 		}
+		return post.getId();
 	}
 
 	@Transactional
@@ -118,21 +94,30 @@ public class PostService {
 
 	@Transactional
 	public void likePost(Long postId, Long userId, Boolean status) {
-		int updatedRows = postLikeRepository.likePost(postId, userId, !status);
-		if (updatedRows >= 1) {
-			postRepository.increaseLikeCount(postId, status);
-			Post post = postRepository.findById(postId).orElseThrow(
-					() -> new NotFoundException("존재하지 않은 게시글입니다.")
-			);
-			Users users = usersRepository.findById(userId).orElseThrow(
-					() -> new NotFoundException("유효하지 않은 회원입니다.")
-			);
-			if (!post.getUsers().getId().equals(users.getId()) && !status) {
-				notificationService.send(post.getUsers(), post, "누군가가 내 피드에 좋아요를 눌렀습니다.");
+		Boolean likeStatus = postLikeRepository.findStatusByPostIdAndUserId(postId, userId);
+		if (status && likeStatus == null)
+			throw new BadRequestException("잘못된 좋아요 요청입니다.");
+
+		if (status == likeStatus || likeStatus == null) {
+			int updatedRows = postLikeRepository.likePost(postId, userId, !status);
+			if (updatedRows >= 1) {
+				postRepository.increaseLikeCount(postId, status);
+				Post post = postRepository.findById(postId).orElseThrow(
+						() -> new NotFoundException("존재하지 않은 게시글입니다.")
+				);
+				Users users = usersRepository.findById(userId).orElseThrow(
+						() -> new NotAuthorizedException("유효하지 않은 회원입니다.")
+				);
+				if (!post.getUsers().getId().equals(users.getId()) && !status) {
+					notificationService.send(post.getUsers(), post, "누군가가 내 피드에 좋아요를 눌렀습니다.");
+				}
+			} else {
+				throw new BadRequestException("좋아요 반영이 실패되었습니다.");
 			}
 		} else {
-			throw new BadRequestException();
+			throw new BadRequestException("잘못된 좋아요 요청입니다.");
 		}
+
 	}
 
 	@Transactional

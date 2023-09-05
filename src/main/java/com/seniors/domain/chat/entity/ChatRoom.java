@@ -1,6 +1,5 @@
 package com.seniors.domain.chat.entity;
 
-import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.seniors.domain.common.BaseEntity;
 import jakarta.persistence.*;
 import lombok.Builder;
@@ -17,7 +16,6 @@ public class ChatRoom extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @JsonManagedReference
     @OneToMany(mappedBy = "chatRoom", orphanRemoval = true, cascade = CascadeType.ALL)
     private List<ChatRoomMembers> chatRoomMembers = new ArrayList<>();
 

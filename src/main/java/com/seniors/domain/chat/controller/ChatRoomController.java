@@ -1,13 +1,14 @@
 package com.seniors.domain.chat.controller;
 
 import com.seniors.common.annotation.LoginUsers;
-import com.seniors.common.dto.CustomPage;
 import com.seniors.common.dto.DataResponseDto;
+import com.seniors.common.dto.ErrorResponse;
 import com.seniors.config.security.CustomUserDetails;
 import com.seniors.domain.chat.dto.ChatRoomDto;
 import com.seniors.domain.chat.service.ChatRoomService;
 import com.seniors.domain.users.dto.UsersDto.GetChatUserRes;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -28,33 +29,30 @@ public class ChatRoomController {
     @Operation(summary = "채팅방 생성")
     @ApiResponse(responseCode = "200", description = "생성 성공",
             content = @Content(mediaType = "application/json", schema = @Schema(implementation = DataResponseDto.class)))
+    @ApiResponse(responseCode = "401", description = "유효하지 않은 회원입니다.",
+            content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class)))
     @PostMapping("")
     public DataResponseDto chatRoomAdd(
             @RequestBody ChatRoomDto.ChatRoomCreateDto chatRoomCreateDto,
             @LoginUsers CustomUserDetails userDetails) {
 
-        chatRoomService.addChatRoom(chatRoomCreateDto.getChatUserId(), chatRoomCreateDto.getRoomName(), userDetails.getUserId());
+        chatRoomService.addChatRoom(chatRoomCreateDto.getChatUserId(), userDetails.getUserId());
 
         return DataResponseDto.of("SUCCESS");
     }
 
     @Operation(summary = "채팅방 전체 조회")
     @ApiResponse(responseCode = "200", description = "조회 성공",
-            content = @Content(mediaType = "application/json", schema = @Schema(implementation = DataResponseDto.class)))
+            content = @Content(mediaType = "application/json", schema = @Schema(implementation = GetChatUserRes.class)))
     @GetMapping("")
-    public DataResponseDto<CustomPage<GetChatUserRes>> chatRoomList (
-            @LoginUsers CustomUserDetails userDetails,
-            @RequestParam(required = false, defaultValue = "1") int page,
-            @RequestParam(required = false) int size) {
-
-        CustomPage<GetChatUserRes> chatRoomResList = chatRoomService.findChatRoom(userDetails.getUserId(), page > 0 ? page - 1 : 0, size);
-
-        return DataResponseDto.of(chatRoomResList);
+    public DataResponseDto<GetChatUserRes> chatRoomList (
+            @Parameter(hidden = true) @LoginUsers CustomUserDetails userDetails) {
+        return chatRoomService.findChatRoom(userDetails.getUserId());
     }
 
     @Operation(summary = "채팅방 입장")
     @ApiResponse(responseCode = "200", description = "입장 성공",
-            content = @Content(mediaType = "application/json", schema = @Schema(implementation = DataResponseDto.class)))
+            content = @Content(mediaType = "application/json", schema = @Schema(implementation = ChatRoomDto.GetChatRoomRes.class)))
     @GetMapping("/{roomId}")
     public DataResponseDto<ChatRoomDto.GetChatRoomRes> chatRoomEnter (
             @PathVariable Long roomId) {
@@ -62,6 +60,21 @@ public class ChatRoomController {
         ChatRoomDto.GetChatRoomRes getChatRoomRes = chatRoomService.findOneChatRoom(roomId);
 
         return DataResponseDto.of(getChatRoomRes);
+    }
+    @Operation(summary = "채팅방 나가기")
+    @ApiResponse(responseCode = "200", description = "나가기 성공",
+            content = @Content(mediaType = "application/json", schema = @Schema(implementation = DataResponseDto.class)))
+    @ApiResponse(responseCode = "404", description = "채팅방이 존재하지 않거나 유효하지 않은 회원입니다",
+            content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class)))
+    @DeleteMapping("/{roomId}")
+    public DataResponseDto<Long> chatRoomExit (
+            @PathVariable Long roomId,
+            @LoginUsers CustomUserDetails userDetails
+    ) {
+
+        chatRoomService.removeChatRoom(roomId, userDetails.getUserId());
+
+        return DataResponseDto.of(null);
     }
 
 }

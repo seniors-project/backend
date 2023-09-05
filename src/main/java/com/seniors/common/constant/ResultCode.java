@@ -26,7 +26,8 @@ public enum ResultCode {
 
 	// 인증
 	UNAUTHORIZED(401, HttpStatus.UNAUTHORIZED, "User unauthorized"),
-	EXPIRED_REFRESH_TOKEN(403, HttpStatus.FORBIDDEN, "Expired Refresh-token");
+	EXPIRED_REFRESH_TOKEN(403, HttpStatus.FORBIDDEN, "Expired Refresh-token"),
+	FORBIDDEN(403, HttpStatus.FORBIDDEN, "Expired Refresh-token");
 
 	private final Integer code;
 	private final HttpStatus httpStatus;

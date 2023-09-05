@@ -32,10 +32,10 @@ public class Education extends BaseTimeEntity {
     private String process;
 
     @Column(columnDefinition = "int not null COMMENT '시작 연도'")
-    private int startedAt;
+    private Integer startedAt;
 
-    @Column(columnDefinition = "int not null COMMENT '종료 연도'")
-    private int endedAt;
+    @Column(columnDefinition = "int COMMENT '종료 연도'")
+    private Integer endedAt;
 
     @Column(columnDefinition = "text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci not null COMMENT '내용'")
     private String content;
@@ -51,7 +51,7 @@ public class Education extends BaseTimeEntity {
     private Resume resume;
 
     @Builder
-    public Education(String institution, String process, int startedAt, int endedAt, String content, Boolean isProcessed, Resume resume) {
+    public Education(String institution, String process, Integer startedAt, Integer endedAt, String content, Boolean isProcessed, Resume resume) {
         this.institution = institution;
         this.process = process;
         this.startedAt = startedAt;
