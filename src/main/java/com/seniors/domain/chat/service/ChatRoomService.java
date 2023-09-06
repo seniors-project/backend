@@ -2,7 +2,6 @@ package com.seniors.domain.chat.service;
 
 import com.seniors.common.dto.DataResponseDto;
 import com.seniors.common.exception.type.NotAuthorizedException;
-import com.seniors.common.exception.type.NotFoundException;
 import com.seniors.domain.chat.dto.ChatRoomDto;
 import com.seniors.domain.chat.entity.ChatRoom;
 import com.seniors.domain.chat.entity.ChatRoomMembers;
@@ -16,6 +15,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Optional;
+
 @Slf4j
 @Service
 @RequiredArgsConstructor
@@ -26,29 +27,36 @@ public class ChatRoomService {
     private final ChatRoomMembersRepository chatRoomMembersRepository;
 
     @Transactional
-    public void addChatRoom(Long userId, Long opponentId) {
+    public ChatRoomDto.GetChatRoomRes addChatRoom(Long userId, Long opponentId) {
 
-        ChatRoom chatRoom = ChatRoom.builder().build();
-        chatRoomRepository.save(chatRoom);
+        Optional<Long> chatRoomId = chatRoomMembersRepository.findChatRoomIdByUserIds(userId, opponentId);
 
-        Users user = usersRepository.findById(userId).orElseThrow(
-                () -> new NotAuthorizedException("유효하지 않은 회원입니다")
-        );
-        Users opponentUser = usersRepository.findById(opponentId).orElseThrow(
-                () -> new NotAuthorizedException("유효하지 않은 회원입니다")
-        );
+        if (chatRoomId.get() == 0L) {
+            ChatRoom chatRoom = ChatRoom.builder().build();
+            chatRoomRepository.save(chatRoom);
 
-        chatRoomMembersRepository.save(ChatRoomMembers.of(user.getNickname(), chatRoom, user));
-        chatRoomMembersRepository.save(ChatRoomMembers.of(opponentUser.getNickname(), chatRoom, opponentUser));
+            Users user = usersRepository.findById(userId).orElseThrow(
+                    () -> new NotAuthorizedException("유효하지 않은 회원입니다")
+            );
+            Users opponentUser = usersRepository.findById(opponentId).orElseThrow(
+                    () -> new NotAuthorizedException("유효하지 않은 회원입니다")
+            );
 
+            chatRoomMembersRepository.save(ChatRoomMembers.of(opponentUser.getNickname(), chatRoom, user));
+            chatRoomMembersRepository.save(ChatRoomMembers.of(user.getNickname(), chatRoom, opponentUser));
 
+            return chatRoomRepository.findOneChatRoom(chatRoom.getId());
+
+        } else {
+            return chatRoomRepository.findOneChatRoom(chatRoomId.orElseThrow());
+        }
 
     }
 
     @Transactional(readOnly = true)
-    public DataResponseDto<UsersDto.GetChatUserRes> findChatRoom(Long userId) {
+    public UsersDto.GetChatUserRes findChatRoom(Long userId) {
         UsersDto.GetChatUserRes getChatUserRes = chatRoomRepository.findAllChatRoom(userId);
-        return DataResponseDto.of(getChatUserRes);
+        return getChatUserRes;
     }
 
     @Transactional

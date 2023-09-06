@@ -20,13 +20,17 @@ public class ChatRoomMembersDto {
         @Schema(description = "채팅방 이름")
         private String roomName;
 
+        @Schema(description = "프로필 이미지 url")
+        private String profileImageUrl;
+
         @Schema(description = "채팅 내용", defaultValue = "채팅", example = "안녕하세요")
         private ChatMessageDto.GetChatMessageRes chatMessageRes;
 
-        public GetChatRoomMembersRes(Long roomId, Long userId, String roomName, ChatMessage chatMessage) {
+        public GetChatRoomMembersRes(Long roomId, Long userId, String roomName, String profileImageUrl, ChatMessage chatMessage) {
             this.roomId = roomId;
             this.userId = userId;
             this.roomName = roomName;
+            this.profileImageUrl = profileImageUrl;
             this.chatMessageRes = new ChatMessageDto.GetChatMessageRes(
                     chatMessage.getContent(),
                     chatMessage.getCreatedAt(),
