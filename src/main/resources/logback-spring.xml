@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8" ?>
+<?xml version="1.0" encoding="UTF-8"?>
 <configuration>
     <springProperty name="SLACK_WEBHOOK_URI" source="logging.slack.webhook-uri"/>
     <appender name="SLACK" class="com.github.maricn.logback.SlackAppender">
@@ -10,11 +10,21 @@
         <iconEmoji>:anger:</iconEmoji>
         <colorCoding>true</colorCoding>
     </appender>
-
-    <!-- Consol appender 설정 -->
+    <!-- Configure the Console appender -->
     <appender name="Console" class="ch.qos.logback.core.ConsoleAppender">
         <encoder>
-            <Pattern>%d %-5level %logger{35} - %msg%n</Pattern>
+            <pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <!-- Configure the Sentry appender, overriding the logging threshold to the WARN level -->
+    <appender name="Sentry" class="io.sentry.logback.SentryAppender">
+        <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+            <level>ERROR</level>
+        </filter>
+        <!-- Optionally add an encoder -->
+        <encoder>
+            <pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</pattern>
         </encoder>
     </appender>
 
@@ -25,8 +35,11 @@
         </filter>
     </appender>
 
+    <!-- Enable the Console and Sentry appenders, Console is provided as an example
+ of a non-Sentry logger that is set to a different logging threshold -->
     <root level="INFO">
-        <appender-ref ref="Console" />
-        <appender-ref ref="ASYNC_SLACK"/>
+        <appender-ref ref="Console"/>
+        <appender-ref ref="Sentry"/>
+        <appender-ref ref ="ASYNC_SLACK"/>
     </root>
 </configuration>
