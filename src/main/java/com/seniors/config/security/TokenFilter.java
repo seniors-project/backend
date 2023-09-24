@@ -30,8 +30,8 @@ public class TokenFilter extends OncePerRequestFilter {
 				CustomUserDetails userDetails = tokenService.getUserDetailsByToken(token);
 				securityService.setAuthentication(userDetails);
 			}
-		} catch (Exception e) {
-			throw new NotAuthorizedException("Invalid Token.", e);
+		} catch (Exception err) {
+			throw new NotAuthorizedException("Invalid Token.", err);
 		}
 
 		filterChain.doFilter(request, response);

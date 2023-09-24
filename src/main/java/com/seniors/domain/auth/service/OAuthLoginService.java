@@ -26,7 +26,7 @@ public class OAuthLoginService {
 	}
 
 	private Users findOrCreateUser(OAuthInfoResponse oAuthInfoResponse) {
-		return usersRepository.findByEmail(oAuthInfoResponse.getEmail())
+		return usersRepository.findByNicknameAndSnsId(oAuthInfoResponse.getNickname(), oAuthInfoResponse.getSnsId())
 				.orElseGet(() -> signUp(oAuthInfoResponse));
 	}
 
