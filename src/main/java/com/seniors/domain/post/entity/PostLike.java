@@ -1,14 +1,18 @@
 package com.seniors.domain.post.entity;
 
+import com.seniors.domain.common.BaseTimeEntity;
 import com.seniors.domain.users.entity.Users;
 import jakarta.persistence.*;
-import lombok.*;
+import lombok.AccessLevel;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @IdClass(PostLikeEmbedded.class) // Specify the composite primary key class
-public class PostLike {
+public class PostLike extends BaseTimeEntity {
 
     @Id
     @ManyToOne(fetch = FetchType.LAZY)

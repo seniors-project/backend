@@ -28,13 +28,13 @@ public class Users extends BaseEntity {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
-	@Column(columnDefinition = "varchar(255) COMMENT 'sns 고유 ID'", unique = true)
+	@Column(columnDefinition = "varchar(255) not null COMMENT 'sns 고유 ID'", unique = true)
 	private String snsId;
 
 	@Column(columnDefinition = "varchar(50) COMMENT '이메일'")
 	private String email;
 
-	@Column(columnDefinition = "varchar(30) COMMENT '닉네임'", unique = true)
+	@Column(columnDefinition = "varchar(30) not null COMMENT '닉네임'", unique = true)
 	private String nickname;
 
 	@Column(columnDefinition = "varchar(10) COMMENT '성별'")
