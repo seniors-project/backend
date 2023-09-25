@@ -1,6 +1,6 @@
 package com.seniors.domain.comment.entity;
 
-import com.seniors.domain.common.BaseEntity;
+import com.seniors.domain.common.BaseTimeEntity;
 import com.seniors.domain.post.entity.Post;
 import com.seniors.domain.users.entity.Users;
 import jakarta.persistence.*;
@@ -18,7 +18,7 @@ import org.hibernate.annotations.Where;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @SQLDelete(sql = "UPDATE Comment SET isDeleted = true WHERE id = ?")
 @Where(clause = "isDeleted = false")
-public class Comment extends BaseEntity {
+public class Comment extends BaseTimeEntity {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;

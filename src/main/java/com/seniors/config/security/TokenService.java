@@ -146,7 +146,7 @@ public class TokenService {
 			claims = jwtUtil.getClaimsForReFresh(token);
 		} catch (Exception e) {
 			throw new SignInException(ResultCode.EXPIRED_REFRESH_TOKEN,
-					"Invalid token (" + token + ")");
+					"Invalid token (" + token + ") \n", e);
 		}
 
 		if (claims == null) {
