@@ -5,11 +5,11 @@
 # This workflow will build a Java project with Gradle and cache/restore any dependencies to improve the workflow execution time
 # For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-java-with-gradle
 
-name: Seniors CICD(deploy)
+name: Java CI with Gradle
 
 on:
   push:
-    branches: [ "main"]
+    branches: [ "main" ]
 
 permissions:
   contents: read
@@ -37,65 +37,59 @@ jobs:
             ~/.gradle/wrapper
           key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
           restore-keys: |
-            ${{ runner.os }}-gradle-    
+            ${{ runner.os }}-gradle-
 
       # application.yml 파일 생성
       - name: make application.yaml
         run: |
           cd ./src/main/resources
-          touch ./application.yml
-          echo "${{ secrets.APPLICATION }}" > ./application.yml
+          touch ./application-dev.yaml
+          echo "${{ secrets.APPLICATION }}" >> ./application-dev.yaml
         shell: bash
 
       # Gradle로 빌드 실행
       - name: Build with Gradle
-        uses: gradle/gradle-build-action@67421db6bd0bf253fb4bd25b31ebb98943c375e1
+        run: ./gradlew bootJar
+
+      # image로부터 Metadata 추출
+      - name: Extract metadata (tags, labels) for Docker
+        id: meta
+        uses: docker/metadata-action@v4
         with:
-          arguments: build
+          images: ${{ secrets.DOCKER_USERNAME }}/${{ secrets.DOCKER_REPO }}
+          tags: |
+            type=sha
 
-      # AWS에 연결
-      - name: Connect to AWS
-        uses: aws-actions/configure-aws-credentials@v1
+      # image 빌드 및 도커허브에 push
+      - name: web docker build and push
+        run: |
+          docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_ACCESS_TOKEN }}
+          docker build -t ${{ secrets.DOCKER_REPO }}/seniors:${{ steps.meta.outputs.version }} .
+          docker push ${{ secrets.DOCKER_REPO }}/seniors:${{ steps.meta.outputs.version }}
+
+      # manifest file 존재하는 Repository clone and checkout
+      - name: Clone and Checkout to config Repository
+        uses: actions/checkout@v3
         with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: ${{ secrets.AWS_REGION }}
+          repository: strangehoon/seniors-config
+          token: ${{ secrets.HELMREPO }}
 
-      # 빌드파일을 ZIP 파일로 생성
-      - name: Make zip file
-        run: |
-          mkdir deploy
-          cp ./appspec.yml ./deploy/
-          cp ./Dockerfile ./deploy/
-          cp ./deploy.sh ./deploy/
-          cp ./build/libs/*.jar ./deploy/
-          zip -r -qq -j ./seniors-build.zip ./deploy
+      # yq 사용해 yaml file edit
+      - name: Change config repo values.yaml
+        uses: mikefarah/yq@master
+        with:
+          cmd: yq -i '.image.tag = "${{ steps.meta.outputs.version }}"' ex/values.yaml
 
-      # S3에 zip 파일 업로드
-      - name: Upload to S3
-        run: |
-          aws s3 cp \
-            --region ap-northeast-2 \
-            ./seniors-build.zip s3://backend-app-bucket    
-
-      # CodeDeploy에 배포 요청
-      - name: Code Deploy Deployment Request
-        run: |
-          aws deploy create-deployment --application-name seniors \
-            --deployment-config-name CodeDeployDefault.OneAtATime \
-            --deployment-group-name seniors \
-            --s3-location bucket=backend-app-bucket,bundleType=zip,key=seniors-build.zip
-
-      # 배포 결과 Slack 알람 전송
-      - name: Slack 알람 발송
-        uses: rtCamp/action-slack-notify@v2
+      # config repo의 image version update
+      - name: Pushes to config repository
+        uses: cpina/github-action-push-to-another-repository@main
         env:
-          SLACK_CHANNEL: general
-          SLACK_COLOR: ${{ job.status }} # or a specific color like 'good' or '#ff00ff'
-          SLACK_ICON: https://github.com/rtCamp.png?size=48
-          SLACK_MESSAGE: 배포 결과 => ${{ job.status }}
-          SLACK_TITLE: 배포 결과 알람
-          SLACK_USERNAME: Notification-Bot
-          SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK_URL }}
-        if: always()
+          API_TOKEN_GITHUB: ${{ secrets.HELMREPO }}
+        with:
+          source-directory: "."
+          destination-github-username: "strangehoon"
+          destination-repository-name: "seniors-config"
+          user-email: strangehoon2@gmail.com
+          target-branch: main
+          commit-message: "Update Image version to ${{ steps.meta.outputs.version  }}"
 
