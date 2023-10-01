@@ -43,8 +43,8 @@ jobs:
       - name: make application.yaml
         run: |
           cd ./src/main/resources
-          touch ./application.yaml
-          echo "${{ secrets.APPLICATION }}" >> ./application.yaml
+          touch ./application.yml
+          echo "${{ secrets.APPLICATION }}" >> ./application.yml
         shell: bash
 
       # Gradle로 빌드 실행
