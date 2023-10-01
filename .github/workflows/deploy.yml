@@ -78,7 +78,7 @@ jobs:
       - name: Change config repo values.yaml
         uses: mikefarah/yq@master
         with:
-          cmd: yq -i '.image.tag = "${{ steps.meta.outputs.version }}"' ex/values.yaml
+          cmd: yq -i '.image.tag = "${{ steps.meta.outputs.version }}"' seniors/values.yaml
 
       # config repo의 image version update
       - name: Pushes to config repository
