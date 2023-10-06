@@ -2,6 +2,7 @@ package com.seniors.domain.chat.controller;
 
 import com.seniors.common.dto.ErrorResponse;
 import com.seniors.domain.chat.dto.ChatMessageDto.ChatMessageTransDto;
+import com.seniors.domain.chat.entity.ChatMessage;
 import com.seniors.domain.chat.service.ChatMessageService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -32,11 +33,10 @@ public class ChatMessageController {
     @MessageMapping("/chat/sendMessage")
     public void chatMessageSend(@Payload ChatMessageTransDto chat) {
 
-        chatMessageService.saveChatMessage(chat);
-
-        template.convertAndSend("/sub/chat/room/" + chat.getChatRoomId(), chat);
+        template.convertAndSend("/sub/chat/room/" + chat.getChatRoomId(), chatMessageService.saveChatMessage(chat));
 
     }
+
 
 
 }
