@@ -45,8 +45,8 @@ public class JpaConfig {
 
     @Bean
     public PlatformTransactionManager transactionManager (
-
-            @Qualifier("entityManagerFactory") LocalContainerEntityManagerFactoryBean entityManagerFactory) {
+            @Qualifier("entityManagerFactory") LocalContainerEntityManagerFactoryBean entityManagerFactory
+    ) {
         JpaTransactionManager jpaTransactionManager = new JpaTransactionManager();
         jpaTransactionManager.setEntityManagerFactory(entityManagerFactory.getObject());
         return jpaTransactionManager;
