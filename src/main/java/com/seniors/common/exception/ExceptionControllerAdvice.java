@@ -7,6 +7,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.validation.BindException;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.ObjectError;
+import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -18,7 +19,7 @@ import java.util.List;
 import static com.seniors.common.constant.ResultCode.BAD_REQUEST;
 
 @Slf4j
-@RestControllerAdvice
+@ControllerAdvice
 public class ExceptionControllerAdvice {
 
 	@ExceptionHandler(ViewException.class)
@@ -29,20 +30,5 @@ public class ExceptionControllerAdvice {
 		mv.addObject("errorMessage", e.getMessage());
 		return mv;
 	}
-
-	@ResponseStatus(HttpStatus.BAD_REQUEST)
-	@ExceptionHandler(BindException.class)
-	public ResponseDto validation(BindException e) {
-		BindingResult bindingResult = e.getBindingResult();
-		List<ObjectError> objectErrors = bindingResult.getAllErrors();
-		List<String> errorMessages = new ArrayList<>();
-
-		for (ObjectError objectError : objectErrors) {
-			errorMessages.add(objectError.getDefaultMessage());
-		}
-		String errorMessage = String.join(", ", errorMessages);
-		return ResponseDto.of(false, BAD_REQUEST, errorMessage);
-	}
-
 
 }
