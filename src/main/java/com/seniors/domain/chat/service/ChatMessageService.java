@@ -24,13 +24,20 @@ public class ChatMessageService {
 
 
     @Transactional
-    public void saveChatMessage (ChatMessageDto.ChatMessageTransDto chat) {
+    public ChatMessageDto.GetChatMessageListRes saveChatMessage (ChatMessageDto.ChatMessageTransDto chat) {
         Users users = usersRepository.findById(chat.getUserId()).orElseThrow(
                 () -> new NotAuthorizedException("유효하지 않은 회원입니다.")
         );
         ChatRoom chatRoom = chatRoomRepository.findById(chat.getChatRoomId()).orElseThrow();
-        ChatMessage chatMessage = ChatMessage.of(chatRoom, users, chat.getContent());
-        chatMessageRepository.save(chatMessage);
+
+        ChatMessage chatMessage = chatMessageRepository.save(ChatMessage.of(chatRoom, users, chat.getContent()));
+        ChatMessageDto.GetChatMessageListRes chatMessageListRes =
+                new ChatMessageDto.GetChatMessageListRes(
+                        chatMessage.getId(), chatMessage.getContent(),
+                        chatMessage.getCreatedAt(), chatMessage.getLastModifiedDate(),
+                        chatMessage.getUsers()
+                );
+        return chatMessageListRes;
 
     }
 
