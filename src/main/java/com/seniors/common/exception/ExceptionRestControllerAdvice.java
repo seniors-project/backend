@@ -3,72 +3,67 @@ package com.seniors.common.exception;
 import com.seniors.common.dto.ErrorResponse;
 import com.seniors.common.constant.ResultCode;
 import com.seniors.common.exception.type.BadRequestException;
-import com.seniors.common.exception.type.InternalException;
 import com.seniors.common.exception.type.NotFoundException;
-import jakarta.validation.ConstraintViolationException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
-import org.springframework.validation.BindException;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.ObjectError;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
-import static org.springframework.web.reactive.function.server.ServerResponse.badRequest;
+import java.util.ArrayList;
+import java.util.List;
+
+
 
 @Slf4j
 @RestControllerAdvice(annotations = RestController.class)
 public class ExceptionRestControllerAdvice extends ResponseEntityExceptionHandler {
-	@ExceptionHandler
-	public ResponseEntity<Object> validation(ConstraintViolationException e, WebRequest request) {
-		return handleExceptionInternal(e, ResultCode.VALIDATION_ERROR, request);
-	}
 
-	@ExceptionHandler
-	public ResponseEntity<Object> general(InternalException e, WebRequest request) {
-		return handleExceptionInternal(e, e.getResultCode(), request);
-	}
+    @ExceptionHandler(BadRequestException.class)
+    public ResponseEntity<Object> handleBadRequestException(BadRequestException e, WebRequest request) {
+        return handleExceptionInternal(e, ResultCode.BAD_REQUEST, request);
+    }
 
-	@ExceptionHandler
-	public ResponseEntity<Object> exception(Exception e, WebRequest request) {
-		return handleExceptionInternal(e, ResultCode.INTERNAL_ERROR, request);
-	}
+    @ExceptionHandler(NotFoundException.class)
+    public ResponseEntity<Object> handleNotFoundException(NotFoundException e, WebRequest request) {
+        return handleExceptionInternal(e, ResultCode.NOT_FOUND, request);
+    }
 
-	@ExceptionHandler
-	public ResponseEntity<Object> handleBadRequestException(BadRequestException e, WebRequest request) {
-		return handleExceptionInternal(e, ResultCode.BAD_REQUEST, request);
-	}
+    @ExceptionHandler(Exception.class)
+    public ResponseEntity<Object> handleAllException(Exception e, WebRequest request) {
+        return handleExceptionInternal(e, ResultCode.INTERNAL_ERROR, request);
+    }
 
-	@ExceptionHandler
-	public ResponseEntity<Object> handleNotFoundException(NotFoundException e, WebRequest request) {
-		return handleExceptionInternal(e, ResultCode.NOT_FOUND, request);
-	}
+    @Override
+    protected ResponseEntity<Object> handleMethodArgumentNotValid(MethodArgumentNotValidException ex, HttpHeaders headers,
+                                                                  HttpStatusCode statusCode, WebRequest request) {
+        BindingResult bindingResult = ex.getBindingResult();
+        List<ObjectError> objectErrors = bindingResult.getAllErrors();
+        List<String> errorMessages = new ArrayList<>();
+        for (ObjectError objectError : objectErrors) {
+            errorMessages.add(objectError.getDefaultMessage());
+        }
+        String errorMessage = String.join(" ", errorMessages);
+        ErrorResponse errorResponse = ErrorResponse.of(ResultCode.VALIDATION_ERROR, errorMessage);
+        return new ResponseEntity<Object>(errorResponse, ResultCode.VALIDATION_ERROR.getHttpStatus());
+    }
 
-//	@Override
-//	protected ResponseEntity<Object> handleExceptionInternal(Exception ex, Object body,
-//	                                                         HttpHeaders headers, HttpStatus status, WebRequest request) {
-//		return handleExceptionInternal(ex,  ResultCode.valueOf(status), headers, status, request);
-//	}
 
-
-	private ResponseEntity<Object> handleExceptionInternal(Exception e, ResultCode errorCode,
-	                                                       WebRequest request) {
-		return handleExceptionInternal(e, errorCode, HttpHeaders.EMPTY, errorCode.getHttpStatus(),
-				request);
-	}
-
-	private ResponseEntity<Object> handleExceptionInternal(Exception e, ResultCode errorCode,
-	                                                       HttpHeaders headers, HttpStatus status, WebRequest request) {
-		return super.handleExceptionInternal(
-				e,
-				ErrorResponse.of(errorCode, errorCode.getMessage(e)),
-				headers,
-				status,
-				request
-		);
-	}
+    private ResponseEntity<Object> handleExceptionInternal(Exception e, ResultCode errorCode,
+                                                           WebRequest request) {
+        return super.handleExceptionInternal(
+                e,
+                ErrorResponse.of(errorCode, errorCode.getMessage(e)),
+                HttpHeaders.EMPTY,
+                errorCode.getHttpStatus(),
+                request
+        );
+    }
 }
