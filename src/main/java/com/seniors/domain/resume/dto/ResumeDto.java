@@ -18,7 +18,6 @@ import java.util.stream.Collectors;
 @Setter
 public class ResumeDto {
 	@Data
-	@Setter
 	public static class SaveResumeReq {
 
 		@Schema(description = "소개글")
@@ -37,9 +36,6 @@ public class ResumeDto {
 		@Schema(description = "이름")
 		private String name;
 
-		@Schema(description = "사진")
-		private MultipartFile image;
-
 		@Valid
 		private List<CertificateDto.saveCertificateReq> certificateList = new ArrayList<>();
 
@@ -52,7 +48,6 @@ public class ResumeDto {
 	}
 
 	@Data
-	@Setter
 	public static class ModifyResumeReq {
 
 		@Schema(description = "기본키")
@@ -73,9 +68,6 @@ public class ResumeDto {
 		@Size(max = 30, message = "이름은 30자 이하여야 합니다.")
 		@Schema(description = "이름")
 		private String name;
-
-		@Schema(description = "사진")
-		private MultipartFile image;
 
 		@Valid
 		private List<CertificateDto.modifyCertificateReq> certificateList = new ArrayList<>();
