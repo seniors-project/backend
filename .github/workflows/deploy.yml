@@ -71,7 +71,7 @@ jobs:
       - name: Clone and Checkout to config Repository
         uses: actions/checkout@v3
         with:
-          repository: strangehoon/seniors-config
+          repository: seniors-project/backend-config
           token: ${{ secrets.HELMREPO }}
 
       # yq 사용해 yaml file edit
@@ -87,8 +87,8 @@ jobs:
           API_TOKEN_GITHUB: ${{ secrets.HELMREPO }}
         with:
           source-directory: "."
-          destination-github-username: "strangehoon"
-          destination-repository-name: "seniors-config"
+          destination-github-username: "seniors-project"
+          destination-repository-name: "backend-config"
           user-email: strangehoon2@gmail.com
           target-branch: main
           commit-message: "Update Image version to ${{ steps.meta.outputs.version  }}"
