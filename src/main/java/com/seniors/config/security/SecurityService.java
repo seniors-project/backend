@@ -30,8 +30,4 @@ public class SecurityService {
 		return (CustomUserDetails) authentication.getPrincipal();
 	}
 
-	public void signOut() {
-		SecurityContextHolder.getContext().getAuthentication().setAuthenticated(false);
-	}
-
 }
