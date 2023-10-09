@@ -23,7 +23,9 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.util.List;
@@ -51,12 +53,13 @@ public class ResumeController {
             content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class)))
     @ApiResponse(responseCode = "500", description = "서버 에러.",
             content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class)))
-    @PostMapping("")
+    @PostMapping(value = "", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
     public DataResponseDto<List<String>> resumeAdd(
-            @ModelAttribute @Valid ResumeDto.SaveResumeReq resumeDto,
+            @RequestPart(value = "data") @Valid ResumeDto.SaveResumeReq resumeDto,
+            @RequestPart MultipartFile image,
             @LoginUsers CustomUserDetails userDetails
         ) throws IOException {
-        resumeService.addResume(resumeDto, userDetails.getUserId());
+        resumeService.addResume(resumeDto, image, userDetails.getUserId());
         return DataResponseDto.of(null);
     }
 
@@ -132,13 +135,14 @@ public class ResumeController {
             content = @Content(mediaType = "application/json", schema = @Schema(implementation = ForbiddenException.class)))
     @ApiResponse(responseCode = "500", description = "서버 에러.",
             content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class)))
-    @PatchMapping("/{resumeId}")
+    @PatchMapping(value = "/{resumeId}", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
     public DataResponseDto<List<String>> resumeModify(
             @PathVariable Long resumeId,
-            @ModelAttribute @Valid ResumeDto.ModifyResumeReq resumeDto,
+            @RequestPart(value = "data") @Valid ResumeDto.ModifyResumeReq resumeDto,
+            @RequestPart MultipartFile image,
             @LoginUsers CustomUserDetails userDetails
     ) throws IOException {
-        resumeService.modifyResume(resumeId, resumeDto, userDetails.getUserId());
+        resumeService.modifyResume(resumeId, resumeDto, image, userDetails.getUserId());
         return DataResponseDto.of(null);
     }
 
