@@ -37,7 +37,8 @@ public class StompHandler {
 
         GenericMessage generic = (GenericMessage) accessor.getHeader("simpConnectMessage");
         Map nativeHeaders = (Map) generic.getHeaders().get("nativeHeaders");
-        String jwt = (String) ((List) nativeHeaders.get("Authorization")).get(0);
+        String jwt = (String) ((List) nativeHeaders.get("authorization")).get(0);
+        jwt = jwt.substring(7);
         String sessionId = stompHeaderAccessor.getSessionId();
         Long userId = tokenService.getUserDetailsByToken(jwt).getUserId();
 
