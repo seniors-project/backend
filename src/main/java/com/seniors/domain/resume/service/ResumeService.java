@@ -22,6 +22,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -40,7 +42,7 @@ public class ResumeService {
 
     private final S3Uploader s3Uploader;
     @Transactional
-    public Long addResume(SaveResumeReq resumeReq, Long userId) throws IOException {
+    public Long addResume(SaveResumeReq resumeReq, MultipartFile image, Long userId) throws IOException {
         if (resumeRepository.findByUsersId(userId).isPresent()) {
             throw new BadRequestException("이미 해당 유저의 이력서가 존재합니다.");
         }
@@ -61,8 +63,8 @@ public class ResumeService {
                 () -> new NotAuthorizedException("유효하지 않은 회원입니다.")
         );
         Resume resume = Resume.of(resumeReq, user);
-        if(!resumeReq.getImage().isEmpty()) {
-            String photoUrl = s3Uploader.upload(resumeReq.getImage(), "resumes");
+        if(!image.isEmpty()) {
+            String photoUrl = s3Uploader.upload(image, "resumes");
             resume.uploadPhotoUrl(photoUrl);
         }
         else{
@@ -134,7 +136,7 @@ public class ResumeService {
     }
 
     @Transactional
-    public void modifyResume(Long resumeId, ResumeDto.ModifyResumeReq resumeReq, Long userId) throws IOException {
+    public void modifyResume(Long resumeId, ResumeDto.ModifyResumeReq resumeReq, MultipartFile image, Long userId) throws IOException {
         Resume resume = resumeRepository.findById(resumeId).orElseThrow(
                 () ->new NotFoundException("이력서가 존재하지 않습니다.")
         );
@@ -159,8 +161,8 @@ public class ResumeService {
             throw new ForbiddenException("수정 권한이 없습니다.");
         }
 
-        if(!resumeReq.getImage().isEmpty()) {
-            String photoUrl = s3Uploader.upload(resumeReq.getImage(), "resumes");
+        if(!image.isEmpty()) {
+            String photoUrl = s3Uploader.upload(image, "resumes");
             resume.update(resumeReq, photoUrl);
         }
         else{
