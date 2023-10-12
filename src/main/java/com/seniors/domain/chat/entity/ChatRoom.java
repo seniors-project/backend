@@ -1,6 +1,6 @@
 package com.seniors.domain.chat.entity;
 
-import com.seniors.domain.common.BaseEntity;
+import com.seniors.common.entity.BaseEntity;
 import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Getter;

@@ -2,9 +2,9 @@ package com.seniors.domain.notification.controller;
 
 import com.seniors.common.annotation.LoginUsers;
 import com.seniors.common.dto.CustomPage;
+import com.seniors.common.dto.CustomSlice;
 import com.seniors.common.dto.DataResponseDto;
 import com.seniors.common.dto.ErrorResponse;
-import com.seniors.common.exception.type.BadRequestException;
 import com.seniors.common.exception.type.NotAuthorizedException;
 import com.seniors.common.exception.type.NotFoundException;
 import com.seniors.config.security.CustomUserDetails;
@@ -12,7 +12,6 @@ import com.seniors.domain.notification.dto.NotificationDto;
 import com.seniors.domain.notification.entity.Notification;
 import com.seniors.domain.notification.service.NotificationService;
 import com.seniors.domain.post.dto.PostDto;
-import io.swagger.v3.oas.annotations.Hidden;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -57,12 +56,12 @@ public class NotificationController {
 	@ApiResponse(responseCode = "500", description = "서버 에러.",
 			content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class)))
 	@GetMapping("")
-	public DataResponseDto<CustomPage<NotificationDto>> notificationList(
+	public DataResponseDto<CustomSlice<NotificationDto>> notificationList(
 			@Parameter(hidden = true) @LoginUsers CustomUserDetails userDetails,
 			@RequestParam int size,
 			@RequestParam(required = false) Long lastId
 	) {
-		CustomPage<NotificationDto> notificationList = notificationService.findNotificationList(userDetails, size, lastId);
+		CustomSlice<NotificationDto> notificationList = notificationService.findNotificationList(userDetails, size, lastId);
 		return DataResponseDto.of(notificationList);
 	}
 

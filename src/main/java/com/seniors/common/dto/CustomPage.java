@@ -46,20 +46,4 @@ public class CustomPage<T> {
         response.setEmpty(page.isEmpty());
         return response;
     }
-
-    public static <T> CustomPage<T> of(Slice<T> page) {
-        if (page == null) return null;
-        List<T> list = page.getContent();
-        CustomPage<T> response = new CustomPage<>();
-        response.setList(list);
-        response.setPageable(page.getPageable());
-        response.setLast(page.isLast());
-        response.setFirst(page.isFirst());
-        response.setSize(page.getSize());
-        response.setNumber(page.getNumber());
-        response.setSort(page.getSort());
-        response.setNumberOfElements(page.getNumberOfElements());
-        response.setEmpty(page.isEmpty());
-        return response;
-    }
 }
