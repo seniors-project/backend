@@ -1,7 +1,7 @@
 package com.seniors.domain.post.entity;
 
 import com.seniors.domain.comment.entity.Comment;
-import com.seniors.domain.common.BaseTimeEntity;
+import com.seniors.common.entity.BaseTimeEntity;
 import com.seniors.domain.users.entity.Users;
 import jakarta.persistence.*;
 import lombok.AccessLevel;

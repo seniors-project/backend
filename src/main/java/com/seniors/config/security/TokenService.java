@@ -62,12 +62,11 @@ public class TokenService {
 		LocalDateTime now = LocalDateTime.now();
 		Map<String, Object> claims = new HashMap<>();
 		claims.put("sub", "access-token");
-		claims.put("iss", secretKey);
 		claims.put("iat", Timestamp.valueOf(now));
 		claims.put("exp", Timestamp.valueOf(now.plusMinutes(plusExpMinutes)).getTime() / 1000);
 		claims.put("userId", user.getId());
 		claims.put("userNickname", user.getNickname());
-		claims.put("userEmail", user.getEmail());
+		claims.put("userEmail", user.getEmail() != null ? user.getEmail() : null);
 		claims.put("createdAt",
 				LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMddHHmmss")));
 
@@ -78,7 +77,6 @@ public class TokenService {
 		LocalDateTime now = LocalDateTime.now();
 		Map<String, Object> claims = new HashMap<>();
 		claims.put("sub", "refresh-token");
-		claims.put("iss", secretKey);
 		claims.put("userId", user.getId());
 		claims.put("iat", Timestamp.valueOf(now));
 		claims.put("exp", Timestamp.valueOf(now.plusMinutes(plusExpMinutes)).getTime() / 1000);

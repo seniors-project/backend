@@ -1,7 +1,7 @@
 package com.seniors.domain.chat.entity;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.seniors.domain.common.BaseEntity;
+import com.seniors.common.entity.BaseEntity;
 import com.seniors.domain.users.entity.Users;
 import jakarta.persistence.*;
 import lombok.AccessLevel;

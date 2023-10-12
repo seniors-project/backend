@@ -2,7 +2,7 @@ package com.seniors.domain.notification.service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.seniors.common.dto.CustomPage;
+import com.seniors.common.dto.CustomSlice;
 import com.seniors.common.exception.type.NotAuthorizedException;
 import com.seniors.common.exception.type.NotFoundException;
 import com.seniors.config.security.CustomUserDetails;
@@ -133,14 +133,14 @@ public class NotificationService {
 	}
 
 	@Transactional
-	public CustomPage<NotificationDto> findNotificationList(CustomUserDetails userDetails, int size, Long lastId) {
+	public CustomSlice<NotificationDto> findNotificationList(CustomUserDetails userDetails, int size, Long lastId) {
 		Sort.Direction direction = Sort.Direction.DESC;
 		Pageable pageable = PageRequest.of(0, size, Sort.by(direction, "id"));
 		Users users =  usersRepository.findById(userDetails.getUserId()).orElseThrow(
 				() -> new NotAuthorizedException("유효하지 않은 회원입니다.")
 		);
 		Slice<NotificationDto> results = notificationRepository.findNotificationList(users.getId(), pageable, lastId);
-		return CustomPage.of(results);
+		return CustomSlice.from(results);
 	}
 
 	@Transactional
