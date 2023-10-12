@@ -5,7 +5,7 @@ import com.seniors.common.constant.OAuthProvider;
 import com.seniors.domain.chat.entity.ChatMessage;
 import com.seniors.domain.chat.entity.ChatRoomMembers;
 import com.seniors.domain.comment.entity.Comment;
-import com.seniors.domain.common.BaseEntity;
+import com.seniors.common.entity.BaseEntity;
 import com.seniors.domain.notification.entity.Notification;
 import com.seniors.domain.post.entity.Post;
 import com.seniors.domain.post.entity.PostLike;
@@ -14,9 +14,7 @@ import lombok.*;
 import org.hibernate.annotations.BatchSize;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 @Entity
 @Getter

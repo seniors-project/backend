@@ -1,10 +1,7 @@
 package com.seniors.domain.resume.entity;
 
-import com.seniors.domain.common.BaseEntity;
-import com.seniors.domain.common.BaseTimeEntity;
+import com.seniors.common.entity.BaseTimeEntity;
 import com.seniors.domain.resume.dto.CertificateDto;
-import com.seniors.domain.resume.dto.ResumeDto;
-import com.seniors.domain.users.entity.Users;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.SQLDelete;

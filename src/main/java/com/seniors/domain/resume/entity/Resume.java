@@ -1,9 +1,6 @@
 package com.seniors.domain.resume.entity;
 
-import com.seniors.domain.comment.entity.Comment;
-import com.seniors.domain.common.BaseEntity;
-import com.seniors.domain.common.BaseTimeEntity;
-import com.seniors.domain.post.entity.Post;
+import com.seniors.common.entity.BaseTimeEntity;
 import com.seniors.domain.resume.dto.ResumeDto;
 import com.seniors.domain.users.entity.Users;
 import jakarta.persistence.*;
@@ -14,7 +11,6 @@ import lombok.NoArgsConstructor;
 import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Where;
-import org.hibernate.type.TrueFalseConverter;
 
 import java.util.ArrayList;
 import java.util.List;

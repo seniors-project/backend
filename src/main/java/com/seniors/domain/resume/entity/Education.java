@@ -1,15 +1,11 @@
 package com.seniors.domain.resume.entity;
 
-import com.seniors.domain.common.BaseEntity;
-import com.seniors.domain.common.BaseTimeEntity;
-import com.seniors.domain.resume.dto.CertificateDto;
+import com.seniors.common.entity.BaseTimeEntity;
 import com.seniors.domain.resume.dto.EducationDto;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Where;
-
-import java.time.Year;
 
 import static java.lang.Boolean.FALSE;
 
