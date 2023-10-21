@@ -37,16 +37,19 @@ public class StompHandler {
 
         GenericMessage generic = (GenericMessage) accessor.getHeader("simpConnectMessage");
         Map nativeHeaders = (Map) generic.getHeaders().get("nativeHeaders");
-        String jwt = (String) ((List) nativeHeaders.get("authorization")).get(0);
-        jwt = jwt.substring(7);
-        String sessionId = stompHeaderAccessor.getSessionId();
-        Long userId = tokenService.getUserDetailsByToken(jwt).getUserId();
 
-        if (!loginUsers.containsValue(userId)) {
-            loginUsers.put(sessionId, userId);
+        if (nativeHeaders.get("Authorization") != null) {
+            String jwt = (String) ((List) nativeHeaders.get("Authorization")).get(0);
+            jwt = jwt.substring(7);
+            String sessionId = stompHeaderAccessor.getSessionId();
+            Long userId = tokenService.getUserDetailsByToken(jwt).getUserId();
+
+            if (!loginUsers.containsValue(userId)) {
+                loginUsers.put(sessionId, userId);
+            }
+
+            messagingTemplate.convertAndSend("/sub/notification", loginUsers.values());
         }
-
-        messagingTemplate.convertAndSend("/sub/notification", loginUsers.values());
 
     }
 
@@ -55,8 +58,10 @@ public class StompHandler {
         MessageHeaderAccessor accessor = NativeMessageHeaderAccessor.getAccessor(event.getMessage(), SimpMessageHeaderAccessor.class);
         StompHeaderAccessor stompHeaderAccessor = StompHeaderAccessor.wrap(event.getMessage());
 
-        loginUsers.remove(stompHeaderAccessor.getSessionId());
+        if (loginUsers.containsKey(stompHeaderAccessor.getSessionId())) {
+            loginUsers.remove(stompHeaderAccessor.getSessionId());
+            messagingTemplate.convertAndSend("/sub/notification", loginUsers.values());
+        }
 
-        messagingTemplate.convertAndSend("/sub/notification", loginUsers.values());
     }
 }
