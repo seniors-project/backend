@@ -1,6 +1,5 @@
 package com.seniors.domain.chat.service;
 
-import com.seniors.common.dto.DataResponseDto;
 import com.seniors.common.exception.type.NotAuthorizedException;
 import com.seniors.domain.chat.dto.ChatRoomDto;
 import com.seniors.domain.chat.entity.ChatRoom;
@@ -55,8 +54,7 @@ public class ChatRoomService {
 
     @Transactional(readOnly = true)
     public UsersDto.GetChatUserRes findChatRoom(Long userId) {
-        UsersDto.GetChatUserRes getChatUserRes = chatRoomRepository.findAllChatRoom(userId);
-        return getChatUserRes;
+        return chatRoomRepository.findAllChatRoom(userId);
     }
 
     @Transactional
