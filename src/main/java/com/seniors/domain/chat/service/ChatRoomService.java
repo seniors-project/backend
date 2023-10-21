@@ -42,8 +42,8 @@ public class ChatRoomService {
                     () -> new NotAuthorizedException("유효하지 않은 회원입니다")
             );
 
-            chatRoomMembersRepository.save(ChatRoomMembers.of(opponentUser.getNickname(), chatRoom, user));
-            chatRoomMembersRepository.save(ChatRoomMembers.of(user.getNickname(), chatRoom, opponentUser));
+            chatRoomMembersRepository.save(ChatRoomMembers.of(opponentUser.getNickname(), chatRoom, opponentUser));
+            chatRoomMembersRepository.save(ChatRoomMembers.of(user.getNickname(), chatRoom, user));
 
             return chatRoomRepository.findOneChatRoom(chatRoom.getId());
 
