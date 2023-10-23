@@ -30,9 +30,8 @@ public class ChatRoomService {
 
         Optional<Long> chatRoomId = chatRoomMembersRepository.findChatRoomIdByUserIds(userId, opponentId);
 
-        if (chatRoomId.get() == 0L) {
-            ChatRoom chatRoom = ChatRoom.builder().build();
-            chatRoomRepository.save(chatRoom);
+        if (chatRoomId.isEmpty()) {
+            ChatRoom chatRoom = chatRoomRepository.save(ChatRoom.builder().build());
 
             Users user = usersRepository.findById(userId).orElseThrow(
                     () -> new NotAuthorizedException("유효하지 않은 회원입니다")

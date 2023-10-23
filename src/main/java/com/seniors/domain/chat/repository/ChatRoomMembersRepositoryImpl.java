@@ -51,6 +51,12 @@ public class ChatRoomMembersRepositoryImpl extends BasicRepoSupport implements C
 				))
 				.fetchFirst();
 
-		return Optional.of(chatRoomIds != null ? chatRoomIds : 0L);
+		Optional<Long> chatRoomId = Optional.empty();
+
+		if (chatRoomIds != null) {
+			chatRoomId = chatRoomIds.describeConstable();
+		}
+
+		return chatRoomId;
 	}
 }
