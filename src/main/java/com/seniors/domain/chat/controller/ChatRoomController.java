@@ -57,9 +57,10 @@ public class ChatRoomController {
             content = @Content(mediaType = "application/json", schema = @Schema(implementation = ChatRoomDto.GetChatRoomRes.class)))
     @GetMapping("/{roomId}")
     public DataResponseDto<ChatRoomDto.GetChatRoomRes> chatRoomEnter (
-            @PathVariable Long roomId) {
+            @PathVariable Long roomId,
+            @LoginUsers CustomUserDetails userDetails) {
 
-        ChatRoomDto.GetChatRoomRes getChatRoomRes = chatRoomService.findOneChatRoom(roomId);
+        ChatRoomDto.GetChatRoomRes getChatRoomRes = chatRoomService.findOneChatRoom(roomId, userDetails.getUserId());
 
         return DataResponseDto.of(getChatRoomRes);
     }

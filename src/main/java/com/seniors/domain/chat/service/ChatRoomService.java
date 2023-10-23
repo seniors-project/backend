@@ -57,9 +57,15 @@ public class ChatRoomService {
         return chatRoomRepository.findAllChatRoom(userId);
     }
 
-    @Transactional
-    public ChatRoomDto.GetChatRoomRes findOneChatRoom(Long roomId) {
-        return chatRoomRepository.findOneChatRoom(roomId);
+    @Transactional(readOnly = true)
+    public ChatRoomDto.GetChatRoomRes findOneChatRoom(Long chatRoomId, Long userId) {
+
+        if (chatRoomMembersRepository.findByChatRoomIdAndUsersId(chatRoomId, userId).isPresent()) {
+            return chatRoomRepository.findOneChatRoom(chatRoomId);
+        } else {
+            throw  new NotAuthorizedException("잘못된 접근입니다");
+        }
+
     }
 
     @Transactional
