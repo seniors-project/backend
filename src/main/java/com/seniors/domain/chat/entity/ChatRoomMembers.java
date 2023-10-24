@@ -1,7 +1,7 @@
 package com.seniors.domain.chat.entity;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.seniors.common.entity.BaseEntity;
+import com.seniors.common.entity.BaseTimeEntity;
 import com.seniors.domain.users.entity.Users;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
@@ -16,7 +16,7 @@ import org.hibernate.annotations.Where;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @SQLDelete(sql = "UPDATE ChatRoomMembers SET isDeleted = true WHERE id = ?")
 @Where(clause = "isDeleted = false")
-public class ChatRoomMembers extends BaseEntity {
+public class ChatRoomMembers extends BaseTimeEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

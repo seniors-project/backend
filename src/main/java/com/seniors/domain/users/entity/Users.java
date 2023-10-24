@@ -2,10 +2,10 @@ package com.seniors.domain.users.entity;
 
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.seniors.common.constant.OAuthProvider;
+import com.seniors.common.entity.BaseTimeEntity;
 import com.seniors.domain.chat.entity.ChatMessage;
 import com.seniors.domain.chat.entity.ChatRoomMembers;
 import com.seniors.domain.comment.entity.Comment;
-import com.seniors.common.entity.BaseEntity;
 import com.seniors.domain.notification.entity.Notification;
 import com.seniors.domain.post.entity.Post;
 import com.seniors.domain.post.entity.PostLike;
@@ -20,7 +20,7 @@ import java.util.List;
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Users extends BaseEntity {
+public class Users extends BaseTimeEntity {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
