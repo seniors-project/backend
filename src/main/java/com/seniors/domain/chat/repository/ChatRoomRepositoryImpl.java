@@ -68,6 +68,7 @@ public class ChatRoomRepositoryImpl extends BasicRepoSupport implements ChatRoom
 								))
 								.groupBy(chatMessage.chatRoom.id)
 				))
+				.orderBy(chatMessage.chatRoom.id.asc())
 				.fetch();
 
 		List<Long> chatRoomId = latestMessages.stream()
@@ -80,6 +81,7 @@ public class ChatRoomRepositoryImpl extends BasicRepoSupport implements ChatRoom
 						chatRoomMembers.chatRoom.id.in(chatRoomId),
 						chatRoomMembers.users.id.ne(userId)
 				)
+				.orderBy(chatRoomMembers.chatRoom.id.asc())
 				.fetch();
 
 		List<ChatRoomMembersDto.GetChatRoomMembersRes> getChatRoomMembersResList = new ArrayList<>();
