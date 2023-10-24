@@ -1,6 +1,5 @@
 package com.seniors.domain.chat.service;
 
-import com.seniors.common.dto.DataResponseDto;
 import com.seniors.common.exception.type.NotAuthorizedException;
 import com.seniors.domain.chat.dto.ChatRoomDto;
 import com.seniors.domain.chat.entity.ChatRoom;
@@ -31,9 +30,8 @@ public class ChatRoomService {
 
         Optional<Long> chatRoomId = chatRoomMembersRepository.findChatRoomIdByUserIds(userId, opponentId);
 
-        if (chatRoomId.get() == 0L) {
-            ChatRoom chatRoom = ChatRoom.builder().build();
-            chatRoomRepository.save(chatRoom);
+        if (chatRoomId.isEmpty()) {
+            ChatRoom chatRoom = chatRoomRepository.save(ChatRoom.builder().build());
 
             Users user = usersRepository.findById(userId).orElseThrow(
                     () -> new NotAuthorizedException("유효하지 않은 회원입니다")
@@ -42,8 +40,8 @@ public class ChatRoomService {
                     () -> new NotAuthorizedException("유효하지 않은 회원입니다")
             );
 
-            chatRoomMembersRepository.save(ChatRoomMembers.of(opponentUser.getNickname(), chatRoom, user));
-            chatRoomMembersRepository.save(ChatRoomMembers.of(user.getNickname(), chatRoom, opponentUser));
+            chatRoomMembersRepository.save(ChatRoomMembers.of(opponentUser.getNickname(), chatRoom, opponentUser));
+            chatRoomMembersRepository.save(ChatRoomMembers.of(user.getNickname(), chatRoom, user));
 
             return chatRoomRepository.findOneChatRoom(chatRoom.getId());
 
@@ -55,13 +53,18 @@ public class ChatRoomService {
 
     @Transactional(readOnly = true)
     public UsersDto.GetChatUserRes findChatRoom(Long userId) {
-        UsersDto.GetChatUserRes getChatUserRes = chatRoomRepository.findAllChatRoom(userId);
-        return getChatUserRes;
+        return chatRoomRepository.findAllChatRoom(userId);
     }
 
-    @Transactional
-    public ChatRoomDto.GetChatRoomRes findOneChatRoom(Long roomId) {
-        return chatRoomRepository.findOneChatRoom(roomId);
+    @Transactional(readOnly = true)
+    public ChatRoomDto.GetChatRoomRes findOneChatRoom(Long chatRoomId, Long userId) {
+
+        if (chatRoomMembersRepository.findByChatRoomIdAndUsersId(chatRoomId, userId).isPresent()) {
+            return chatRoomRepository.findOneChatRoom(chatRoomId);
+        } else {
+            throw  new NotAuthorizedException("잘못된 접근입니다");
+        }
+
     }
 
     @Transactional
