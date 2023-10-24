@@ -63,7 +63,7 @@ public class ResumeService {
                 () -> new NotAuthorizedException("유효하지 않은 회원입니다.")
         );
         Resume resume = Resume.of(resumeReq, user);
-        if(!image.isEmpty()) {
+        if(image != null) {
             String photoUrl = s3Uploader.upload(image, "resumes");
             resume.uploadPhotoUrl(photoUrl);
         }

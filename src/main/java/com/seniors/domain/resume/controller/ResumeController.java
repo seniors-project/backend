@@ -56,7 +56,7 @@ public class ResumeController {
     @PostMapping(value = "", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
     public DataResponseDto<List<String>> resumeAdd(
             @RequestPart(value = "data") @Valid ResumeDto.SaveResumeReq resumeDto,
-            @RequestPart MultipartFile image,
+            @RequestPart(required = false) MultipartFile image,
             @LoginUsers CustomUserDetails userDetails
         ) throws IOException {
         resumeService.addResume(resumeDto, image, userDetails.getUserId());
