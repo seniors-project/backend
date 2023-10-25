@@ -67,6 +67,9 @@ public class TokenService {
 		claims.put("userId", user.getId());
 		claims.put("userNickname", user.getNickname());
 		claims.put("userEmail", user.getEmail() != null ? user.getEmail() : null);
+		claims.put("userProfileImageUrl", user.getProfileImageUrl());
+		claims.put("userSnsId", user.getSnsId());
+		claims.put("userGender", user.getGender());
 		claims.put("createdAt",
 				LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMddHHmmss")));
 
@@ -78,6 +81,10 @@ public class TokenService {
 		Map<String, Object> claims = new HashMap<>();
 		claims.put("sub", "refresh-token");
 		claims.put("userId", user.getId());
+		claims.put("userProfileImageUrl", user.getProfileImageUrl());
+		claims.put("userSnsId", user.getSnsId());
+		claims.put("userEmail", user.getEmail());
+		claims.put("userGender", user.getGender());
 		claims.put("iat", Timestamp.valueOf(now));
 		claims.put("exp", Timestamp.valueOf(now.plusMinutes(plusExpMinutes)).getTime() / 1000);
 		claims.put("createdAt",
@@ -153,8 +160,13 @@ public class TokenService {
 		}
 
 		Long userId = Long.parseLong(claims.get("userId").toString());
+		String userSnsId = claims.get("userSnsId") != null ? claims.get("userSnsId").toString() : null;
+		String userEmail = claims.get("userEmail") != null ? claims.get("userEmail").toString() : null;
+		String userNickname = claims.get("userNickname").toString();
+		String userGender = claims.get("userGender") != null ? claims.get("userGender").toString() : null;
+		String userProfileImageUrl = claims.get("userProfileImageUrl") != null ? claims.get("userProfileImageUrl").toString() : null;
 
-		return new CustomUserDetails(userId, null, null, null, null, null);
+		return new CustomUserDetails(userId, userSnsId, userEmail, userNickname, userGender, userProfileImageUrl);
 	}
 
 }

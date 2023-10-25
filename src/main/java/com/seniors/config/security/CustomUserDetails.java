@@ -41,7 +41,7 @@ public class CustomUserDetails implements UserDetails {
 
 	@Override
 	public String getUsername() {
-		return userId.toString();
+		return userNickname;
 	}
 
 	@Override
@@ -67,4 +67,5 @@ public class CustomUserDetails implements UserDetails {
 	public void setUserId(Long userId) {
 		this.userId = userId;
 	}
+
 }
