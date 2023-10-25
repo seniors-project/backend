@@ -142,7 +142,6 @@ public class TokenService {
 		String userGender = claims.get("userGender") != null ? claims.get("userGender").toString() : null;
 		String userProfileImageUrl = claims.get("userProfileImageUrl") != null ? claims.get("userProfileImageUrl").toString() : null;
 
-		log.info("profile image: {}", userProfileImageUrl);
 		return new CustomUserDetails(userId, userSnsId, userEmail, userNickname, userGender, userProfileImageUrl);
 	}
 
@@ -166,7 +165,7 @@ public class TokenService {
 		String userNickname = claims.get("userNickname").toString();
 		String userGender = claims.get("userGender") != null ? claims.get("userGender").toString() : null;
 		String userProfileImageUrl = claims.get("userProfileImageUrl") != null ? claims.get("userProfileImageUrl").toString() : null;
-		log.info("profile image: {}", userProfileImageUrl);
+
 		return new CustomUserDetails(userId, userSnsId, userEmail, userNickname, userGender, userProfileImageUrl);
 	}
 
