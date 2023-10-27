@@ -22,6 +22,11 @@ import java.util.Set;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Where(clause = "isDeleted = false")
 @SQLDelete(sql = "UPDATE Post SET isDeleted = true WHERE id = ?")
+@Table(name = "Post", indexes = {
+		@Index(name = "idx_userId", columnList = "userId"),
+		@Index(name = "idx_isDeleted", columnList = "isDeleted"),
+		@Index(name = "idx_postId_userId_isDeleted", columnList = "id, userId, isDeleted")
+})
 public class Post extends BaseTimeEntity {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
