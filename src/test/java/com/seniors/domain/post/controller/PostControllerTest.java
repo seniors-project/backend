@@ -5,6 +5,7 @@ import com.seniors.common.constant.OAuthProvider;
 import com.seniors.common.constant.ResultCode;
 import com.seniors.config.security.CustomUserDetails;
 import com.seniors.domain.post.dto.PostDto.PostCreateDto;
+import com.seniors.domain.post.dto.PostDto.SetPostDto;
 import com.seniors.domain.post.entity.Post;
 import com.seniors.domain.post.entity.PostLike;
 import com.seniors.domain.post.repository.post.PostRepository;
@@ -43,6 +44,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @ActiveProfiles("dev")
 @Transactional
 class PostControllerTest {
+
 
 	@Autowired
 	private ObjectMapper objectMapper;
@@ -112,9 +114,7 @@ class PostControllerTest {
 	@DisplayName("생성 요청 시 title 값은 필수")
 	void postAddNotExistTitle() throws Exception {
 		// given
-		PostCreateDto request = PostCreateDto.builder()
-				.content("글 내용입니다.")
-				.build();
+		SetPostDto request = PostCreateDto.of("글 내용입니다.", "");
 		String json = objectMapper.writeValueAsString(request);
 
 		// expected

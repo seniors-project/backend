@@ -49,7 +49,7 @@ public class ResumeService {
 
         for(CareerDto.saveCareerReq saveCareerReq : resumeReq.getCareerList()){
             if(saveCareerReq.getEndedAt()!= null && saveCareerReq.getIsAttendanced()==true){
-                throw new BadRequestException("퇴사연도를 입력하심면 재직중 여부를 체크하실 수 없습니다.");
+                throw new BadRequestException("퇴사연도를 입력하시면 재직중 여부를 체크하실 수 없습니다.");
             }
         }
 
