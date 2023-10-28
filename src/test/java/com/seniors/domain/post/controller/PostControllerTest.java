@@ -4,6 +4,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.seniors.common.constant.OAuthProvider;
 import com.seniors.common.constant.ResultCode;
 import com.seniors.config.security.CustomUserDetails;
+import com.seniors.config.security.JwtUtil;
+import com.seniors.config.security.TokenService;
 import com.seniors.domain.post.dto.PostDto.PostCreateDto;
 import com.seniors.domain.post.dto.PostDto.SetPostDto;
 import com.seniors.domain.post.entity.Post;
@@ -18,6 +20,8 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.http.HttpMethod;
+import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -25,13 +29,16 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.nio.charset.StandardCharsets;
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 import static org.hamcrest.Matchers.is;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
+import static org.springframework.http.MediaType.MULTIPART_FORM_DATA;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -56,6 +63,12 @@ class PostControllerTest {
 	@Autowired
 	private UsersRepository usersRepository;
 	private Authentication authentication;
+	private String accessToken;
+	private JwtUtil jwtUtil;
+
+	@Autowired
+	private TokenService tokenService;
+
 	private Users users;
 
 	@BeforeEach
@@ -73,6 +86,7 @@ class PostControllerTest {
 
 		users = usersRepository.save(Users.builder()
 				.snsId(String.valueOf(randomNumber))
+				.nickname("tester1")
 				.email("test@test.com")
 				.gender("male")
 				.ageRange("20~29")
@@ -88,7 +102,10 @@ class PostControllerTest {
 				users.getProfileImageUrl());
 		userDetails.setUserId(users.getId());
 
+		accessToken = tokenService.generateToken(users, Long.valueOf(1000 * 60 * 60 * 24));
+
 		authentication = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
+
 		SecurityContextHolder.getContext().setAuthentication(authentication);
 	}
 
@@ -98,13 +115,20 @@ class PostControllerTest {
 		// given
 		String title = "글 제목입니다.";
 		String content = "글 내용입니다.";
+		PostCreateDto createDto = PostCreateDto.builder().title(title).content(content).build();
+		ObjectMapper objectMapper = new ObjectMapper();
+		String createDtoJson = objectMapper.writeValueAsString(createDto);
+
+		MockMultipartFile file = new MockMultipartFile("files", "tooth.png", "multipart/form-data", "uploadFile".getBytes(StandardCharsets.UTF_8));
+		MockMultipartFile request = new MockMultipartFile("data", null, "application/json", createDtoJson.getBytes(StandardCharsets.UTF_8));
 
 		// expected
-		mockMvc.perform(post("/api/posts")
-						.contentType(APPLICATION_JSON)
-								.param("title", title)
-								.param("content", content)
-						.principal(authentication)
+		mockMvc.perform(multipart(HttpMethod.POST, "/api/posts")
+						.file(file)
+						.file(request)
+						.accept(APPLICATION_JSON)
+						.contentType(MULTIPART_FORM_DATA)
+						.header("Authorization", accessToken)
 				)
 				.andExpect(status().isOk())
 				.andDo(print());
