@@ -31,7 +31,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.nio.charset.StandardCharsets;
 import java.util.List;
-import java.util.Map;
 import java.util.Random;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -64,7 +63,6 @@ class PostControllerTest {
 	private UsersRepository usersRepository;
 	private Authentication authentication;
 	private String accessToken;
-	private JwtUtil jwtUtil;
 
 	@Autowired
 	private TokenService tokenService;
@@ -119,12 +117,12 @@ class PostControllerTest {
 		ObjectMapper objectMapper = new ObjectMapper();
 		String createDtoJson = objectMapper.writeValueAsString(createDto);
 
-		MockMultipartFile file = new MockMultipartFile("files", "tooth.png", "multipart/form-data", "uploadFile".getBytes(StandardCharsets.UTF_8));
+//		MockMultipartFile file = new MockMultipartFile("files", "tooth.png", "multipart/form-data", "uploadFile".getBytes(StandardCharsets.UTF_8));
 		MockMultipartFile request = new MockMultipartFile("data", null, "application/json", createDtoJson.getBytes(StandardCharsets.UTF_8));
 
 		// expected
 		mockMvc.perform(multipart(HttpMethod.POST, "/api/posts")
-						.file(file)
+//						.file(file)
 						.file(request)
 						.accept(APPLICATION_JSON)
 						.contentType(MULTIPART_FORM_DATA)
@@ -138,14 +136,15 @@ class PostControllerTest {
 	@DisplayName("생성 요청 시 title 값은 필수")
 	void postAddNotExistTitle() throws Exception {
 		// given
-		SetPostDto request = PostCreateDto.of("글 내용입니다.", "");
-		String json = objectMapper.writeValueAsString(request);
-
+		SetPostDto setPostDto = PostCreateDto.of("글 내용입니다.", "");
+		String json = objectMapper.writeValueAsString(setPostDto);
+		MockMultipartFile request = new MockMultipartFile("data", null, "application/json", json.getBytes(StandardCharsets.UTF_8));
 		// expected
-		mockMvc.perform(post("/api/posts")
-						.contentType(APPLICATION_JSON)
-						.content(json)
-						.principal(authentication)
+		mockMvc.perform(multipart(HttpMethod.POST, "/api/posts")
+								.file(request)
+								.accept(APPLICATION_JSON)
+								.contentType(MULTIPART_FORM_DATA)
+								.header("Authorization", accessToken)
 				)
 				.andExpect(status().isBadRequest())
 				.andExpect(jsonPath("$.success").value(false))
@@ -203,15 +202,18 @@ class PostControllerTest {
 		// given
 		Post post = postRepository.save(Post.of("글 제목1", "글 내용1", users));
 
-		// given
 		String title = "글 수정 제목1입니다.";
 		String content = "글 수정 내용1입니다.";
+		SetPostDto setPostDto = PostCreateDto.of(title, content);
+		String json = objectMapper.writeValueAsString(setPostDto);
+		MockMultipartFile request = new MockMultipartFile("data", null, "application/json", json.getBytes(StandardCharsets.UTF_8));
+
 		// expected
-		mockMvc.perform(patch("/api/posts/{postId}", post.getId())
-						.contentType(APPLICATION_JSON)
-						.param("title", title)
-						.param("content", content)
-						.principal(authentication)
+		mockMvc.perform(multipart(HttpMethod.PATCH, "/api/posts/{postId}", post.getId())
+						.file(request)
+						.accept(APPLICATION_JSON)
+						.contentType(MULTIPART_FORM_DATA)
+						.header("Authorization", accessToken)
 				)
 				.andExpect(status().isOk())
 				.andDo(print());
