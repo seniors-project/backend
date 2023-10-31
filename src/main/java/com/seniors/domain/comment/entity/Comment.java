@@ -21,8 +21,7 @@ import org.hibernate.annotations.Where;
 @Table(name = "Comment", indexes = {
 		@Index(name = "idx_userId", columnList = "userId"),
 		@Index(name = "idx_postId", columnList = "postId"),
-		@Index(name = "idx_isDeleted", columnList = "isDeleted"),
-		@Index(name = "idx_postId_userId_isDeleted", columnList = "postId, userId, isDeleted")
+		@Index(name = "idx_postId_userId", columnList = "postId, userId")
 })
 public class Comment extends BaseTimeEntity {
 	@Id

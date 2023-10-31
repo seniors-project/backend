@@ -24,8 +24,7 @@ import java.util.Set;
 @SQLDelete(sql = "UPDATE Post SET isDeleted = true WHERE id = ?")
 @Table(name = "Post", indexes = {
 		@Index(name = "idx_userId", columnList = "userId"),
-		@Index(name = "idx_isDeleted", columnList = "isDeleted"),
-		@Index(name = "idx_postId_userId_isDeleted", columnList = "id, userId, isDeleted")
+		@Index(name = "idx_postId_userId", columnList = "id, userId")
 })
 public class Post extends BaseTimeEntity {
 	@Id
