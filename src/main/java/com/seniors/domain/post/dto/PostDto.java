@@ -9,7 +9,6 @@ import com.seniors.domain.users.entity.Users;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotEmpty;
 import lombok.*;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -24,8 +23,19 @@ import static com.seniors.domain.comment.dto.CommentDto.GetCommentRes;
 public class PostDto {
 
 	@Data
+	public static class SetPostDto {
+		@NotEmpty(message = "게시글 제목은 비워둘 수 없습니다.")
+		@Schema(description = "게시글 제목", defaultValue = "제목 1", example = "제목 1이요")
+		private String title;
+
+		@NotEmpty(message = "게시글 내용은 비워둘 수 없습니다.")
+		@Schema(description = "게시글 내용", defaultValue = "내용 1", example = "내용 1이요")
+		private String content;
+	}
+
+	@Data
 	@Builder
-	public static class PostCreateDto {
+	public static class PostCreateDto extends SetPostDto {
 		@NotEmpty(message = "게시글 제목은 비워둘 수 없습니다.")
 		@Schema(description = "게시글 제목", defaultValue = "제목 1", example = "제목 1이요")
 		private String title;
@@ -34,14 +44,10 @@ public class PostDto {
 		@Schema(description = "게시글 내용", defaultValue = "내용 1", example = "내용 1이요")
 		private String content;
 
-		@Schema(description = "사진 및 동영상")
-		private List<MultipartFile> files;
-
-		public static PostCreateDto of(String title, String content, List<MultipartFile> files) {
+		public static SetPostDto of(String title, String content) {
 			return PostCreateDto.builder()
 					.title(title)
 					.content(content)
-					.files(files)
 					.build();
 		}
 	}

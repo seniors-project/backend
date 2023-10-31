@@ -7,7 +7,7 @@ import com.seniors.common.exception.type.NotFoundException;
 import com.seniors.config.S3Uploader;
 import com.seniors.domain.notification.service.NotificationService;
 import com.seniors.domain.post.dto.PostDto.GetPostRes;
-import com.seniors.domain.post.dto.PostDto.PostCreateDto;
+import com.seniors.domain.post.dto.PostDto.SetPostDto;
 import com.seniors.domain.post.entity.Post;
 import com.seniors.domain.post.entity.PostMedia;
 import com.seniors.domain.post.repository.post.PostRepository;
@@ -24,10 +24,10 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.validation.BindingResult;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.util.List;
 
 @Slf4j
 @Service
@@ -42,13 +42,14 @@ public class PostService {
 	private final NotificationService notificationService;
 
 	@Transactional
-	public Long addPost(PostCreateDto postCreateDto, BindingResult bindingResult, Long userId) throws IOException {
+	public Long addPost(SetPostDto setPostDto, List<MultipartFile> files, Long userId) throws IOException {
+		// post에 user 객체를 넣어주기 위해 조회
 		Users users = usersRepository.findById(userId).orElseThrow(
 				() -> new NotAuthorizedException("유효하지 않은 회원입니다.")
 		);
-		Post post = postRepository.save(Post.of(postCreateDto.getTitle(), postCreateDto.getContent(), users));
-		if (postCreateDto.getFiles() != null && !postCreateDto.getFiles().isEmpty()) {
-			for (MultipartFile file : postCreateDto.getFiles()) {
+		Post post = postRepository.save(Post.of(setPostDto.getTitle(), setPostDto.getContent(), users));
+		if (files != null && !files.isEmpty()) {
+			for (MultipartFile file :files) {
 				String uploadImagePath = s3Uploader.upload(file, "posts/media/" + post.getId().toString());
 				postMediaRepository.save(PostMedia.of(uploadImagePath, post));
 			}
@@ -68,18 +69,18 @@ public class PostService {
 	}
 
 	@Transactional
-	public Long modifyPost(PostCreateDto postCreateDto, BindingResult bindingResult, Long postId, Long userId) throws IOException {
+	public Long modifyPost(SetPostDto setPostDto, List<MultipartFile> files, Long postId, Long userId) throws IOException {
 
 		Post post = postRepository.findById(postId).orElseThrow(() -> new NotFoundException("유효하지 않은 게시글입니다."));
-		postRepository.modifyPost(postCreateDto.getTitle(), postCreateDto.getContent(), postId, userId);
+		postRepository.modifyPost(setPostDto.getTitle(), setPostDto.getContent(), postId, userId);
 
 		// 기존 미디어 파일 삭제
 		s3Uploader.deleteS3Object("posts/media/" + post.getId().toString());
 
 		postMediaRepository.deleteByPostId(postId);
 
-		if (postCreateDto.getFiles() != null && !postCreateDto.getFiles().isEmpty()) {
-			for (MultipartFile file : postCreateDto.getFiles()) {
+		if (files != null && !files.isEmpty()) {
+			for (MultipartFile file : files) {
 				String uploadImagePath = s3Uploader.upload(file, "posts/media/" + post.getId().toString());
 				postMediaRepository.save(PostMedia.of(uploadImagePath, post));
 			}

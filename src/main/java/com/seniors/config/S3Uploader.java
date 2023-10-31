@@ -17,6 +17,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 @Slf4j
 @RequiredArgsConstructor    // final 멤버변수가 있으면 생성자 항목에 포함시킴
@@ -37,7 +38,8 @@ public class S3Uploader {
     }
 
     private String upload(File uploadFile, String dirName) {
-        String fileName = dirName + "/" + uploadFile.getName();
+        // 파일 이름 중복과 한글 문자열 인코딩 이슈로 uuid 방식을 사용
+        String fileName = dirName + "/" + UUID.randomUUID();
         String uploadImageUrl = putS3(uploadFile, fileName);
 
         removeNewFile(uploadFile);  // 로컬에 생성된 File 삭제 (MultipartFile -> File 전환 하며 로컬에 파일 생성됨)
@@ -72,7 +74,8 @@ public class S3Uploader {
     }
 
     private Optional<File> convert(MultipartFile file) throws  IOException {
-        File convertFile = new File(file.getOriginalFilename());
+        // 파일 이름 중복과 한글 문자열 인코딩 이슈로 uuid 방식을 사용
+        File convertFile = new File(System.getProperty("user.dir") + "/" + UUID.randomUUID());
         if(convertFile.createNewFile()) {
             try (FileOutputStream fos = new FileOutputStream(convertFile)) {
                 fos.write(file.getBytes());
