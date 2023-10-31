@@ -9,7 +9,7 @@ import com.seniors.common.exception.type.NotAuthorizedException;
 import com.seniors.common.exception.type.NotFoundException;
 import com.seniors.config.security.CustomUserDetails;
 import com.seniors.domain.post.dto.PostDto.GetPostRes;
-import com.seniors.domain.post.dto.PostDto.PostCreateDto;
+import com.seniors.domain.post.dto.PostDto.SetPostDto;
 import com.seniors.domain.post.dto.PostLikeDto.SetLikeDto;
 import com.seniors.domain.post.service.PostService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -21,10 +21,12 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.validation.BindingResult;
+import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.util.List;
 
 @Tag(name = "게시글", description = "게시글 API 명세서")
 @Slf4j
@@ -37,7 +39,7 @@ public class PostController {
 
 	@Operation(summary = "게시글 생성")
 	@io.swagger.v3.oas.annotations.parameters.RequestBody(description = "생성 요청 body",
-			content = @Content(mediaType = "application/json", schema = @Schema(implementation = PostCreateDto.class)))
+			content = @Content(mediaType = "application/json", schema = @Schema(implementation = SetPostDto.class)))
 	@ApiResponse(responseCode = "200", description = "생성 성공",
 			content = @Content(mediaType = "application/json", schema = @Schema(implementation = DataResponseDto.class)))
 	@ApiResponse(responseCode = "400", description = "유효성 검증 실패",
@@ -48,11 +50,12 @@ public class PostController {
 			content = @Content(mediaType = "application/json", schema = @Schema(implementation = NotFoundException.class)))
 	@ApiResponse(responseCode = "500", description = "서버 에러.",
 			content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class)))
-	@PostMapping("")
+	@PostMapping(value = "", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE, MediaType.APPLICATION_JSON_VALUE})
 	public DataResponseDto<String> postAdd(
-			@ModelAttribute @Valid PostCreateDto postCreateDto, BindingResult bindingResult,
+			@RequestPart(value = "data") @Valid SetPostDto setPostDto,
+			@RequestPart(value = "files", required = false) List<MultipartFile> files,
 			@LoginUsers CustomUserDetails userDetails) throws IOException {
-		postService.addPost(postCreateDto, bindingResult, userDetails.getUserId());
+		postService.addPost(setPostDto, files, userDetails.getUserId());
 		return DataResponseDto.of("SUCCESS");
 	}
 
@@ -95,7 +98,7 @@ public class PostController {
 
 	@Operation(summary = "게시글 수정")
 	@io.swagger.v3.oas.annotations.parameters.RequestBody(description = "수정 요청 body",
-			content = @Content(mediaType = "application/json", schema = @Schema(implementation = PostCreateDto.class)))
+			content = @Content(mediaType = "application/json", schema = @Schema(implementation = SetPostDto.class)))
 	@ApiResponse(responseCode = "200", description = "단건 수정 성공",
 			content = @Content(mediaType = "application/json", schema = @Schema(implementation = DataResponseDto.class)))
 	@ApiResponse(responseCode = "400", description = "유효성 검증 실패",
@@ -106,12 +109,13 @@ public class PostController {
 			content = @Content(mediaType = "application/json", schema = @Schema(implementation = NotFoundException.class)))
 	@ApiResponse(responseCode = "500", description = "서버 에러.",
 			content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class)))
-	@PatchMapping("/{postId}")
+	@PatchMapping(value = "/{postId}", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE, MediaType.APPLICATION_JSON_VALUE})
 	public DataResponseDto<String> postModify(
 			@Parameter(description = "게시글 ID") @PathVariable(value = "postId") Long postId,
-			@ModelAttribute @Valid PostCreateDto postCreateDto, BindingResult bindingResult,
+			@RequestPart(value = "data") @Valid SetPostDto setPostDto,
+			@RequestPart(value = "files", required = false) List<MultipartFile> files,
 			@LoginUsers CustomUserDetails userDetails) throws IOException {
-		postService.modifyPost(postCreateDto, bindingResult, postId, userDetails.getUserId());
+		postService.modifyPost(setPostDto, files, postId, userDetails.getUserId());
 		return DataResponseDto.of("SUCCESS");
 	}
 

@@ -104,13 +104,14 @@ class PostServiceTest {
 				.build();
 
 		// when
-		Long postId = postService.addPost(PostCreateDto.of(post.getTitle(), post.getContent(), files), bindingResult, users.getId());
+		Long postId = postService.addPost(PostCreateDto.of(post.getTitle(), post.getContent()), files, users.getId());
+//		Post savePost = postRepository.save(Post.of(post.getTitle(), post.getContent(), users));
 
 		// then
 		assertEquals(1L, postRepository.count());
-		Post savePost = postRepository.findById(postId).orElse(null);
-		assertEquals("글 제목입니다.", savePost.getTitle());
-		assertEquals("글 내용입니다.", savePost.getContent());
+		Post findPost = postRepository.findById(postId).orElse(null);
+		assertEquals("글 제목입니다.", findPost.getTitle());
+		assertEquals("글 내용입니다.", findPost.getContent());
 	}
 
 	@Test
@@ -126,8 +127,8 @@ class PostServiceTest {
 				.likeCount(0)
 				.users(users)
 				.build();
-		Long postId = postService.addPost(PostCreateDto.of(post.getTitle(), post.getContent(), files), bindingResult, users.getId());
-
+		Long postId = postService.addPost(PostCreateDto.of(post.getTitle(), post.getContent()), files, users.getId());
+//		Post savePost = postRepository.save(Post.of(post.getTitle(), post.getContent(), users));
 
 		// when
 		GetPostRes findPost = postService.findOnePost(postId, users.getId());
@@ -154,7 +155,7 @@ class PostServiceTest {
 		Post savePost = postRepository.save(post);
 
 		// when
-		Long postId = postService.modifyPost(PostCreateDto.of("글 제목입니다.", "글 내용입니다.", files), bindingResult, savePost.getId(), users.getId());
+		Long postId = postService.modifyPost(PostCreateDto.of("글 제목입니다.", "글 내용입니다."), files, savePost.getId(), users.getId());
 
 		em.flush();  // Force synchronization with the database
 		em.clear();  // Clear the persistence context
