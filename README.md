@@ -1,7 +1,5 @@
 
-<img src = "https://github.com/seniors-project/backend/assets/117654450/72756334-6370-46d6-9f29-f94d0a63b0f6" height = "200" width = "700" allign = "center">
-
-
+<p align="center"><img src = "https://github.com/seniors-project/backend/assets/117654450/72756334-6370-46d6-9f29-f94d0a63b0f6" height = "200" width = "700"></p>
 
 </br>
 
@@ -18,7 +16,8 @@
 
 # 🕹 Skills
 
-![image](https://github.com/seniors-project/backend/assets/117654450/b8872d42-b24a-4dbc-906c-60ab91557196)
+![image](https://github.com/seniors-project/backend/assets/117654450/119cf4fa-2b71-4109-8004-c396fe4f2a49)
+
 
 
 </br>
@@ -38,7 +37,8 @@
 </br>
 
 # 📊 ERD
-![image](https://github.com/seniors-project/backend/assets/117654450/fe06df83-c2f5-450c-9550-1d148508dc19)
+![image](https://github.com/seniors-project/backend/assets/117654450/590cc5c9-ec2a-429a-a85a-557fded3f41a)
+
 
 </br>
 
