@@ -101,5 +101,13 @@ public class UsersDto {
 		}
 	}
 
+	@Data
+	public static class SetUserDto {
+		@Schema(description = "닉네임")
+		private String nickname;
+
+		@Schema(description = "프로필 이미지 url")
+		private String profileImageUrl;
+	}
 
 }

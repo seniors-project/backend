@@ -1,15 +1,16 @@
 package com.seniors.domain.users.repository;
 
 import com.querydsl.jpa.impl.JPAQueryFactory;
-import com.seniors.common.exception.type.BadRequestException;
 import com.seniors.common.exception.type.NotFoundException;
 import com.seniors.common.repository.BasicRepoSupport;
 import com.seniors.domain.resume.entity.Resume;
+import com.seniors.domain.users.dto.UsersDto;
 import com.seniors.domain.users.dto.UsersDto.GetUserDetailRes;
 import com.seniors.domain.users.entity.QUsers;
 import com.seniors.domain.users.entity.Users;
-import static com.seniors.domain.resume.entity.QResume.resume;
 import jakarta.persistence.EntityManager;
+
+import static com.seniors.domain.resume.entity.QResume.resume;
 
 public class UsersRepositoryImpl extends BasicRepoSupport implements UsersRepositoryCustom {
 
@@ -39,6 +40,15 @@ public class UsersRepositoryImpl extends BasicRepoSupport implements UsersReposi
 		}
 
 		return new GetUserDetailRes(detailResume, userId, snsId, nickname, profileImageUrl, email, gender);
+	}
+
+	@Override
+	public void modifyUser(Long userId, UsersDto.SetUserDto setUserDto, String profileImageUrl) {
+		jpaQueryFactory.update(users)
+				.set(users.nickname, setUserDto.getNickname())
+				.set(users.profileImageUrl, profileImageUrl)
+				.where(users.id.eq(userId))
+				.execute();
 	}
 
 }
