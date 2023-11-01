@@ -9,6 +9,7 @@ import com.seniors.domain.comment.entity.Comment;
 import com.seniors.domain.notification.entity.Notification;
 import com.seniors.domain.post.entity.Post;
 import com.seniors.domain.post.entity.PostLike;
+import com.seniors.domain.resume.entity.Resume;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.BatchSize;
