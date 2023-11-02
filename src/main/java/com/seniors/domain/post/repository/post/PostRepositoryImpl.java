@@ -6,10 +6,6 @@ import com.seniors.common.exception.type.NotFoundException;
 import com.seniors.common.repository.BasicRepoSupport;
 import com.seniors.domain.comment.entity.QComment;
 import com.seniors.domain.post.dto.PostDto.GetPostRes;
-import com.seniors.domain.post.entity.Post;
-import com.seniors.domain.post.entity.QPost;
-import com.seniors.domain.post.entity.QPostMedia;
-import com.seniors.domain.post.dto.PostDto.ModifyPostReq;
 import com.seniors.domain.post.entity.*;
 import com.seniors.domain.users.entity.QUsers;
 import jakarta.persistence.EntityManager;
@@ -20,7 +16,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 
 @Slf4j
@@ -150,4 +145,3 @@ public class PostRepositoryImpl extends BasicRepoSupport implements PostReposito
 				.execute();
 	}
 }
-

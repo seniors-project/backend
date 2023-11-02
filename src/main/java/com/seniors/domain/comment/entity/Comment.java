@@ -18,6 +18,11 @@ import org.hibernate.annotations.Where;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @SQLDelete(sql = "UPDATE Comment SET isDeleted = true WHERE id = ?")
 @Where(clause = "isDeleted = false")
+@Table(name = "Comment", indexes = {
+		@Index(name = "idx_userId", columnList = "userId"),
+		@Index(name = "idx_postId", columnList = "postId"),
+		@Index(name = "idx_postId_userId", columnList = "postId, userId")
+})
 public class Comment extends BaseTimeEntity {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
