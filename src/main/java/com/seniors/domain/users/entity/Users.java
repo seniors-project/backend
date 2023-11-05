@@ -21,6 +21,9 @@ import java.util.List;
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@Table(name = "Users", indexes = {
+		@Index(name = "idx_userId_snsId", columnList = "id, snsId")
+})
 public class Users extends BaseTimeEntity {
 
 	@Id
