@@ -1,7 +1,6 @@
 package com.seniors.domain.users.service;
 
 import com.seniors.config.S3Uploader;
-import com.seniors.domain.post.entity.PostMedia;
 import com.seniors.domain.users.dto.UsersDto.GetUserDetailRes;
 import com.seniors.domain.users.dto.UsersDto.SetUserDto;
 import com.seniors.domain.users.repository.UsersRepository;
@@ -30,12 +29,15 @@ public class UsersService {
 	}
 
 	@Transactional
-	public void modifyUsers(Long userId, SetUserDto setUserDto, MultipartFile profileImage) throws IOException {
+	public void modifyUsers(Long userId, String curProfileImage, SetUserDto setUserDto, MultipartFile profileImage) throws IOException {
 		String dirName = "users/profileImage/" + userId.toString();
-		// 기존 미디어 파일 삭제
-		s3Uploader.deleteS3Object(dirName);
+		String uploadImagePath = curProfileImage;
+		if (profileImage != null) {
+			// 기존 미디어 파일 삭제
+			s3Uploader.deleteS3Object(dirName);
+			uploadImagePath = s3Uploader.upload(profileImage, dirName);
+		}
 
-		String uploadImagePath = s3Uploader.upload(profileImage, dirName);
 		usersRepository.modifyUser(userId, setUserDto, uploadImagePath);
 	}
 }

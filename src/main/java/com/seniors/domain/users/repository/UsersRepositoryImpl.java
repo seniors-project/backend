@@ -4,8 +4,8 @@ import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.seniors.common.exception.type.NotFoundException;
 import com.seniors.common.repository.BasicRepoSupport;
 import com.seniors.domain.resume.entity.Resume;
-import com.seniors.domain.users.dto.UsersDto;
 import com.seniors.domain.users.dto.UsersDto.GetUserDetailRes;
+import com.seniors.domain.users.dto.UsersDto.SetUserDto;
 import com.seniors.domain.users.entity.QUsers;
 import com.seniors.domain.users.entity.Users;
 import jakarta.persistence.EntityManager;
@@ -43,7 +43,7 @@ public class UsersRepositoryImpl extends BasicRepoSupport implements UsersReposi
 	}
 
 	@Override
-	public void modifyUser(Long userId, UsersDto.SetUserDto setUserDto, String profileImageUrl) {
+	public void modifyUser(Long userId, SetUserDto setUserDto, String profileImageUrl) {
 		jpaQueryFactory.update(users)
 				.set(users.nickname, setUserDto.getNickname())
 				.set(users.profileImageUrl, profileImageUrl)

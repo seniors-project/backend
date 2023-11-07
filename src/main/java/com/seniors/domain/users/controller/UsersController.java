@@ -12,7 +12,6 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -21,7 +20,6 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.util.List;
 
 @Tag(name = "사용자", description = "사용자 API 명세서")
 @Slf4j
@@ -69,7 +67,7 @@ public class UsersController {
 			@RequestPart(value = "data") SetUserDto setUserDto,
 			@RequestPart(value = "profileImage", required = false) MultipartFile profileImage
 	) throws IOException {
-		usersService.modifyUsers(userDetails.getUserId(), setUserDto, profileImage);
+		usersService.modifyUsers(userDetails.getUserId(), userDetails.getProfileImageUrl(), setUserDto, profileImage);
 		return DataResponseDto.of("SUCCESS");
 	}
 
