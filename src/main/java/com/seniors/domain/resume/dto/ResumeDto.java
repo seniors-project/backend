@@ -112,7 +112,7 @@ public class ResumeDto {
 
 
 		@Builder
-		private GetResumeRes(Resume resume) {
+		public GetResumeRes(Resume resume) {
 			this.id = resume.getId();
 			this.introduce = resume.getIntroduce();
 			this.photoUrl = resume.getPhotoUrl();
