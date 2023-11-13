@@ -2,8 +2,7 @@ package com.seniors.common.exception;
 
 import com.seniors.common.constant.ResultCode;
 import com.seniors.common.dto.ErrorResponse;
-import com.seniors.common.exception.type.BadRequestException;
-import com.seniors.common.exception.type.NotFoundException;
+import com.seniors.common.exception.type.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatusCode;
@@ -29,15 +28,31 @@ public class ExceptionRestControllerAdvice extends ResponseEntityExceptionHandle
 		return handleExceptionInternal(e, ResultCode.BAD_REQUEST, request);
 	}
 
+	@ExceptionHandler(NotAuthorizedException.class)
+	public ResponseEntity<Object> handleNotAuthorizedException(NotAuthorizedException e, WebRequest request) {
+		return handleExceptionInternal(e, ResultCode.UNAUTHORIZED, request);
+	}
+
 	@ExceptionHandler(NotFoundException.class)
 	public ResponseEntity<Object> handleNotFoundException(NotFoundException e, WebRequest request) {
 		return handleExceptionInternal(e, ResultCode.NOT_FOUND, request);
+	}
+
+	@ExceptionHandler(ConflictException.class)
+	public ResponseEntity<Object> handleConflictException(ConflictException e, WebRequest request) {
+		return handleExceptionInternal(e, ResultCode.CONFLICT, request);
+	}
+
+	@ExceptionHandler(ForbiddenException.class)
+	public ResponseEntity<Object> handleForbiddenException(ForbiddenException e, WebRequest request) {
+		return handleExceptionInternal(e, ResultCode.FORBIDDEN, request);
 	}
 
 	@ExceptionHandler(Exception.class)
 	public ResponseEntity<Object> handleAllException(Exception e, WebRequest request) {
 		return handleExceptionInternal(e, ResultCode.INTERNAL_ERROR, request);
 	}
+
 
 	@Override
 	protected ResponseEntity<Object> handleMethodArgumentNotValid(MethodArgumentNotValidException ex, HttpHeaders headers,
