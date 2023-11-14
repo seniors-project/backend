@@ -78,7 +78,7 @@ public class NotificationController {
 	@ApiResponse(responseCode = "500", description = "서버 에러.",
 			content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class)))
 	@PatchMapping("/{id}")
-	public DataResponseDto<Notification> notificationRead(
+	public DataResponseDto<NotificationDto> notificationRead(
 			@PathVariable Long id,
 			@LoginUsers CustomUserDetails userDetails
 	) {
