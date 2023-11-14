@@ -1,5 +1,6 @@
 package com.seniors.domain.notification.entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.seniors.common.entity.BaseTimeEntity;
 import com.seniors.domain.users.entity.Users;
 import jakarta.persistence.*;
@@ -22,6 +23,7 @@ public class Notification extends BaseTimeEntity {
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "userId")
+	@JsonBackReference
 	private Users users;
 
 	@Column(columnDefinition = "varchar(50) not null COMMENT '알림 내용'")

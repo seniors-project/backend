@@ -13,6 +13,7 @@ public class NotificationDto {
 	 * 알림 id
 	 */
 	private Long id;
+
 	private Long userId;
 
 	/**
