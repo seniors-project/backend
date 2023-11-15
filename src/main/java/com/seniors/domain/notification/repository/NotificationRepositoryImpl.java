@@ -37,23 +37,22 @@ public class NotificationRepositoryImpl extends BasicRepoSupport implements Noti
 				.orderBy(notification.id.desc())
 				.limit(pageable.getPageSize() + 1)
 				.fetch();
-		List<NotificationDto> content = results.stream()
+		List<NotificationDto> list = results.stream()
 				.map(n -> new NotificationDto(
 						n.getId(),
 						n.getUsers().getId(),
 						n.getContent(),
 						n.getUrl(),
 						n.getCreatedAt(),
-						n.getLastModifiedDate(),
 						n.isRead()
 				))
 				.collect(Collectors.toList());
 
-		return checkLastPage(pageable, content);
+		return checkLastPage(pageable, list);
 	}
 
 	private BooleanExpression userIdEq(Long userId) {
-		return notification.users.id.ne(userId);
+		return notification.users.id.eq(userId);
 	}
 
 	// no-offset 방식 처리하는 메서드

@@ -141,7 +141,7 @@ public class NotificationService {
 	}
 
 	@Transactional
-	public Notification readNotification(CustomUserDetails userDetails, Long id) {
+	public NotificationDto readNotification(CustomUserDetails userDetails, Long id) {
 
 		Notification notification = notificationRepository.findById(id)
 				.orElseThrow(() -> new NotFoundException("존재하지 않는 알림입니다."));
@@ -150,6 +150,6 @@ public class NotificationService {
 			throw new NotAuthorizedException("읽기 권한이 없습니다.");
 		}
 		notification.read();
-		return notification;
+		return NotificationDto.of(notification);
 	}
 }
