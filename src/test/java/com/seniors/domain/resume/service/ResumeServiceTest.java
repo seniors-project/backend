@@ -1,19 +1,18 @@
 package com.seniors.domain.resume.service;
 
 import com.seniors.common.constant.OAuthProvider;
+import com.seniors.common.dto.CustomSlice;
 import com.seniors.common.exception.type.BadRequestException;
-import com.seniors.domain.resume.dto.CareerDto;
-import com.seniors.domain.resume.dto.CertificateDto;
+import com.seniors.common.exception.type.ConflictException;
+import com.seniors.common.exception.type.ForbiddenException;
+import com.seniors.domain.resume.dto.*;
 
-import com.seniors.domain.resume.dto.EducationDto;
-import com.seniors.domain.resume.dto.ResumeDto;
-import com.seniors.domain.resume.entity.Career;
-import com.seniors.domain.resume.entity.Certificate;
-import com.seniors.domain.resume.entity.Education;
-import com.seniors.domain.resume.entity.Resume;
+import com.seniors.domain.resume.entity.*;
 import com.seniors.domain.resume.repository.ResumeRepository;
+import com.seniors.domain.resume.repository.ResumeViewRepository;
 import com.seniors.domain.users.entity.Users;
 import com.seniors.domain.users.repository.UsersRepository;
+import io.swagger.v3.oas.annotations.Operation;
 import org.checkerframework.checker.units.qual.A;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -25,6 +24,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Import;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
@@ -34,6 +35,8 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.NoSuchElementException;
+import java.util.Optional;
 
 
 import static org.assertj.core.api.Assertions.*;
@@ -55,207 +58,506 @@ class ResumeServiceTest {
     @Autowired
     private ResumeRepository resumeRepository;
 
+    @Autowired
+    private ResumeViewRepository resumeViewRepository;
 
 
-    @DisplayName("신규 이력서를 등록한다. 이력서와 함께 자격증, 경력, 교육도 동반되어 저장된다.")
+
+    @DisplayName("신규 이력서를 등록한다. 자격증, 경력, 교육사항들도 함께 등록된다.")
     @Test
     void addResume() throws IOException {
         // given
-        Users user = createUser("김철수", "male", "08-08", "20~29", "https:~");
+        Users user = createUser("mike", "male", "08-08", "20~29");
         Users savedUser = usersRepository.save(user);
-
-        byte[] imageData = new byte[] {
-                (byte) 0xFF, (byte) 0xD8, (byte) 0xFF, (byte) 0xE0,
-                // ... (more image bytes) ...
-                (byte) 0xFF, (byte) 0xD9
-        };
-
-        MockMultipartFile image = new MockMultipartFile(
-                "image",           // Field name
-                "image.jpg",       // Original file name
-                "image/jpeg",      // Content type
-                imageData          // Image data as byte array
-        );
 
         List<CertificateDto.saveCertificateReq> certificateReqList = new ArrayList<>();
         List<CareerDto.saveCareerReq> careerReqList = new ArrayList<>();
         List<EducationDto.saveEducationReq> educationReqList = new ArrayList<>();
 
-        CertificateDto.saveCertificateReq saveCertificateReq = new CertificateDto.saveCertificateReq();
-        saveCertificateReq.setName("OPIC");
-        saveCertificateReq.setRating("AL");
-        saveCertificateReq.setIssuedYear(2005);
-        saveCertificateReq.setIssuedMonth(5);
-        saveCertificateReq.setIsIssued(false);
-        certificateReqList.add(saveCertificateReq);
+        CertificateDto.saveCertificateReq certificateReq = new CertificateDto.saveCertificateReq();
+        certificateReq.setName("OPIC");
+        certificateReq.setIssuedYear(2005);
+        certificateReq.setIssuedMonth(5);
+        certificateReq.setRating("AL");
+        certificateReqList.add(certificateReq);
 
-        CareerDto.saveCareerReq saveCareerReq = new CareerDto.saveCareerReq();
-        saveCareerReq.setStartedAt(2001);
-        saveCareerReq.setEndedAt(2005);
-        saveCareerReq.setCompany("삼성 병원");
-        saveCareerReq.setTitle("부장");
-        saveCareerReq.setIsAttendanced(false);
-        saveCareerReq.setContent("삼성 병원에서 부장으로 근무");
-        careerReqList.add(saveCareerReq);
+        CareerDto.saveCareerReq careerReq = new CareerDto.saveCareerReq();
+        careerReq.setStartedAt(2001);
+        careerReq.setCompany("삼성 병원");
+        careerReq.setTitle("부장");
+        careerReq.setContent("삼성 병원에서 부장으로 근무");
+        careerReqList.add(careerReq);
 
-        EducationDto.saveEducationReq saveEducationReq = new EducationDto.saveEducationReq();
-        saveEducationReq.setInstitution("서울대학교");
-        saveEducationReq.setProcess("의과대학");
-        saveEducationReq.setStartedAt(1990);
-        saveEducationReq.setEndedAt(1994);
-        saveEducationReq.setContent("의대 학부 전공");
-        saveEducationReq.setIsProcessed(false);
-        educationReqList.add(saveEducationReq);
+        EducationDto.saveEducationReq educationReq = new EducationDto.saveEducationReq();
+        educationReq.setInstitution("서울대학교");
+        educationReq.setStartedAt(1990);
+        educationReq.setProcess("컴공");
+        educationReq.setContent("학부 전공");
+        educationReqList.add(educationReq);
 
-        ResumeDto.SaveResumeReq saveResumeReq = new ResumeDto.SaveResumeReq();
-        saveResumeReq.setIntroduce("안녕하세요");
-        saveResumeReq.setOccupation("의사");
-        saveResumeReq.setIsOpened(true);
-        saveResumeReq.setName("김철수");
-//        saveResumeReq.setImage(image);
-        saveResumeReq.setCareerList(careerReqList);
-        saveResumeReq.setCertificateList(certificateReqList);
-        saveResumeReq.setEducationList(educationReqList);
+        ResumeDto.SaveResumeReq resumeReq = new ResumeDto.SaveResumeReq();
+        resumeReq.setOccupation("의사");
+        resumeReq.setName("김철수");
+        resumeReq.setCareerList(careerReqList);
+        resumeReq.setCertificateList(certificateReqList);
+        resumeReq.setEducationList(educationReqList);
 
         // when
-//        Long savedResumeId = resumeService.addResume(saveResumeReq, savedUser.getId());
+        Long newResumeId = resumeService.addResume(resumeReq, null, savedUser.getId());
 
-        List<Resume> resumes = resumeRepository.findAll();
-        assertThat(resumes).hasSize(1)
-                .extracting("introduce", "occupation", "isOpened", "name", "photoUrl")
-                .contains(
-                        tuple("안녕하세요", "의사", true, "김철수", "https://seniors-for-bucket.s3.ap-northeast-2.amazonaws.com/images/image.jpg")
-                );
-        assertThat(resumes.get(0).getCertificates()).hasSize(1)
-                .extracting("name", "rating", "issuedYear", "issuedMonth", "isIssued")
-                .contains(
-                        tuple("OPIC", "AL", 2005, 5, false)
-                );
-        assertThat(resumes.get(0).getCareers()).hasSize(1)
-                .extracting("startedAt", "endedAt", "company", "title", "isAttendanced", "content")
-                .contains(
-                        tuple(2001, 2005, "삼성 병원", "부장", false, "삼성 병원에서 부장으로 근무")
-                );
-        assertThat(resumes.get(0).getEducations()).hasSize(1)
-                .extracting("institution", "process", "startedAt", "endedAt", "content", "isProcessed")
-                .contains(
-                        tuple("서울대학교", "의과대학", 1990, 1994, "의대 학부 전공", false)
-                );
-
+        // then
+        Resume findResume = resumeRepository.findById(newResumeId).get();
+        assertThat(resumeReq.getOccupation()).isEqualTo(findResume.getOccupation());
+        assertThat(resumeReq.getName()).isEqualTo(findResume.getName());
+        assertThat(certificateReq.getName()).isEqualTo(findResume.getCertificates().get(0).getName());
+        assertThat(certificateReq.getIssuedYear()).isEqualTo(findResume.getCertificates().get(0).getIssuedYear());
+        assertThat(certificateReq.getIssuedMonth()).isEqualTo(findResume.getCertificates().get(0).getIssuedMonth());
+        assertThat(careerReq.getStartedAt()).isEqualTo(findResume.getCareers().get(0).getStartedAt());
+        assertThat(careerReq.getCompany()).isEqualTo(findResume.getCareers().get(0).getCompany());
+        assertThat(careerReq.getTitle()).isEqualTo(findResume.getCareers().get(0).getTitle());
+        assertThat(careerReq.getContent()).isEqualTo(findResume.getCareers().get(0).getContent());
+        assertThat(educationReq.getInstitution()).isEqualTo(findResume.getEducations().get(0).getInstitution());
+        assertThat(educationReq.getStartedAt()).isEqualTo(findResume.getEducations().get(0).getStartedAt());
     }
 
     @DisplayName("신규 이력서를 등록한다. 이력서는 유저당 한개씩만 등록 가능하며 2개 이상 등록 시도시 예외가 발생한다.")
     @Test
-    void addResumeMoreThanTwice() throws IOException {
+    void addResumeMoreThanTwice() {
         // given
-        Users user = createUser("김철수", "male", "08-08", "20~29", "https:~");
+        Users user = createUser("mike", "male", "08-08", "20~29");
         Users savedUser = usersRepository.save(user);
 
-        byte[] imageData = new byte[] {
-                (byte) 0xFF, (byte) 0xD8, (byte) 0xFF, (byte) 0xE0,
-                // ... (more image bytes) ...
-                (byte) 0xFF, (byte) 0xD9
-        };
-
-        MockMultipartFile image = new MockMultipartFile(
-                "image",           // Field name
-                "image.jpg",       // Original file name
-                "image/jpeg",      // Content type
-                imageData          // Image data as byte array
-        );
+        Resume resume1 = createResume("안녕하세요~!!",  "개발자", "박철수", savedUser);
+        resumeRepository.save(resume1);
 
         List<CertificateDto.saveCertificateReq> certificateReqList = new ArrayList<>();
         List<CareerDto.saveCareerReq> careerReqList = new ArrayList<>();
         List<EducationDto.saveEducationReq> educationReqList = new ArrayList<>();
 
-        CertificateDto.saveCertificateReq saveCertificateReq1 = new CertificateDto.saveCertificateReq();
-        saveCertificateReq1.setName("OPIC");
-        saveCertificateReq1.setRating("AL");
-        saveCertificateReq1.setIssuedYear(2005);
-        saveCertificateReq1.setIssuedMonth(5);
-        saveCertificateReq1.setIsIssued(false);
-        certificateReqList.add(saveCertificateReq1);
+        CertificateDto.saveCertificateReq certificateReq = new CertificateDto.saveCertificateReq();
+        certificateReq.setName("OPIC");
+        certificateReq.setIssuedYear(2005);
+        certificateReq.setIssuedMonth(5);
+        certificateReqList.add(certificateReq);
 
-        CertificateDto.saveCertificateReq saveCertificateReq2 = new CertificateDto.saveCertificateReq();
-        saveCertificateReq2.setName("TOEIC");
-        saveCertificateReq2.setRating("900");
-        saveCertificateReq2.setIssuedYear(2001);
-        saveCertificateReq2.setIssuedMonth(1);
-        saveCertificateReq2.setIsIssued(false);
-        certificateReqList.add(saveCertificateReq2);
+        CareerDto.saveCareerReq careerReq = new CareerDto.saveCareerReq();
+        careerReq.setStartedAt(2001);
+        careerReq.setCompany("삼성 병원");
+        careerReq.setTitle("부장");
+        careerReq.setContent("삼성 병원에서 부장으로 근무");
+        careerReqList.add(careerReq);
 
-        CareerDto.saveCareerReq saveCareerReq1 = new CareerDto.saveCareerReq();
-        saveCareerReq1.setStartedAt(2001);
-        saveCareerReq1.setEndedAt(2005);
-        saveCareerReq1.setCompany("삼성 병원");
-        saveCareerReq1.setTitle("부장");
-        saveCareerReq1.setIsAttendanced(false);
-        saveCareerReq1.setContent("삼성 병원에서 부장으로 근무");
-        careerReqList.add(saveCareerReq1);
+        EducationDto.saveEducationReq educationReq = new EducationDto.saveEducationReq();
+        educationReq.setInstitution("서울대학교");
+        educationReq.setStartedAt(1990);
+        educationReqList.add(educationReq);
 
-        CareerDto.saveCareerReq saveCareerReq2 = new CareerDto.saveCareerReq();
-        saveCareerReq2.setStartedAt(2005);
-        saveCareerReq2.setEndedAt(2013);
-        saveCareerReq2.setCompany("아산 병원");
-        saveCareerReq2.setTitle("부장");
-        saveCareerReq2.setIsAttendanced(false);
-        saveCareerReq2.setContent("아산 병원에서 부장으로 근무");
-        careerReqList.add(saveCareerReq2);
-
-        EducationDto.saveEducationReq saveEducationReq1 = new EducationDto.saveEducationReq();
-        saveEducationReq1.setInstitution("서울대학교");
-        saveEducationReq1.setProcess("의과대학");
-        saveEducationReq1.setStartedAt(1990);
-        saveEducationReq1.setEndedAt(1994);
-        saveEducationReq1.setContent("의대 학부 전공");
-        saveEducationReq1.setIsProcessed(false);
-        educationReqList.add(saveEducationReq1);
-
-        EducationDto.saveEducationReq saveEducationReq2 = new EducationDto.saveEducationReq();
-        saveEducationReq2.setInstitution("연세대학교");
-        saveEducationReq2.setProcess("의과대학");
-        saveEducationReq2.setStartedAt(1990);
-        saveEducationReq2.setEndedAt(1994);
-        saveEducationReq2.setContent("의대 학부 전공");
-        saveEducationReq2.setIsProcessed(false);
-        educationReqList.add(saveEducationReq2);
-
-        ResumeDto.SaveResumeReq saveResumeReq1 = new ResumeDto.SaveResumeReq();
-        saveResumeReq1.setIntroduce("안녕하세요");
-        saveResumeReq1.setOccupation("의사");
-        saveResumeReq1.setIsOpened(true);
-        saveResumeReq1.setName("김철수");
-//        saveResumeReq1.setImage(image);
-        saveResumeReq1.setCareerList(careerReqList);
-        saveResumeReq1.setCertificateList(certificateReqList);
-        saveResumeReq1.setEducationList(educationReqList);
-
-        ResumeDto.SaveResumeReq saveResumeReq2 = new ResumeDto.SaveResumeReq();
-        saveResumeReq2.setIntroduce("안녕하세요");
-        saveResumeReq2.setOccupation("의사");
-        saveResumeReq2.setIsOpened(true);
-        saveResumeReq2.setName("김백수");
-//        saveResumeReq2.setImage(image);
-        saveResumeReq2.setCareerList(careerReqList);
-        saveResumeReq2.setCertificateList(certificateReqList);
-        saveResumeReq2.setEducationList(educationReqList);
+        ResumeDto.SaveResumeReq resumeReq = new ResumeDto.SaveResumeReq();
+        resumeReq.setOccupation("의사");
+        resumeReq.setName("김철수");
+        resumeReq.setCareerList(careerReqList);
+        resumeReq.setCertificateList(certificateReqList);
+        resumeReq.setEducationList(educationReqList);
 
         // when & then
-//        resumeService.addResume(saveResumeReq1, savedUser.getId());
-//        assertThatThrownBy(() -> resumeService.addResume(saveResumeReq2, savedUser.getId()))
-////                .isInstanceOf(BadRequestException.class)
-//                .hasMessage("이미 해당 유저의 이력서가 존재합니다.");
+        assertThatThrownBy(() -> resumeService.addResume(resumeReq, null, savedUser.getId()))
+                .isInstanceOf(ConflictException.class)
+                        .hasMessage("이미 해당 유저의 이력서가 존재합니다.");
+    }
+
+    @DisplayName("신규 이력서를 등록한다. 퇴사연도와 재직중 여부 값을 둘다 받으면 예외가 터진다.")
+    @Test
+    void addResumeWithConstraint1(){
+        // given
+        Users user = createUser("mike", "male", "08-08", "20~29");
+        Users savedUser = usersRepository.save(user);
+
+        List<CertificateDto.saveCertificateReq> certificateReqList = new ArrayList<>();
+        List<CareerDto.saveCareerReq> careerReqList = new ArrayList<>();
+        List<EducationDto.saveEducationReq> educationReqList = new ArrayList<>();
+
+        CertificateDto.saveCertificateReq certificateReq = new CertificateDto.saveCertificateReq();
+        certificateReq.setName("OPIC");
+        certificateReq.setIssuedYear(2005);
+        certificateReq.setIssuedMonth(5);
+        certificateReqList.add(certificateReq);
+
+        CareerDto.saveCareerReq careerReq = new CareerDto.saveCareerReq();
+        careerReq.setStartedAt(2001);
+        careerReq.setEndedAt(2008); // 퇴사 연도
+        careerReq.setIsAttendanced(true); // 재직중 여부
+        careerReq.setCompany("삼성 병원");
+        careerReq.setTitle("부장");
+        careerReq.setContent("삼성 병원에서 부장으로 근무");
+        careerReqList.add(careerReq);
+
+        EducationDto.saveEducationReq educationReq = new EducationDto.saveEducationReq();
+        educationReq.setInstitution("서울대학교");
+        educationReq.setStartedAt(1990);
+        educationReqList.add(educationReq);
+
+        ResumeDto.SaveResumeReq resumeReq = new ResumeDto.SaveResumeReq();
+        resumeReq.setOccupation("의사");
+        resumeReq.setName("김철수");
+        resumeReq.setCareerList(careerReqList);
+        resumeReq.setCertificateList(certificateReqList);
+        resumeReq.setEducationList(educationReqList);
+
+        // when & then
+        assertThatThrownBy(() -> resumeService.addResume(resumeReq, null, savedUser.getId()))
+                .isInstanceOf(BadRequestException.class)
+                .hasMessage("퇴사연도를 입력하심면 재직중 여부를 체크하실 수 없습니다.");
+    }
+
+    @DisplayName("신규 이력서를 등록한다. 종료연도와 진행중 여부 값을 둘다 받으면 예외가 터진다.")
+    @Test
+    void addResumeWithConstraint2(){
+        // given
+        Users user = createUser("mike", "male", "08-08", "20~29");
+        Users savedUser = usersRepository.save(user);
+
+        List<CertificateDto.saveCertificateReq> certificateReqList = new ArrayList<>();
+        List<CareerDto.saveCareerReq> careerReqList = new ArrayList<>();
+        List<EducationDto.saveEducationReq> educationReqList = new ArrayList<>();
+
+        CertificateDto.saveCertificateReq certificateReq = new CertificateDto.saveCertificateReq();
+        certificateReq.setName("OPIC");
+        certificateReq.setIssuedYear(2005);
+        certificateReq.setIssuedMonth(5);
+        certificateReqList.add(certificateReq);
+
+        CareerDto.saveCareerReq careerReq = new CareerDto.saveCareerReq();
+        careerReq.setStartedAt(2001);
+        careerReq.setCompany("삼성 병원");
+        careerReq.setTitle("부장");
+        careerReq.setContent("삼성 병원에서 부장으로 근무");
+        careerReqList.add(careerReq);
+
+        EducationDto.saveEducationReq educationReq = new EducationDto.saveEducationReq();
+        educationReq.setInstitution("서울대학교");
+        educationReq.setEndedAt(1998); // 종료 연도
+        educationReq.setIsProcessed(true); // 진행중 여부
+        educationReq.setStartedAt(1990);
+        educationReqList.add(educationReq);
+
+        ResumeDto.SaveResumeReq resumeReq = new ResumeDto.SaveResumeReq();
+        resumeReq.setOccupation("의사");
+        resumeReq.setName("김철수");
+        resumeReq.setCareerList(careerReqList);
+        resumeReq.setCertificateList(certificateReqList);
+        resumeReq.setEducationList(educationReqList);
+
+        // when & then
+        assertThatThrownBy(() -> resumeService.addResume(resumeReq, null, savedUser.getId()))
+                .isInstanceOf(BadRequestException.class)
+                .hasMessage("종료연도를 입력하시면 진행중 여부를 체크하실 수 없습니다.");
+    }
+
+    @DisplayName("이력서를 조회한다. 이력서를 열람한 횟수가 1증가한다. 자격증, 경력, 교육사항들도 함께 조회된다.")
+    @Test
+    void findResume(){
+        // given
+        Users user1 = createUser("mike", "male", "08-08", "20~29");
+        Users user2 = createUser("sam", "female", "03-01", "20~29");
+        Users savedUser1 = usersRepository.save(user1);
+        Users savedUser2 = usersRepository.save(user1);
+
+        Resume resume = createResume("안녕하세요~!!",  "개발자", "박철수", savedUser1);
+        Certificate certificate = createCertificate("OPIC", "AL", 2015, 8, true);
+        Career career = createCareer(1998, 2007, "Naver", "CTO", false, "정산 업무 담당");
+        Education education = createEducation("ABC 대학교", "컴퓨터 공학과", 1980, 1984, "컴퓨터 공학과 전공했습니다.", false);
+
+        resume.addCertificate(certificate);
+        resume.addCareer(career);
+        resume.addEducation(education);
+        Resume savedResume = resumeRepository.save(resume);
+
+        // when
+        ResumeDto.GetResumeRes getResumeRes = resumeService.findResume(savedResume.getId(), savedUser2.getId());
+
+        // then
+        assertThat(getResumeRes.getViewCount()).isEqualTo(savedResume.getViewCount()+1); // viewCount 1 증가
+        assertThat(getResumeRes.getIntroduce()).isEqualTo(resume.getIntroduce());
+        assertThat(getResumeRes.getOccupation()).isEqualTo(resume.getOccupation());
+        assertThat(getResumeRes.getName()).isEqualTo(resume.getName());
+        assertThat(getResumeRes.getCertificates().get(0).getName()).isEqualTo(certificate.getName());
+        assertThat(getResumeRes.getCertificates().get(0).getRating()).isEqualTo(certificate.getRating());
+        assertThat(getResumeRes.getCareers().get(0).getCompany()).isEqualTo(career.getCompany());
+        assertThat(getResumeRes.getCareers().get(0).getContent()).isEqualTo(career.getContent());
+        assertThat(getResumeRes.getEducations().get(0).getInstitution()).isEqualTo(education.getInstitution());
+        assertThat(getResumeRes.getEducations().get(0).getProcess()).isEqualTo(education.getProcess());
 
     }
 
-    private Users createUser(String nickname, String gender, String birthday, String ageRange, String profileImageUrl) {
+    @DisplayName("나의 이력서를 조회한다. 이력서를 열람한 횟수는 변화없다. 자격증, 경력, 교육사항들도 함께 조회된다.")
+    @Test
+    void findMyesume(){
+        // given
+        Users user = createUser("mike", "male", "08-08", "20~29");
+        Users savedUser1 = usersRepository.save(user);
+
+        Resume resume = createResume("안녕하세요~!!",  "개발자", "박철수", savedUser1);
+        Certificate certificate = createCertificate("OPIC", "AL", 2015, 8, true);
+        Career career = createCareer(1998, 2007, "Naver", "CTO", false, "정산 업무 담당");
+        Education education = createEducation("ABC 대학교", "컴퓨터 공학과", 1980, 1984, "컴퓨터 공학과 전공했습니다.", false);
+
+        resume.addCertificate(certificate);
+        resume.addCareer(career);
+        resume.addEducation(education);
+        Resume savedResume = resumeRepository.save(resume);
+
+        // when
+        ResumeDto.GetResumeRes getResumeRes = resumeService.findMyResume(user.getId());
+
+        // then
+        assertThat(getResumeRes.getViewCount()).isEqualTo(savedResume.getViewCount());
+        assertThat(getResumeRes.getIntroduce()).isEqualTo(resume.getIntroduce());
+        assertThat(getResumeRes.getOccupation()).isEqualTo(resume.getOccupation());
+        assertThat(getResumeRes.getName()).isEqualTo(resume.getName());
+        assertThat(getResumeRes.getCertificates().get(0).getName()).isEqualTo(certificate.getName());
+        assertThat(getResumeRes.getCertificates().get(0).getRating()).isEqualTo(certificate.getRating());
+        assertThat(getResumeRes.getCareers().get(0).getCompany()).isEqualTo(career.getCompany());
+        assertThat(getResumeRes.getCareers().get(0).getContent()).isEqualTo(career.getContent());
+        assertThat(getResumeRes.getEducations().get(0).getInstitution()).isEqualTo(education.getInstitution());
+        assertThat(getResumeRes.getEducations().get(0).getProcess()).isEqualTo(education.getProcess());
+
+    }
+
+    @DisplayName("이력서 리스트를 페이지 사이즈 만큼 조회한다.")
+    @Test
+    void findResumeList(){
+        // given
+        Users user1 = createUser("mike", "male", "08-08", "20~29");
+        Users user2 = createUser("nike", "male", "02-02", "20~29");
+        Users user3 = createUser("ann", "female", "03-01", "20~29");
+        Users user4 = createUser("bill", "female", "04-08", "20~29");
+        Users savedUser1 = usersRepository.save(user1);
+        Users savedUser2 = usersRepository.save(user2);
+        Users savedUser3 = usersRepository.save(user3);
+        Users savedUser4 = usersRepository.save(user4);
+
+        Resume resume1 = createResume("안녕하세요~!!",  "개발자", "박철수", savedUser1);
+        Resume resume2 = createResume("Hello",  "의사", "김철수", savedUser2);
+        Resume resume3 = createResume("안녕!!",  "요리사", "이철수", savedUser3);
+        Resume resume4 = createResume("안녕요~!!",  "회사원", "송철수", savedUser4);
+
+        Resume savedResume1 = resumeRepository.save(resume1);
+        Resume savedResume2 = resumeRepository.save(resume2);
+        Resume savedResume3 = resumeRepository.save(resume3);
+        Resume savedResume4 = resumeRepository.save(resume4);
+        Pageable pageable = PageRequest.of(0, 2);
+
+        // when
+        CustomSlice<ResumeDto.GetResumeByQueryDslRes> getResumeByQueryDslResCustomSlice = resumeService.findResumeList(pageable, null, user1.getId());
+
+        // then
+        assertThat(getResumeByQueryDslResCustomSlice.getSize()).isEqualTo(pageable.getPageSize());
+        assertThat(getResumeByQueryDslResCustomSlice.getContent().get(0).getId()).isEqualTo(savedResume4.getId());
+        assertThat(getResumeByQueryDslResCustomSlice.getContent().get(0).getName()).isEqualTo(resume4.getName());
+        assertThat(getResumeByQueryDslResCustomSlice.getContent().get(0).getOccupation()).isEqualTo(resume4.getOccupation());
+        assertThat(getResumeByQueryDslResCustomSlice.getContent().get(1).getId()).isEqualTo(savedResume3.getId());
+        assertThat(getResumeByQueryDslResCustomSlice.getContent().get(1).getName()).isEqualTo(resume3.getName());
+        assertThat(getResumeByQueryDslResCustomSlice.getContent().get(1).getOccupation()).isEqualTo(resume3.getOccupation());
+    }
+
+    @DisplayName("이력서를 수정한다. 자격증, 경력, 교육사항들도 함께 수정할 수 있다.")
+    @Test
+    void modifyResume() throws IOException {
+        // given
+        Users user = createUser("mike", "male", "08-08", "20~29");
+        Users savedUser = usersRepository.save(user);
+
+        Resume resume = createResume("안녕하세요~!!",  "개발자", "박철수", savedUser);
+        Certificate certificate = createCertificate("OPIC", "AL", 2015, 8, true);
+        Career career = createCareer(1998, 2007, "Naver", "CTO", false, "정산 업무 담당");
+        Education education = createEducation("ABC 대학교", "컴퓨터 공학과", 1980, 1984, "컴퓨터 공학과 전공했습니다.", false);
+
+        resume.addCertificate(certificate);
+        resume.addCareer(career);
+        resume.addEducation(education);
+        Resume savedResume = resumeRepository.save(resume);
+
+        List<CertificateDto.modifyCertificateReq> certificateReqList = new ArrayList<>();
+        List<CareerDto.modifyCareerReq> careerReqList = new ArrayList<>();
+        List<EducationDto.modifyEducationReq> educationReqList = new ArrayList<>();
+
+        CertificateDto.modifyCertificateReq certificateReq = new CertificateDto.modifyCertificateReq();
+        certificateReq.setName("TOEIC");
+        certificateReq.setIssuedYear(1995);
+        certificateReq.setIssuedMonth(5);
+        certificateReqList.add(certificateReq);
+
+        ResumeDto.ModifyResumeReq resumeReq = new ResumeDto.ModifyResumeReq();
+        resumeReq.setOccupation("의사");
+        resumeReq.setName("김철수");
+        resumeReq.setCertificateList(certificateReqList);
+        resumeReq.setCareerList(careerReqList);
+        resumeReq.setEducationList(educationReqList);
+
+        // when
+        resumeService.modifyResume(savedResume.getId(), resumeReq, null, savedUser.getId());
+
+        // then
+        Resume modifiedResume = resumeRepository.findById(savedResume.getId()).get();
+        assertThat(modifiedResume.getId()).isEqualTo(savedResume.getId());
+        assertThat(modifiedResume.getOccupation()).isEqualTo("의사");
+        assertThat(modifiedResume.getName()).isEqualTo("김철수");
+        assertThat(modifiedResume.getCertificates().get(0).getName()).isEqualTo("TOEIC");
+        assertThat(modifiedResume.getCertificates().get(0).getIssuedYear()).isEqualTo(1995);
+        assertThat(modifiedResume.getCertificates().get(0).getIssuedMonth()).isEqualTo(5);
+    }
+
+    @DisplayName("다른 사람의 이력서를 수정하려고하면 예외가 터진다.")
+    @Test
+    void modifyResumeWithConstraint() throws IOException{
+        // given
+        Users user1 = createUser("mike", "male", "08-08", "20~29");
+        Users user2 = createUser("sam", "female", "01-08", "20~29");
+        Users savedUser1 = usersRepository.save(user1);
+        Users savedUser2 = usersRepository.save(user2);
+
+        Resume resume = createResume("안녕하세요~!!",  "개발자", "박철수", user1);
+        Resume savedResume = resumeRepository.save(resume);
+
+        ResumeDto.ModifyResumeReq resumeReq = new ResumeDto.ModifyResumeReq();
+        resumeReq.setOccupation("의사");
+        resumeReq.setName("김철수");
+
+        // when & then
+        assertThatThrownBy(() -> resumeService.modifyResume(savedResume.getId(), resumeReq, null, savedUser2.getId()))
+                .isInstanceOf(ForbiddenException.class)
+                .hasMessage("수정 권한이 없습니다.");
+    }
+
+    @DisplayName("이력서를 삭제한다. 연관된 자격증, 경력, 교육사항들도 함께 삭제된다.")
+    @Test
+    void removeResume() throws IOException{
+        // given
+        Users user = createUser("mike", "male", "08-08", "20~29");
+        Users savedUser = usersRepository.save(user);
+
+        Resume resume = createResume("안녕하세요~!!",  "개발자", "박철수", savedUser);
+        Certificate certificate = createCertificate("OPIC", "AL", 2015, 8, true);
+        Career career = createCareer(1998, 2007, "Naver", "CTO", false, "정산 업무 담당");
+        Education education = createEducation("ABC 대학교", "컴퓨터 공학과", 1980, 1984, "컴퓨터 공학과 전공했습니다.", false);
+
+        resume.addCertificate(certificate);
+        resume.addCareer(career);
+        resume.addEducation(education);
+        Resume savedResume = resumeRepository.save(resume);
+
+        // when
+        resumeService.removeResume(savedResume.getId(), savedResume.getUsers().getId());
+
+        // then
+        Optional<Resume> findResume = resumeRepository.findById(savedResume.getId());
+        assertThatThrownBy(() -> findResume.get())
+                .isInstanceOf(NoSuchElementException.class);
+    }
+
+    @DisplayName("다른 사람의 이력서를 삭제하려고하면 예외가 터진다.")
+    @Test
+    void removeResumeWithConstraint(){
+        // given
+        Users user1 = createUser("mike", "male", "08-08", "20~29");
+        Users user2 = createUser("sam", "female", "04-08", "20~29");
+        Users savedUser1 = usersRepository.save(user1);
+        Users savedUser2 = usersRepository.save(user2);
+
+        Resume resume = createResume("안녕하세요~!!",  "개발자", "박철수", savedUser1);
+        Certificate certificate = createCertificate("OPIC", "AL", 2015, 8, true);
+        Career career = createCareer(1998, 2007, "Naver", "CTO", false, "정산 업무 담당");
+        Education education = createEducation("ABC 대학교", "컴퓨터 공학과", 1980, 1984, "컴퓨터 공학과 전공했습니다.", false);
+
+        resume.addCertificate(certificate);
+        resume.addCareer(career);
+        resume.addEducation(education);
+        Resume savedResume = resumeRepository.save(resume);
+
+        // when & then
+        assertThatThrownBy(() -> resumeService.removeResume(savedResume.getId(), savedUser2.getId()))
+                .isInstanceOf(ForbiddenException.class)
+                .hasMessage("삭제 권한이 없습니다.");
+    }
+
+    @DisplayName("이력서를 열람한 사람들 정보를 조회한다.")
+    @Test
+    void findResumeViewerList() {
+        // given
+        Users user1 = createUser("mike", "male", "08-08", "20~29");
+        Users user2 = createUser("sam", "female", "04-08", "20~29");
+        Users user3 = createUser("tony", "female", "03-28", "20~29");
+
+        Users savedUser1 = usersRepository.save(user1);
+        Users savedUser2 = usersRepository.save(user2);
+        Users savedUser3 = usersRepository.save(user3);
+
+        Resume resume1 = createResume("안녕하세요~!!",  "의사", "박철수", savedUser1);
+        resumeRepository.save(resume1);
+
+        ResumeView resumeView2 = ResumeView.of(resume1, user2);
+        ResumeView resumeView3 = ResumeView.of(resume1, user3);
+        resumeViewRepository.save(resumeView2);
+        resumeViewRepository.save(resumeView3);
+
+        // when
+        List<ViewerInfoDto.GetViewerInfoRes> getViewerInfoResList = resumeService.findResumeViewerList(savedUser1.getId());
+
+        // then
+        assertThat(getViewerInfoResList.get(0).getUserId()).isEqualTo(savedUser2.getId());
+        assertThat(getViewerInfoResList.get(0).getName()).isEqualTo(savedUser2.getNickname());
+        assertThat(getViewerInfoResList.get(1).getUserId()).isEqualTo(savedUser3.getId());
+        assertThat(getViewerInfoResList.get(1).getName()).isEqualTo(savedUser3.getNickname());
+    }
+
+    private Users createUser(String nickname, String gender, String birthday, String ageRange) {
         return Users.builder()
                 .nickname(nickname)
-                .oAuthProvider(null)
                 .gender(gender)
                 .birthday(birthday)
                 .ageRange(ageRange)
-                .profileImageUrl(profileImageUrl)
+                .build();
+    }
+
+    private Resume createResume(String introduce, String occupation, String name, Users users) {
+        return Resume.builder()
+                .introduce(introduce)
+                .occupation(occupation)
+                .isOpened(true)
+                .name(name)
+                .users(users)
+                .build();
+    }
+
+    private Certificate createCertificate(String name, String rating, int issuedYear, int issuedMonth, Boolean isIssued) {
+        return Certificate.builder()
+                .name(name)
+                .rating(rating)
+                .issuedYear(issuedYear)
+                .issuedMonth(issuedMonth)
+                .isIssued(isIssued)
+                .build();
+    }
+
+    private Career createCareer(int startedAt, int endedAt, String company, String title, Boolean isAttendanced, String content) {
+        return Career.builder()
+                .startedAt(startedAt)
+                .endedAt(endedAt)
+                .company(company)
+                .title(title)
+                .isAttendanced(isAttendanced)
+                .content(content)
+                .build();
+    }
+
+    private Education createEducation(String institution, String process, int startedAt, int endedAt, String content, Boolean isprocessed) {
+        return Education.builder()
+                .institution(institution)
+                .process(process)
+                .startedAt(startedAt)
+                .endedAt(endedAt)
+                .content(content)
+                .isProcessed(isprocessed)
                 .build();
     }
 

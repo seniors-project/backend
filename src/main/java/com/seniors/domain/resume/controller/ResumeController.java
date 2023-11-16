@@ -110,7 +110,7 @@ public class ResumeController {
             @Parameter(hidden = true) @LoginUsers CustomUserDetails userDetails
     ) {
         Pageable pageable = PageRequest.of(0, size);
-        return resumeService.findResumeList(pageable, lastId, userDetails.getUserId());
+        return DataResponseDto.of(resumeService.findResumeList(pageable, lastId, userDetails.getUserId()));
     }
 
     @Operation(summary = "이력서 수정")

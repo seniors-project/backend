@@ -126,13 +126,12 @@ public class ResumeService {
     }
 
     @Transactional(readOnly = true)
-    public DataResponseDto<CustomSlice<ResumeDto.GetResumeByQueryDslRes>> findResumeList(Pageable pageable, Long lastId, Long userId){
+    public CustomSlice<ResumeDto.GetResumeByQueryDslRes> findResumeList(Pageable pageable, Long lastId, Long userId){
         Users user =  usersRepository.findById(userId).orElseThrow(
                 () -> new NotFoundException("회원이 존재하지 않습니다.")
         );
         Slice<ResumeDto.GetResumeByQueryDslRes> result = resumeRepository.findResumeList(pageable, lastId, user.getId());
-
-        return DataResponseDto.of(CustomSlice.from(result));
+        return CustomSlice.from(result);
     }
 
     @Transactional
@@ -163,7 +162,7 @@ public class ResumeService {
             throw new ForbiddenException("수정 권한이 없습니다.");
         }
 
-        if(!image.isEmpty()) {
+        if(image != null) {
             String photoUrl = s3Uploader.upload(image, "resumes");
             resume.update(resumeReq, photoUrl);
         }
