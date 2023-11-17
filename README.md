@@ -64,6 +64,23 @@
 
 <img src = "https://github.com/seniors-project/backend/assets/117654450/91630253-2114-4aee-a002-bd95dd65ac50" height = "450" width = "700" allign = "center">
 
+**Developer Flow**
+1. App Repository에 code 변경 사항 push
+2. Github Actions가 변경 감지
+3. 빌드 후, Docker Hub에 이미지 push
+4. Slack에 빌드 성공 여부 알림 전송
+5. Config Repository의 values.yaml의 image.tag 값 변경
+6. ArgoCD가 Config Repository Sync
+7. EKS에 배포
+8. Slack에 배포 성공 여부 알림 전송
+
+</br>
+
+**Operator Flow**
+1. Config Repository에 code 변경 사항 push
+2. ArgoCD가 Config Repository Sync
+3. EKS에 배포
+4. Slack에 배포 성공 여부 알림 전송
 
 </br>
 

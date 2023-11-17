@@ -9,7 +9,6 @@ import com.seniors.domain.comment.entity.Comment;
 import com.seniors.domain.notification.entity.Notification;
 import com.seniors.domain.post.entity.Post;
 import com.seniors.domain.post.entity.PostLike;
-import com.seniors.domain.resume.entity.Resume;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.BatchSize;
@@ -77,6 +76,7 @@ public class Users extends BaseTimeEntity {
 	@OneToMany(mappedBy = "users", cascade = CascadeType.PERSIST)
 	private List<PostLike> postLikes = new ArrayList<>();
 
+	@JsonManagedReference
 	@OneToMany(mappedBy = "users", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
 	private List<Notification> notifications = new ArrayList<>();
 
