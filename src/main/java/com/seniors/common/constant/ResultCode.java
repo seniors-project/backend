@@ -21,6 +21,8 @@ public enum ResultCode {
 	VALIDATION_ERROR(400, HttpStatus.BAD_REQUEST, "Validation error"),
 	NOT_FOUND(404, HttpStatus.NOT_FOUND, "Requested resource is not found"),
 
+	CONFLICT(409, HttpStatus.CONFLICT, "Conflict error"),
+
 	// 500대 에러
 	INTERNAL_ERROR(500, HttpStatus.INTERNAL_SERVER_ERROR, "Internal error"),
 
