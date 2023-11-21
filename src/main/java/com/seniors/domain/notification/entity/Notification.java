@@ -1,5 +1,6 @@
 package com.seniors.domain.notification.entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.seniors.common.entity.BaseTimeEntity;
 import com.seniors.domain.users.entity.Users;
 import jakarta.persistence.*;
@@ -11,6 +12,10 @@ import lombok.NoArgsConstructor;
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
+@Table(name = "Notification", indexes = {
+		@Index(name = "idx_userId", columnList = "userId"),
+		@Index(name = "idx_notificationId_userId", columnList = "id, userId"),
+})
 public class Notification extends BaseTimeEntity {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -18,6 +23,7 @@ public class Notification extends BaseTimeEntity {
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "userId")
+	@JsonBackReference
 	private Users users;
 
 	@Column(columnDefinition = "varchar(50) not null COMMENT '알림 내용'")

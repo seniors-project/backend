@@ -44,8 +44,9 @@ public class ResumeService {
         if (resumeRepository.findByUsersId(userId).isPresent()) {
             throw new ConflictException("이미 해당 유저의 이력서가 존재합니다.");
         }
-
+        
         resumeReq.getCareers().stream()
+
                 .filter(saveCareerReq -> saveCareerReq.getEndedAt()!=null && saveCareerReq.getIsAttendanced()==true)
                 .findAny()
                 .ifPresent(saveCareerReq -> {
