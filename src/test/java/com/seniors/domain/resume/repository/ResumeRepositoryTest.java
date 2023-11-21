@@ -7,26 +7,20 @@ import com.seniors.domain.resume.entity.Education;
 import com.seniors.domain.resume.entity.Resume;
 import com.seniors.domain.users.entity.Users;
 import com.seniors.domain.users.repository.UsersRepository;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.tuple;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.awt.print.Book;
-import java.io.IOException;
-import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
-
 import static org.assertj.core.api.Assertions.*;
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @SpringBootTest
 @Transactional
@@ -171,18 +165,15 @@ public class ResumeRepositoryTest {
         Pageable pageable = PageRequest.of(0, 2);
 
         // when
-        Slice<ResumeDto.GetResumeByQueryDslRes> resumeList = resumeRepository.findResumeList(pageable, null, null);
+        Slice<ResumeDto.GetResumeByQueryDslRes> resumeList = resumeRepository.findResumeList(pageable, null, savedUser1.getId());
 
         // then
-        assertThat(resumeList.getContent().size()).isEqualTo(pageable.getPageSize());
-        assertThat(resumeList.getContent().get(0).getId()).isEqualTo(savedResume4.getId());
-        assertThat(resumeList.getContent().get(0).getIntroduce()).isEqualTo(resume4.getIntroduce());
-        assertThat(resumeList.getContent().get(0).getOccupation()).isEqualTo(resume4.getOccupation());
-        assertThat(resumeList.getContent().get(0).getName()).isEqualTo(resume4.getName());
-        assertThat(resumeList.getContent().get(1).getId()).isEqualTo(savedResume3.getId());
-        assertThat(resumeList.getContent().get(1).getIntroduce()).isEqualTo(resume3.getIntroduce());
-        assertThat(resumeList.getContent().get(1).getOccupation()).isEqualTo(resume3.getOccupation());
-        assertThat(resumeList.getContent().get(1).getName()).isEqualTo(resume3.getName());
+        assertThat(resumeList).hasSize(pageable.getPageSize())
+                .extracting("id", "introduce", "occupation", "name")
+                        .containsExactlyInAnyOrder(
+                                tuple(savedResume4.getId(), "안녕요~!!",  "회사원", "송철수"),
+                                tuple(savedResume3.getId(), "안녕!!",  "요리사", "이철수")
+                        );
     }
 
     @Test

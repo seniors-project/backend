@@ -130,34 +130,9 @@ class ResumeServiceTest {
         Resume resume1 = createResume("안녕하세요~!!",  "개발자", "박철수", savedUser);
         resumeRepository.save(resume1);
 
-        List<CertificateDto.saveCertificateReq> certificateReqList = new ArrayList<>();
-        List<CareerDto.saveCareerReq> careerReqList = new ArrayList<>();
-        List<EducationDto.saveEducationReq> educationReqList = new ArrayList<>();
-
-        CertificateDto.saveCertificateReq certificateReq = new CertificateDto.saveCertificateReq();
-        certificateReq.setName("OPIC");
-        certificateReq.setIssuedYear(2005);
-        certificateReq.setIssuedMonth(5);
-        certificateReqList.add(certificateReq);
-
-        CareerDto.saveCareerReq careerReq = new CareerDto.saveCareerReq();
-        careerReq.setStartedAt(2001);
-        careerReq.setCompany("삼성 병원");
-        careerReq.setTitle("부장");
-        careerReq.setContent("삼성 병원에서 부장으로 근무");
-        careerReqList.add(careerReq);
-
-        EducationDto.saveEducationReq educationReq = new EducationDto.saveEducationReq();
-        educationReq.setInstitution("서울대학교");
-        educationReq.setStartedAt(1990);
-        educationReqList.add(educationReq);
-
         ResumeDto.SaveResumeReq resumeReq = new ResumeDto.SaveResumeReq();
         resumeReq.setOccupation("의사");
         resumeReq.setName("김철수");
-        resumeReq.setCareerList(careerReqList);
-        resumeReq.setCertificateList(certificateReqList);
-        resumeReq.setEducationList(educationReqList);
 
         // when & then
         assertThatThrownBy(() -> resumeService.addResume(resumeReq, null, savedUser.getId()))
@@ -172,15 +147,7 @@ class ResumeServiceTest {
         Users user = createUser("mike", "male", "08-08", "20~29");
         Users savedUser = usersRepository.save(user);
 
-        List<CertificateDto.saveCertificateReq> certificateReqList = new ArrayList<>();
         List<CareerDto.saveCareerReq> careerReqList = new ArrayList<>();
-        List<EducationDto.saveEducationReq> educationReqList = new ArrayList<>();
-
-        CertificateDto.saveCertificateReq certificateReq = new CertificateDto.saveCertificateReq();
-        certificateReq.setName("OPIC");
-        certificateReq.setIssuedYear(2005);
-        certificateReq.setIssuedMonth(5);
-        certificateReqList.add(certificateReq);
 
         CareerDto.saveCareerReq careerReq = new CareerDto.saveCareerReq();
         careerReq.setStartedAt(2001);
@@ -191,17 +158,11 @@ class ResumeServiceTest {
         careerReq.setContent("삼성 병원에서 부장으로 근무");
         careerReqList.add(careerReq);
 
-        EducationDto.saveEducationReq educationReq = new EducationDto.saveEducationReq();
-        educationReq.setInstitution("서울대학교");
-        educationReq.setStartedAt(1990);
-        educationReqList.add(educationReq);
-
         ResumeDto.SaveResumeReq resumeReq = new ResumeDto.SaveResumeReq();
         resumeReq.setOccupation("의사");
         resumeReq.setName("김철수");
         resumeReq.setCareerList(careerReqList);
-        resumeReq.setCertificateList(certificateReqList);
-        resumeReq.setEducationList(educationReqList);
+
 
         // when & then
         assertThatThrownBy(() -> resumeService.addResume(resumeReq, null, savedUser.getId()))
@@ -216,22 +177,7 @@ class ResumeServiceTest {
         Users user = createUser("mike", "male", "08-08", "20~29");
         Users savedUser = usersRepository.save(user);
 
-        List<CertificateDto.saveCertificateReq> certificateReqList = new ArrayList<>();
-        List<CareerDto.saveCareerReq> careerReqList = new ArrayList<>();
         List<EducationDto.saveEducationReq> educationReqList = new ArrayList<>();
-
-        CertificateDto.saveCertificateReq certificateReq = new CertificateDto.saveCertificateReq();
-        certificateReq.setName("OPIC");
-        certificateReq.setIssuedYear(2005);
-        certificateReq.setIssuedMonth(5);
-        certificateReqList.add(certificateReq);
-
-        CareerDto.saveCareerReq careerReq = new CareerDto.saveCareerReq();
-        careerReq.setStartedAt(2001);
-        careerReq.setCompany("삼성 병원");
-        careerReq.setTitle("부장");
-        careerReq.setContent("삼성 병원에서 부장으로 근무");
-        careerReqList.add(careerReq);
 
         EducationDto.saveEducationReq educationReq = new EducationDto.saveEducationReq();
         educationReq.setInstitution("서울대학교");
@@ -243,8 +189,6 @@ class ResumeServiceTest {
         ResumeDto.SaveResumeReq resumeReq = new ResumeDto.SaveResumeReq();
         resumeReq.setOccupation("의사");
         resumeReq.setName("김철수");
-        resumeReq.setCareerList(careerReqList);
-        resumeReq.setCertificateList(certificateReqList);
         resumeReq.setEducationList(educationReqList);
 
         // when & then
@@ -351,13 +295,12 @@ class ResumeServiceTest {
         CustomSlice<ResumeDto.GetResumeByQueryDslRes> getResumeByQueryDslResCustomSlice = resumeService.findResumeList(pageable, null, user1.getId());
 
         // then
-        assertThat(getResumeByQueryDslResCustomSlice.getSize()).isEqualTo(pageable.getPageSize());
-        assertThat(getResumeByQueryDslResCustomSlice.getContent().get(0).getId()).isEqualTo(savedResume4.getId());
-        assertThat(getResumeByQueryDslResCustomSlice.getContent().get(0).getName()).isEqualTo(resume4.getName());
-        assertThat(getResumeByQueryDslResCustomSlice.getContent().get(0).getOccupation()).isEqualTo(resume4.getOccupation());
-        assertThat(getResumeByQueryDslResCustomSlice.getContent().get(1).getId()).isEqualTo(savedResume3.getId());
-        assertThat(getResumeByQueryDslResCustomSlice.getContent().get(1).getName()).isEqualTo(resume3.getName());
-        assertThat(getResumeByQueryDslResCustomSlice.getContent().get(1).getOccupation()).isEqualTo(resume3.getOccupation());
+        assertThat(getResumeByQueryDslResCustomSlice.getContent()).hasSize(pageable.getPageSize())
+                .extracting("id", "introduce", "occupation", "name")
+                .containsExactlyInAnyOrder(
+                        tuple(savedResume4.getId(), "안녕요~!!",  "회사원", "송철수"),
+                        tuple(savedResume3.getId(), "안녕!!",  "요리사", "이철수")
+                );
     }
 
     @DisplayName("이력서를 수정한다. 자격증, 경력, 교육사항들도 함께 수정할 수 있다.")
@@ -378,9 +321,6 @@ class ResumeServiceTest {
         Resume savedResume = resumeRepository.save(resume);
 
         List<CertificateDto.modifyCertificateReq> certificateReqList = new ArrayList<>();
-        List<CareerDto.modifyCareerReq> careerReqList = new ArrayList<>();
-        List<EducationDto.modifyEducationReq> educationReqList = new ArrayList<>();
-
         CertificateDto.modifyCertificateReq certificateReq = new CertificateDto.modifyCertificateReq();
         certificateReq.setName("TOEIC");
         certificateReq.setIssuedYear(1995);
@@ -391,8 +331,7 @@ class ResumeServiceTest {
         resumeReq.setOccupation("의사");
         resumeReq.setName("김철수");
         resumeReq.setCertificateList(certificateReqList);
-        resumeReq.setCareerList(careerReqList);
-        resumeReq.setEducationList(educationReqList);
+
 
         // when
         resumeService.modifyResume(savedResume.getId(), resumeReq, null, savedUser.getId());
@@ -504,10 +443,12 @@ class ResumeServiceTest {
         List<ViewerInfoDto.GetViewerInfoRes> getViewerInfoResList = resumeService.findResumeViewerList(savedUser1.getId());
 
         // then
-        assertThat(getViewerInfoResList.get(0).getUserId()).isEqualTo(savedUser2.getId());
-        assertThat(getViewerInfoResList.get(0).getName()).isEqualTo(savedUser2.getNickname());
-        assertThat(getViewerInfoResList.get(1).getUserId()).isEqualTo(savedUser3.getId());
-        assertThat(getViewerInfoResList.get(1).getName()).isEqualTo(savedUser3.getNickname());
+        assertThat(getViewerInfoResList).hasSize(2)
+                .extracting("userId", "name")
+                .containsExactlyInAnyOrder(
+                        tuple(savedUser3.getId(), "tony"),
+                        tuple(savedUser2.getId(), "sam")
+                );
     }
 
     private Users createUser(String nickname, String gender, String birthday, String ageRange) {
