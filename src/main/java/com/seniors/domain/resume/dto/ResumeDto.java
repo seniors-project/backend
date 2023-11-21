@@ -37,13 +37,13 @@ public class ResumeDto {
 		private String name;
 
 		@Valid
-		private List<CertificateDto.saveCertificateReq> certificateList = new ArrayList<>();
+		private List<CertificateDto.saveCertificateReq> certificates = new ArrayList<>();
 
 		@Valid
-		private List<CareerDto.saveCareerReq> careerList = new ArrayList<>();
+		private List<CareerDto.saveCareerReq> careers = new ArrayList<>();
 
 		@Valid
-		private List<EducationDto.saveEducationReq> educationList = new ArrayList<>();
+		private List<EducationDto.saveEducationReq> educations = new ArrayList<>();
 
 	}
 
@@ -70,13 +70,13 @@ public class ResumeDto {
 		private String name;
 
 		@Valid
-		private List<CertificateDto.modifyCertificateReq> certificateList = new ArrayList<>();
+		private List<CertificateDto.modifyCertificateReq> certificates = new ArrayList<>();
 
 		@Valid
-		private List<CareerDto.modifyCareerReq> careerList = new ArrayList<>();
+		private List<CareerDto.modifyCareerReq> careers = new ArrayList<>();
 
 		@Valid
-		private List<EducationDto.modifyEducationReq> educationList = new ArrayList<>();
+		private List<EducationDto.modifyEducationReq> educations = new ArrayList<>();
 
 	}
 

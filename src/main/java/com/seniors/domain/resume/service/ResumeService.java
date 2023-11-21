@@ -45,14 +45,14 @@ public class ResumeService {
             throw new ConflictException("이미 해당 유저의 이력서가 존재합니다.");
         }
 
-        resumeReq.getCareerList().stream()
+        resumeReq.getCareers().stream()
                 .filter(saveCareerReq -> saveCareerReq.getEndedAt()!=null && saveCareerReq.getIsAttendanced()==true)
                 .findAny()
                 .ifPresent(saveCareerReq -> {
                     throw new BadRequestException("퇴사연도를 입력하심면 재직중 여부를 체크하실 수 없습니다.");
                 });
 
-        resumeReq.getEducationList().stream()
+        resumeReq.getEducations().stream()
                 .filter(saveEducationReq -> saveEducationReq.getEndedAt()!=null && saveEducationReq.getIsProcessed()==true)
                 .findAny()
                 .ifPresent(saveEducationReq1 -> {
@@ -72,15 +72,15 @@ public class ResumeService {
             resume.uploadPhotoUrl(null);
         }
 
-        resumeReq.getCareerList().stream()
+        resumeReq.getCareers().stream()
                 .map(Career::from)
                 .forEach(resume::addCareer);
 
-        resumeReq.getCertificateList().stream()
+        resumeReq.getCertificates().stream()
                 .map(Certificate::from)
                 .forEach(resume::addCertificate);
 
-        resumeReq.getEducationList().stream()
+        resumeReq.getEducations().stream()
                 .map(Education::from)
                 .forEach(resume::addEducation);
 
@@ -140,14 +140,14 @@ public class ResumeService {
                 () ->new NotFoundException("이력서가 존재하지 않습니다.")
         );
 
-        resumeReq.getCareerList().stream()
+        resumeReq.getCareers().stream()
                 .filter(modifyCareerReq -> modifyCareerReq.getEndedAt()!=null && modifyCareerReq.getIsAttendanced()==true)
                 .findAny()
                 .ifPresent(modifyCareerReq -> {
                     throw new BadRequestException("퇴사연도를 입력하심면 재직중 여부를 체크하실 수 없습니다.");
                 });
 
-        resumeReq.getEducationList().stream()
+        resumeReq.getEducations().stream()
                 .filter(modifyEducationReq -> modifyEducationReq.getEndedAt()!=null && modifyEducationReq.getIsProcessed()==true)
                 .findAny()
                 .ifPresent(modifyCareerReq -> {
@@ -175,15 +175,15 @@ public class ResumeService {
         resume.getCertificates().clear();
         resume.getEducations().clear();
 
-        resumeReq.getCareerList().stream()
+        resumeReq.getCareers().stream()
                 .map(Career::from)
                 .forEach(resume::addCareer);
 
-        resumeReq.getCertificateList().stream()
+        resumeReq.getCertificates().stream()
                 .map(Certificate::from)
                 .forEach(resume::addCertificate);
 
-        resumeReq.getEducationList().stream()
+        resumeReq.getEducations().stream()
                 .map(Education::from)
                 .forEach(resume::addEducation);
     }
