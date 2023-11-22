@@ -127,15 +127,15 @@ class ChatRoomServiceTest {
 
         // when
         ChatRoom chatRoom = chatRoomRepository.save(ChatRoom.builder().build());
-        ChatRoomMembers chatRoomMembers = chatRoomMembersRepository.save(ChatRoomMembers.of(users.getNickname(), chatRoom, users));
-        ChatRoomMembers chatRoomMembers2 = chatRoomMembersRepository.save(ChatRoomMembers.of(users2.getNickname(), chatRoom, users2));
+        chatRoomMembersRepository.save(ChatRoomMembers.of(users.getNickname(), chatRoom, users));
+        chatRoomMembersRepository.save(ChatRoomMembers.of(users2.getNickname(), chatRoom, users2));
 
         ChatRoom chatRoom2 = chatRoomRepository.save(ChatRoom.builder().build());
-        ChatRoomMembers chatRoomMembers3 = chatRoomMembersRepository.save(ChatRoomMembers.of(users.getNickname(), chatRoom2, users));
-        ChatRoomMembers chatRoomMembers4 = chatRoomMembersRepository.save(ChatRoomMembers.of(users3.getNickname(), chatRoom2, users3));
+        chatRoomMembersRepository.save(ChatRoomMembers.of(users.getNickname(), chatRoom2, users));
+        chatRoomMembersRepository.save(ChatRoomMembers.of(users3.getNickname(), chatRoom2, users3));
 
-        ChatMessage chatMessage = chatMessageRepository.save(ChatMessage.of(chatRoom, users, "유저1입니다"));
-        ChatMessage chatMessage2 = chatMessageRepository.save(ChatMessage.of(chatRoom2, users, "유저1입니다"));
+        chatMessageRepository.save(ChatMessage.of(chatRoom, users, "유저1입니다"));
+        chatMessageRepository.save(ChatMessage.of(chatRoom2, users, "유저1입니다"));
 
         // then
         assertEquals(2, chatRoomService.findChatRoom(users.getId()).getChatRoomMembers().size());
@@ -161,10 +161,10 @@ class ChatRoomServiceTest {
 
         // when
         ChatRoom chatRoom = chatRoomRepository.save(ChatRoom.builder().build());
-        ChatRoomMembers chatRoomMembers = chatRoomMembersRepository.save(ChatRoomMembers.of(users.getNickname(), chatRoom, users));
-        ChatRoomMembers chatRoomMembers2 = chatRoomMembersRepository.save(ChatRoomMembers.of(users2.getNickname(), chatRoom, users2));
+        chatRoomMembersRepository.save(ChatRoomMembers.of(users.getNickname(), chatRoom, users));
+        chatRoomMembersRepository.save(ChatRoomMembers.of(users2.getNickname(), chatRoom, users2));
 
-        ChatMessage chatMessage = chatMessageRepository.save(ChatMessage.of(chatRoom, users, "채팅방1 입니다"));
+        chatMessageRepository.save(ChatMessage.of(chatRoom, users, "채팅방1 입니다"));
 
         em.flush();
         em.clear();
@@ -190,7 +190,7 @@ class ChatRoomServiceTest {
                 .build());
 
         ChatRoom chatRoom = chatRoomRepository.save(ChatRoom.builder().build());
-        ChatRoomMembers chatRoomMembers = chatRoomMembersRepository.save(ChatRoomMembers.of(users.getNickname(), chatRoom, users));
+        chatRoomMembersRepository.save(ChatRoomMembers.of(users.getNickname(), chatRoom, users));
 
         // when
         chatRoomService.removeChatRoom(chatRoom.getId(), users.getId());
