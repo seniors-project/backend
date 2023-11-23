@@ -50,9 +50,9 @@ public class NotificationController {
 			content = @Content(mediaType = "application/json", schema =
 			@Schema(implementation = CustomPage.class)))
 	@ApiResponse(responseCode = "401", description = "유효하지 않은 회원입니다.",
-			content = @Content(mediaType = "application/json", schema = @Schema(implementation = NotAuthorizedException.class)))
+			content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class)))
 	@ApiResponse(responseCode = "404", description = "알림이 존재하지 않습니다",
-			content = @Content(mediaType = "application/json", schema = @Schema(implementation = NotFoundException.class)))
+			content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class)))
 	@ApiResponse(responseCode = "500", description = "서버 에러.",
 			content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class)))
 	@GetMapping("")
@@ -72,9 +72,9 @@ public class NotificationController {
 	@ApiResponse(responseCode = "200", description = "단건 조회 성공",
 			content = @Content(mediaType = "application/json", schema = @Schema(implementation = PostDto.GetPostRes.class)))
 	@ApiResponse(responseCode = "401", description = "유효하지 않은 회원입니다.",
-			content = @Content(mediaType = "application/json", schema = @Schema(implementation = NotAuthorizedException.class)))
+			content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class)))
 	@ApiResponse(responseCode = "404", description = "알림이 존재하지 않습니다",
-			content = @Content(mediaType = "application/json", schema = @Schema(implementation = NotFoundException.class)))
+			content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class)))
 	@ApiResponse(responseCode = "500", description = "서버 에러.",
 			content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class)))
 	@PatchMapping("/{id}")
