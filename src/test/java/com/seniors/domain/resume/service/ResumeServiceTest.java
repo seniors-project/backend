@@ -98,9 +98,9 @@ class ResumeServiceTest {
         ResumeDto.SaveResumeReq resumeReq = new ResumeDto.SaveResumeReq();
         resumeReq.setOccupation("의사");
         resumeReq.setName("김철수");
-        resumeReq.setCareerList(careerReqList);
-        resumeReq.setCertificateList(certificateReqList);
-        resumeReq.setEducationList(educationReqList);
+        resumeReq.setCareers(careerReqList);
+        resumeReq.setCertificates(certificateReqList);
+        resumeReq.setEducations(educationReqList);
 
         // when
         Long newResumeId = resumeService.addResume(resumeReq, null, savedUser.getId());
@@ -161,7 +161,7 @@ class ResumeServiceTest {
         ResumeDto.SaveResumeReq resumeReq = new ResumeDto.SaveResumeReq();
         resumeReq.setOccupation("의사");
         resumeReq.setName("김철수");
-        resumeReq.setCareerList(careerReqList);
+        resumeReq.setCareers(careerReqList);
 
 
         // when & then
@@ -189,7 +189,7 @@ class ResumeServiceTest {
         ResumeDto.SaveResumeReq resumeReq = new ResumeDto.SaveResumeReq();
         resumeReq.setOccupation("의사");
         resumeReq.setName("김철수");
-        resumeReq.setEducationList(educationReqList);
+        resumeReq.setEducations(educationReqList);
 
         // when & then
         assertThatThrownBy(() -> resumeService.addResume(resumeReq, null, savedUser.getId()))
@@ -330,7 +330,7 @@ class ResumeServiceTest {
         ResumeDto.ModifyResumeReq resumeReq = new ResumeDto.ModifyResumeReq();
         resumeReq.setOccupation("의사");
         resumeReq.setName("김철수");
-        resumeReq.setCertificateList(certificateReqList);
+        resumeReq.setCertificates(certificateReqList);
 
 
         // when
