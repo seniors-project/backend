@@ -46,7 +46,7 @@ public class UsersController {
 	@ApiResponse(responseCode = "200", description = "검증 성공",
 			content = @Content(mediaType = "application/json", schema = @Schema(implementation = ResponseEntity.class)))
 	@ApiResponse(responseCode = "401", description = "검증 실패",
-			content = @Content(mediaType = "application/json", schema = @Schema(implementation = ResponseEntity.class)))
+			content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class)))
 	@GetMapping("/validate")
 	public ResponseEntity<?> userValidate(
 			@Parameter(hidden = true) @LoginUsers CustomUserDetails userDetails
@@ -60,9 +60,9 @@ public class UsersController {
 	@ApiResponse(responseCode = "200", description = "단건 조회 성공",
 			content = @Content(mediaType = "application/json", schema = @Schema(implementation = GetUserDetailRes.class)))
 	@ApiResponse(responseCode = "401", description = "유효하지 않은 회원입니다.",
-			content = @Content(mediaType = "application/json", schema = @Schema(implementation = NotAuthorizedException.class)))
+			content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class)))
 	@ApiResponse(responseCode = "404", description = "사용자가 존재하지 않습니다.",
-			content = @Content(mediaType = "application/json", schema = @Schema(implementation = NotFoundException.class)))
+			content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class)))
 	@ApiResponse(responseCode = "500", description = "서버 에러.",
 			content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class)))
 	@GetMapping("")
@@ -81,11 +81,11 @@ public class UsersController {
 	@ApiResponse(responseCode = "200", description = "단건 수정 성공",
 			content = @Content(mediaType = "application/json", schema = @Schema(implementation = DataResponseDto.class)))
 	@ApiResponse(responseCode = "400", description = "유효성 검증 실패",
-			content = @Content(mediaType = "application/json", schema = @Schema(implementation = BadRequestException.class)))
+			content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class)))
 	@ApiResponse(responseCode = "401", description = "유효하지 않은 회원입니다.",
-			content = @Content(mediaType = "application/json", schema = @Schema(implementation = NotAuthorizedException.class)))
+			content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class)))
 	@ApiResponse(responseCode = "404", description = "사용자가 존재하지 않습니다.",
-			content = @Content(mediaType = "application/json", schema = @Schema(implementation = NotFoundException.class)))
+			content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class)))
 	@ApiResponse(responseCode = "500", description = "서버 에러.",
 			content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class)))
 	@PatchMapping("")
