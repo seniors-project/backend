@@ -1,5 +1,18 @@
 package com.seniors.domain.notification.service;
 
+import java.io.IOException;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
+
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
+import org.springframework.data.domain.Sort;
+import org.springframework.scheduling.annotation.Async;
+import org.springframework.stereotype.Service;
+import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
+
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.seniors.common.dto.CustomSlice;
@@ -15,20 +28,10 @@ import com.seniors.domain.post.entity.Post;
 import com.seniors.domain.resume.entity.Resume;
 import com.seniors.domain.users.entity.Users;
 import com.seniors.domain.users.repository.UsersRepository;
+
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Slice;
-import org.springframework.data.domain.Sort;
-import org.springframework.stereotype.Service;
-import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
-
-import java.io.IOException;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
 
 @Service
 @Slf4j
@@ -52,7 +55,7 @@ public class NotificationService {
 		emitter.onTimeout(() -> emitterRepository.deleteById(id));
 
 		// To prevent 503 error, send a dummy event
-//		sendDummyEvent(emitter, userId);
+		//		sendDummyEvent(emitter, userId);
 
 		// Send unsent Event list to prevent Event loss
 		sendUnsentEvents(emitter, userId, lastEventId);
@@ -62,7 +65,8 @@ public class NotificationService {
 
 	private void sendDummyEvent(SseEmitter emitter, Long userId) {
 		String dummyEvent = "{\"message\": \"EventStream Created. [userId=" + userId + "]\"," +
-				" \"url\": \"/api/posts\", \"content\": \"시니어스 구독 userId " + userId + " \", \"id\": " + userId + ", \"isRead\": false, \"createdAt\": \"2023-01-01 01:01:01.123456\"}";
+			" \"url\": \"/api/posts\", \"content\": \"시니어스 구독 userId " + userId + " \", \"id\": " + userId
+			+ ", \"isRead\": false, \"createdAt\": \"2023-01-01 01:01:01.123456\"}";
 		sendToClient(emitter, userId.toString(), dummyEvent);
 	}
 
@@ -70,8 +74,8 @@ public class NotificationService {
 		if (lastEventId != null && !lastEventId.isEmpty()) {
 			Map<String, Object> events = emitterRepository.findAllEventCacheStartWithId(String.valueOf(userId));
 			events.entrySet().stream()
-					.filter(entry -> lastEventId.compareTo(entry.getKey()) < 0)
-					.forEach(entry -> sendToClient(emitter, entry.getKey(), entry.getValue()));
+				.filter(entry -> lastEventId.compareTo(entry.getKey()) < 0)
+				.forEach(entry -> sendToClient(emitter, entry.getKey(), entry.getValue()));
 		}
 	}
 
@@ -82,18 +86,23 @@ public class NotificationService {
 
 		String id = String.valueOf(receiver.getId());
 
-		Map<String, SseEmitter> sseEmitters = emitterRepository.findAllStartWithById(id);
+		sendNotification(id, notification);
+	}
+
+	@Async("threadPoolTaskExecutor")
+	public void sendNotification(String userId, Notification notification) {
+		Map<String, SseEmitter> sseEmitters = emitterRepository.findAllStartWithById(userId);
 		sseEmitters.forEach(
-				(key, emitter) -> {
-					try {
-						String notificationJson = objectMapper.writeValueAsString(NotificationDto.of(notification));
-						emitterRepository.saveEventCache(key, notificationJson);
-						sendToClient(emitter, key, notificationJson);
-					} catch (JsonProcessingException e) {
-						log.error("Error processing JSON:", e);
-						throw new RuntimeException(e);
-					}
+			(key, emitter) -> {
+				try {
+					String notificationJson = objectMapper.writeValueAsString(NotificationDto.of(notification));
+					emitterRepository.saveEventCache(key, notificationJson);
+					sendToClient(emitter, key, notificationJson);
+				} catch (JsonProcessingException e) {
+					log.error("Error processing JSON:", e);
+					throw new RuntimeException(e);
 				}
+			}
 		);
 	}
 
@@ -101,11 +110,11 @@ public class NotificationService {
 		String url = "/api";
 
 		if (entity instanceof Post) {
-			url += "/posts/" + ((Post) entity).getId();
+			url += "/posts/" + ((Post)entity).getId();
 		} else if (entity instanceof Comment) {
-			url += "/posts/" +((Comment) entity).getPost().getId();
+			url += "/posts/" + ((Comment)entity).getPost().getId();
 		} else if (entity instanceof Resume) {
-			url += "/resumes/" + ((Resume) entity).getId();
+			url += "/resumes/" + ((Resume)entity).getId();
 		}
 
 		return Notification.of(receiver, content, url, false);
@@ -118,9 +127,9 @@ public class NotificationService {
 				processingRequests.add(emitter);
 
 				emitter.send(SseEmitter.event()
-						.id(id)
-						.name("sse")
-						.data(data));
+					.id(id)
+					.name("sse")
+					.data(data));
 				emitter.complete();
 			}
 		} catch (IOException exception) {
@@ -136,7 +145,8 @@ public class NotificationService {
 	public CustomSlice<NotificationDto> findNotificationList(CustomUserDetails userDetails, int size, Long lastId) {
 		Sort.Direction direction = Sort.Direction.DESC;
 		Pageable pageable = PageRequest.of(0, size, Sort.by(direction, "id"));
-		Slice<NotificationDto> results = notificationRepository.findNotificationList(userDetails.getUserId(), pageable, lastId);
+		Slice<NotificationDto> results = notificationRepository.findNotificationList(userDetails.getUserId(), pageable,
+			lastId);
 		return CustomSlice.from(results);
 	}
 
@@ -144,7 +154,7 @@ public class NotificationService {
 	public NotificationDto readNotification(CustomUserDetails userDetails, Long id) {
 
 		Notification notification = notificationRepository.findById(id)
-				.orElseThrow(() -> new NotFoundException("존재하지 않는 알림입니다."));
+			.orElseThrow(() -> new NotFoundException("존재하지 않는 알림입니다."));
 
 		if (!userDetails.getUserId().equals(notification.getUsers().getId())) {
 			throw new NotAuthorizedException("읽기 권한이 없습니다.");
