@@ -51,11 +51,14 @@ jobs:
       - name: Build with Gradle
         run: ./gradlew bootJar
 
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v1
+
       # image 빌드 및 도커허브에 push
       - name: web docker build and push
         run: |
           docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_ACCESS_TOKEN }}
-          docker buildx build -t ${{ secrets.DOCKER_REPO }}/seniors
+          docker buildx build -t ${{ secrets.DOCKER_REPO }}/seniors .
           docker push ${{ secrets.DOCKER_REPO }}/seniors
 
 
