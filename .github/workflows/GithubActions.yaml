@@ -44,7 +44,7 @@ jobs:
         run: |
           cd ./src/main/resources
           touch ./application.yml
-          echo "${{ secrets.APPLICATION }}" >> ./application.yml
+          echo "${{ secrets.APPLICATION }}" > ./application.yml
         shell: bash
 
       # Gradle로 빌드 실행
@@ -58,6 +58,7 @@ jobs:
       - name: web docker build and push
         run: |
           docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_ACCESS_TOKEN }}
+
           docker buildx build --push -t ${{ secrets.DOCKER_REPO }}/seniors .
 
 
