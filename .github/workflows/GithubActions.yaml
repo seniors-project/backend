@@ -58,8 +58,7 @@ jobs:
       - name: web docker build and push
         run: |
           docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_ACCESS_TOKEN }}
-          docker buildx build -t ${{ secrets.DOCKER_REPO }}/seniors .
-          docker push ${{ secrets.DOCKER_REPO }}/seniors
+          docker buildx build --push -t ${{ secrets.DOCKER_REPO }}/seniors .
 
 
       ## docker compose up
