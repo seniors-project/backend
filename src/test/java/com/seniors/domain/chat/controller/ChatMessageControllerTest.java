@@ -1,11 +1,11 @@
 package com.seniors.domain.chat.controller;
 
-import com.seniors.common.constant.OAuthProvider;
 import com.seniors.config.security.CustomUserDetails;
 import com.seniors.domain.chat.dto.ChatMessageDto;
 import com.seniors.domain.chat.entity.ChatRoom;
-import com.seniors.domain.chat.repository.ChatRoomMembersRepository;
+import com.seniors.domain.chat.repository.ChatMessageRepository;
 import com.seniors.domain.chat.repository.ChatRoomRepository;
+import com.seniors.domain.config.WithMockCustomUser;
 import com.seniors.domain.users.entity.Users;
 import com.seniors.domain.users.repository.UsersRepository;
 import lombok.extern.slf4j.Slf4j;
@@ -22,11 +22,13 @@ import org.springframework.messaging.simp.stomp.StompFrameHandler;
 import org.springframework.messaging.simp.stomp.StompHeaders;
 import org.springframework.messaging.simp.stomp.StompSession;
 import org.springframework.messaging.simp.stomp.StompSessionHandlerAdapter;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
+import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.socket.client.standard.StandardWebSocketClient;
 import org.springframework.web.socket.config.annotation.EnableWebSocketMessageBroker;
 import org.springframework.web.socket.messaging.WebSocketStompClient;
@@ -36,13 +38,15 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeUnit;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
 
+@ActiveProfiles("dev")
+@AutoConfigureMockMvc
 @ExtendWith(SpringExtension.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @EnableWebSocketMessageBroker
-@ActiveProfiles("dev")
-@AutoConfigureMockMvc
 @Slf4j
+@WithMockCustomUser
 class ChatMessageControllerTest {
 
     @Autowired
@@ -50,46 +54,37 @@ class ChatMessageControllerTest {
     @Autowired
     private UsersRepository usersRepository;
     @Autowired
-    private ChatRoomMembersRepository chatRoomMembersRepository;
+    private ChatMessageRepository chatMessageRepository;
     private Authentication authentication;
     private Users users;
+
+    @Autowired
+    private MockMvc mockMvc;
+
+    @Autowired
+    private WebApplicationContext webApplicationContext;
     static final String WEBSOCKET_SUB_URI = "/sub/chat/room/";
     static final String WEBSOCKET_PUB_URI = "/pub/chat/sendMessage";
+
     @LocalServerPort
     private int port;
 
     @BeforeEach
-    void clean() {
-        chatRoomRepository.deleteAll();
-        chatRoomMembersRepository.deleteAll();
-        usersRepository.deleteAll();
+    void setUp() {
+        mockMvc = MockMvcBuilders
+                .webAppContextSetup(webApplicationContext)
+                .apply(springSecurity())
+                .build();
 
-        users = usersRepository.save(Users.builder()
-                .snsId(String.valueOf(123456))
-                .email("test@test.com")
-                .nickname("user1")
-                .gender("male")
-                .ageRange("20~29")
-                .birthday("12-31")
-                .oAuthProvider(OAuthProvider.KAKAO)
-                .profileImageUrl("profileImageUrl")
-                .build());
+        authentication = SecurityContextHolder.getContext().getAuthentication();
+        CustomUserDetails customUserDetails = (CustomUserDetails) authentication.getPrincipal();
 
-        CustomUserDetails userDetails = new CustomUserDetails(
-                users.getId(),
-                users.getSnsId(),
-                users.getEmail(),
-                users.getNickname(),
-                users.getGender(),
-                users.getProfileImageUrl());
-        userDetails.setUserId(users.getId());
-
-        authentication = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
-        SecurityContextHolder.getContext().setAuthentication(authentication);
+        users = usersRepository.getOneUsers(customUserDetails.getUserId());
     }
     @Test
     @DisplayName("채팅하기")
     public void chatMessageSend() throws Exception {
+
         // given
         WebSocketStompClient stompClient = new WebSocketStompClient(new StandardWebSocketClient());
         stompClient.setMessageConverter(new MappingJackson2MessageConverter());
@@ -99,11 +94,11 @@ class ChatMessageControllerTest {
 
         ChatRoom chatRoom = new ChatRoom();
         chatRoomRepository.save(chatRoom);
-
         ChatMessageDto.ChatMessageTransDto chatMessageTransDto = ChatMessageDto.ChatMessageTransDto.of(chatRoom.getId(), users.getId(), "채팅 내용입니다.");
 
         CompletableFuture<ChatMessageDto.ChatMessageTransDto> subscribeFuture = new CompletableFuture<>();
 
+        // when
         stompSession.send(WEBSOCKET_PUB_URI, chatMessageTransDto);
         stompSession.subscribe(WEBSOCKET_SUB_URI + chatMessageTransDto.getChatRoomId(), new StompFrameHandler() {
             @Override
@@ -117,9 +112,8 @@ class ChatMessageControllerTest {
             }
         });
 
-        ChatMessageDto.ChatMessageTransDto chatMessage = subscribeFuture.get(10, TimeUnit.SECONDS);
-
-        // expected
-        assertEquals(chatMessageTransDto.getContent(), chatMessage.getContent());
+        // then
+        assertEquals(chatMessageTransDto.getContent(), subscribeFuture.get(10, TimeUnit.SECONDS).getContent());
+        assertEquals(chatMessageTransDto.getContent(), chatMessageRepository.findAll().get(0).getContent());
     }
 }

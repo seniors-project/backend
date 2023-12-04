@@ -1,11 +1,11 @@
 package com.seniors.domain.chat.service;
 
-import com.seniors.common.constant.OAuthProvider;
 import com.seniors.config.security.CustomUserDetails;
 import com.seniors.domain.chat.dto.ChatMessageDto;
 import com.seniors.domain.chat.entity.ChatRoom;
 import com.seniors.domain.chat.repository.ChatMessageRepository;
 import com.seniors.domain.chat.repository.ChatRoomRepository;
+import com.seniors.domain.config.WithMockCustomUser;
 import com.seniors.domain.users.entity.Users;
 import com.seniors.domain.users.repository.UsersRepository;
 import lombok.extern.slf4j.Slf4j;
@@ -14,25 +14,36 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
+import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.socket.config.annotation.EnableWebSocketMessageBroker;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
 
+@Transactional
+@ActiveProfiles("dev")
+@AutoConfigureMockMvc
 @ExtendWith(SpringExtension.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @EnableWebSocketMessageBroker
-@ActiveProfiles("dev")
 @Slf4j
+@WithMockCustomUser
+
 class ChatMessageServiceTest {
 
     @Autowired
     private ChatRoomRepository chatRoomRepository;
+    @Autowired
+    private MockMvc mockMvc;
     @Autowired
     private UsersRepository usersRepository;
     @Autowired
@@ -42,34 +53,22 @@ class ChatMessageServiceTest {
     private ChatMessageService chatMessageService;
     private Users users;
 
+    @Autowired
+    private WebApplicationContext webApplicationContext;
+
 
     @BeforeEach
-    void clean() {
-        chatRoomRepository.deleteAll();
-        usersRepository.deleteAll();
+    void setUp() {
 
-        users = usersRepository.save(Users.builder()
-                .snsId(String.valueOf(123456))
-                .email("test@test.com")
-                .nickname("user1")
-                .gender("male")
-                .ageRange("20~29")
-                .birthday("12-31")
-                .oAuthProvider(OAuthProvider.KAKAO)
-                .profileImageUrl("profileImageUrl")
-                .build());
+        mockMvc = MockMvcBuilders
+                .webAppContextSetup(webApplicationContext)
+                .apply(springSecurity())
+                .build();
 
-        CustomUserDetails userDetails = new CustomUserDetails(
-                users.getId(),
-                users.getSnsId(),
-                users.getEmail(),
-                users.getNickname(),
-                users.getGender(),
-                users.getProfileImageUrl());
-        userDetails.setUserId(users.getId());
+        authentication = SecurityContextHolder.getContext().getAuthentication();
+        CustomUserDetails customUserDetails = (CustomUserDetails) authentication.getPrincipal();
 
-        authentication = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
-        SecurityContextHolder.getContext().setAuthentication(authentication);
+        users = usersRepository.getOneUsers(customUserDetails.getUserId());
     }
     @Test
     @DisplayName("채팅 메세지 저장")
